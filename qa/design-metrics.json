@@ -1,0 +1,21 @@
+{
+  "viewport": "1440 × 1000",
+  "environment": "Local Windows, headless Chromium, production Next.js build",
+  "errors": [],
+  "homeInitialCLS": 0,
+  "renderingBackend": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "serviceCube": {
+    "frames": 79,
+    "meanFrameMs": 25.64,
+    "approximateRAFPerSecond": 39,
+    "p95FrameMs": 33.4
+  },
+  "colors": {
+    "background": "rgb(75, 85, 96)",
+    "card": "rgb(89, 101, 114)",
+    "footer": "rgb(48, 57, 68)",
+    "primaryText": "rgb(240, 241, 248)",
+    "accent": "#2f80fe"
+  },
+  "notes": "A short local requestAnimationFrame sample measures this browser run only. It is not a cross-device FPS, GPU frame-time, or memory-leak guarantee."
+}

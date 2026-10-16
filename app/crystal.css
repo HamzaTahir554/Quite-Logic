@@ -1,0 +1,335 @@
+:root {
+  --bg: #4b5560;
+  --card: #596572;
+  --slate: #303944;
+  --muted: #dde1e8;
+  --secondary: #c4cad2;
+  --glass: rgba(89, 101, 114, 0.62);
+}
+body {
+  background:
+    radial-gradient(ellipse at 22% 0, #687a8d50, transparent 42%), var(--bg);
+}
+.reference-hero.hero {
+  background:
+    radial-gradient(ellipse at 22% 30%, #91bdff14, transparent 50%),
+    linear-gradient(135deg, #59657266, #46515d33), var(--bg);
+  padding-top: 140px;
+}
+.reference-hero .hero-copy,
+.banner-content,
+.atlas-primary .atlas-copy {
+  perspective: 1000px;
+}
+.reference-hero h1,
+.hero-description,
+.hero-actions,
+.banner-content > h1,
+.banner-content > p {
+  position: relative;
+}
+.hero-copy {
+  z-index: 2;
+}
+.page-hero {
+  background: linear-gradient(125deg, #71829424, transparent 70%), var(--bg);
+}
+.site-header {
+  background: rgba(48, 57, 68, 0.86);
+}
+.project-card,
+.about-panel,
+.cta-panel,
+.contact-form,
+.contact-booking-panel {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(135deg, #91bdff0a, transparent 55%), var(--glass);
+  border: 1px solid #f0f1f826;
+  box-shadow:
+    inset 0 1px 0 #ffffff12,
+    0 16px 42px #202b3514;
+  overflow: hidden;
+}
+.atlas-primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(140deg, #596572bb, #303944);
+  border-color: #f0f1f826;
+}
+@supports (backdrop-filter: blur(14px)) {
+  .about-panel,
+  .cta-panel,
+  .contact-booking-panel {
+    backdrop-filter: blur(14px);
+  }
+}
+.crystal-light {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(520px, 90%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #c9e2ff12,
+    #2f80fe06 42%,
+    transparent 70%
+  );
+  transform: translate3d(-50%, -50%, 0);
+  pointer-events: none;
+  z-index: -1;
+}
+.banner-motion > .crystal-light,
+.reference-hero > .crystal-light {
+  z-index: 0;
+}
+.crystal-sheen {
+  position: absolute;
+  inset: -20% 0;
+  width: 24%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    #f0f1f80c,
+    #c7dfff14,
+    transparent
+  );
+  transform: translate3d(-160%, 0, 0) skewX(-18deg);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+}
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+.contact-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 46px;
+}
+.contact-option {
+  padding: 26px 30px;
+  border: 1px solid #f0f1f82e;
+  border-radius: 20px;
+  background: linear-gradient(130deg, #71829455, #59657244);
+  display: grid;
+  gap: 12px;
+  transition:
+    border-color 0.2s,
+    scale 0.2s;
+}
+.contact-option strong {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.3;
+}
+.contact-option > span:last-child {
+  color: var(--muted);
+  font-size: 13px;
+}
+.contact-option strong span {
+  color: var(--accent);
+}
+.contact-layout {
+  align-items: start;
+}
+#send-message,
+#message-form,
+#book-call {
+  scroll-margin-top: 120px;
+}
+.contact-email {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+  color: var(--paper);
+  text-decoration: underline;
+  text-decoration-color: #91bdff80;
+  text-underline-offset: 6px;
+  margin: 6px 0 30px;
+}
+.contact-booking-panel {
+  border-radius: 24px;
+  padding: 30px;
+  margin-bottom: 32px;
+}
+.contact-layout .contact-booking-panel h2 {
+  font-size: 30px;
+  margin: 18px 0;
+}
+.contact-layout .contact-booking-panel p {
+  font-size: 14px;
+}
+.contact-layout .contact-booking-panel .booking-note {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 18px 0 0;
+  color: var(--muted);
+}
+.booking-dialog.MuiPaper-root {
+  background: var(--slate);
+  color: var(--paper);
+  border: 1px solid #91bdff55;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.booking-title.MuiDialogTitle-root {
+  position: relative;
+  padding: 20px 60px 16px 24px;
+  font-size: 22px;
+}
+.booking-title > span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.booking-title > button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: var(--paper);
+}
+.booking-content.MuiDialogContent-root {
+  padding: 0;
+}
+.booking-frame {
+  position: relative;
+  height: 700px;
+  background: var(--slate);
+}
+.booking-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  position: relative;
+  z-index: 1;
+}
+.booking-loading {
+  position: absolute;
+  inset: 30px 0 auto;
+  text-align: center;
+  color: var(--paper);
+}
+.booking-fallback {
+  margin: 0;
+  padding: 16px 24px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.booking-fallback a {
+  color: var(--paper);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.contact-form .MuiInputLabel-root,
+.contact-form .MuiFormHelperText-root:not(.Mui-error) {
+  color: var(--paper);
+}
+.contact-form .MuiInputBase-input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+.contact-form .MuiFormHelperText-root.Mui-error {
+  color: #ffdad6;
+}
+.overline,
+.small.muted,
+.technical-label {
+  opacity: 1;
+}
+/* A deeper fill keeps small white button labels above 4.5:1; accents stay #2F80FE. */
+.button.primary,
+.reference-hero .hero-actions .button.primary,
+.contact-form .submit-button {
+  background: linear-gradient(140deg, #2165cc, #1d59bb);
+  color: var(--paper);
+  border-color: #2f80fe;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .project-card:hover > .crystal-sheen,
+  .about-panel:hover > .crystal-sheen,
+  .cta-panel:hover > .crystal-sheen,
+  .contact-booking-panel:hover > .crystal-sheen {
+    animation: crystal-pass 1.4s ease-out both;
+  }
+  .contact-option:hover {
+    scale: 1.015;
+    border-color: #91bdff88;
+  }
+}
+@keyframes crystal-pass {
+  0% {
+    opacity: 0;
+    transform: translate3d(-160%, 0, 0) skewX(-18deg);
+  }
+  25% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(540%, 0, 0) skewX(-18deg);
+  }
+}
+@media (max-width: 900px) {
+  .crystal-light {
+    display: none;
+  }
+  .about-panel,
+  .cta-panel,
+  .contact-booking-panel {
+    backdrop-filter: none;
+  }
+}
+@media (max-width: 600px) {
+  .reference-hero.hero {
+    padding: 110px 20px 85px;
+  }
+  .contact-options {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+  .contact-option {
+    padding: 22px;
+  }
+  .contact-booking-panel {
+    padding: 24px;
+  }
+  .cta-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .booking-dialog.MuiPaper-root {
+    margin: 0;
+    width: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .booking-title.MuiDialogTitle-root {
+    padding-left: 18px;
+  }
+  .booking-fallback {
+    padding-inline: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crystal-light,
+  .crystal-sheen {
+    display: none;
+  }
+  .contact-option:hover {
+    scale: 1;
+  }
+}

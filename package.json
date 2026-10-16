@@ -1,0 +1,52 @@
+{
+  "name": "quitelogic",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Quite Logic — calm, precise software",
+  "type": "module",
+  "scripts": {
+    "start": "next start",
+    "dev": "next dev",
+    "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "db:migrate": "node scripts/database.mjs",
+    "admin:setup": "node scripts/database.mjs --admin",
+    "test:server": "node scripts/test-server.mjs"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^9.5.0",
+    "@mui/material-nextjs": "^9.5.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "framer-motion": "^14.3.0",
+    "gsap": "^3.15.0",
+    "next": "^16.4.1",
+    "nodemailer": "^10.1.2",
+    "pg": "^8.23.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5",
+    "three": "^0.186.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "@electric-sql/pglite-socket": "^0.2.13",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2"
+  }
+}

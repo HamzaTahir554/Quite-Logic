@@ -1,0 +1,27 @@
+{
+  "environment": "Local Windows / headless Chromium / production build",
+  "routes": [
+    {
+      "route": "/services",
+      "frames": 72,
+      "p95FrameMs": 33.4,
+      "cls": 0,
+      "shifts": [],
+      "horizontalOverflow": false
+    },
+    {
+      "route": "/contact",
+      "frames": 64,
+      "p95FrameMs": 49.9,
+      "cls": 0,
+      "shifts": [],
+      "horizontalOverflow": false
+    }
+  ],
+  "errors": [],
+  "blankPageFrameSample": {
+    "frames": 67,
+    "elapsedMs": 1809
+  },
+  "note": "A short local RAF sample is not a cross-device frame-rate guarantee."
+}

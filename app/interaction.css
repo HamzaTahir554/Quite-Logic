@@ -1,0 +1,106 @@
+@media (pointer: fine) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html[data-studio-cursor="active"] body,
+  html[data-studio-cursor="active"] a,
+  html[data-studio-cursor="active"] button,
+  html[data-studio-cursor="active"] [data-cursor] {
+    cursor: none;
+  }
+}
+.contact-form
+  .MuiFormControl-root[data-state="valid"]
+  .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(145, 189, 255, 0.32);
+}
+.contact-form[data-status="loading"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 30%;
+  height: 2px;
+  background: var(--blue);
+  animation: inquiry-progress 1.3s ease-in-out infinite alternate;
+}
+@keyframes inquiry-progress {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(150%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-form[data-status="loading"]::after {
+    animation: none;
+    width: 80%;
+  }
+}
+
+/* Individual scale leaves layout and existing positioning untouched. */
+.button,
+button:not(:disabled),
+.signature-explorer .service-selector button,
+.cube-controls button,
+.portfolio-filters button,
+.contact-form .submit-button,
+.text-link,
+.nav-link {
+  scale: 1;
+  transition:
+    scale 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 200ms,
+    box-shadow 200ms,
+    background-color 200ms,
+    color 200ms;
+}
+.button,
+.button *,
+.contact-form .submit-button,
+.studio-cursor,
+.studio-cursor * {
+  filter: none;
+  backdrop-filter: none;
+}
+.text-link > span,
+.contact-form .submit-button > .MuiButton-endIcon {
+  transition: translate 200ms ease-out;
+}
+@media (hover: hover) and (pointer: fine) {
+  .button:hover,
+  button:not(:disabled):hover,
+  .contact-form .submit-button:hover,
+  .text-link:hover,
+  .nav-link:hover {
+    scale: 1.04;
+  }
+  .button:hover,
+  .contact-form .submit-button:hover {
+    border-color: #91bdff80;
+    box-shadow:
+      0 0 0 1px #2f80fe25,
+      0 6px 20px #2f80fe20;
+  }
+  .text-link:hover > span,
+  .contact-form .submit-button:hover > .MuiButton-endIcon {
+    translate: 3px -2px;
+  }
+}
+.button:active,
+button:not(:disabled):active {
+  scale: 0.98;
+}
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  button:not(:disabled),
+  .contact-form .submit-button,
+  .text-link,
+  .nav-link {
+    scale: 1 !important;
+    transition: none !important;
+  }
+  .button-arrow,
+  .text-link > span,
+  .contact-form .submit-button > .MuiButton-endIcon {
+    translate: none !important;
+  }
+}
