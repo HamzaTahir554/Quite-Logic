@@ -73,3 +73,5 @@ For an isolated local test server, run `$env:E2E_BASE_URL='http://localhost:3100
 
 See [ADMIN-SETUP.md](./ADMIN-SETUP.md) for hosted PostgreSQL, Gmail, database migration, secure admin creation, and integration-test instructions. Public reviews live at `/reviews`; moderation and client messaging live at `/admin`.
 
+#   Q u i t e - L o g i c  
+ 
