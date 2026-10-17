@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Alert, Button, MenuItem, TextField } from "@mui/material";
 import BrandText from "@/components/ui/BrandText";
+import { contactEmail } from "@/lib/company";
 import {
   budgets,
   contactSchema,
@@ -14,6 +15,8 @@ export default function ContactForm() {
   useEffect(() => setReady(true), []);
   const reduced = useReducedMotion();
   const revealed = useRef(false);
+  const submitting = useRef(false);
+  const submissionKey = useRef<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -22,7 +25,7 @@ export default function ContactForm() {
   const [formVersion, setFormVersion] = useState(0);
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (status === "loading") return;
+    if (submitting.current) return;
     const form = event.currentTarget;
     const values = Object.fromEntries(new FormData(form));
     const parsed = contactSchema.safeParse(values);
@@ -39,11 +42,16 @@ export default function ContactForm() {
       return;
     }
     setErrors({});
+    submitting.current = true;
+    submissionKey.current ??= crypto.randomUUID();
     setStatus("loading");
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": submissionKey.current,
+        },
         body: JSON.stringify(parsed.data),
       });
       const data: { message: string } = await response.json();
@@ -53,10 +61,11 @@ export default function ContactForm() {
             ? "Please check the form fields and try again."
             : response.status === 429
               ? "You've sent several messages recently. Please wait a little or email us directly."
-              : "We couldn't send your message right now. Please try again or email company.quitelogic@gmail.com directly.",
+              : `We couldn't send your message right now. Please try again or email ${contactEmail} directly.`,
         );
       setStatus("success");
-      setMessage(data.message);
+      setMessage("Thank you! Your message has been sent successfully.");
+      submissionKey.current = null;
       form.reset();
       setFormVersion((value) => value + 1);
     } catch (e) {
@@ -69,6 +78,8 @@ export default function ContactForm() {
           ? e.message
           : "Unable to send your message. Please try again.",
       );
+    } finally {
+      submitting.current = false;
     }
   }
   function field(name: keyof ContactInput) {
@@ -114,6 +125,7 @@ export default function ContactForm() {
           );
       }}
       onInputCapture={(event) => {
+        if (!submitting.current) submissionKey.current = null;
         const target = event.target;
         if (!(
           target instanceof HTMLInputElement ||
@@ -155,7 +167,6 @@ export default function ContactForm() {
         />
         <TextField
           label="Company"
-          required
           autoComplete="organization"
           {...field("company")}
         />
@@ -168,8 +179,7 @@ export default function ContactForm() {
         <TextField
           label="Project type"
           select
-          required
-          defaultValue=""
+          defaultValue="Other"
           {...field("projectType")}
         >
           {projectTypes.map((t) => (
@@ -181,8 +191,7 @@ export default function ContactForm() {
         <TextField
           label="Budget range"
           select
-          required
-          defaultValue=""
+          defaultValue="Let’s discuss"
           {...field("budget")}
         >
           {budgets.map((b) => (
@@ -192,6 +201,11 @@ export default function ContactForm() {
           ))}
         </TextField>
       </div>
+      <TextField
+        label="Subject (optional)"
+        {...field("subject")}
+        slotProps={{ htmlInput: { maxLength: 180 } }}
+      />
       <TextField
         label="Tell us about your project"
         required
@@ -209,6 +223,9 @@ export default function ContactForm() {
       <p className="small muted">
         Your details are used to respond to this inquiry. Please avoid including
         passwords or confidential data.
+      </p>
+      <p className="small">
+        Prefer email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
       </p>
       <Button
         variant="contained"

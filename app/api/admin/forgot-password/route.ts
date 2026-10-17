@@ -9,7 +9,8 @@ import {
   readJson,
   HttpError,
 } from "@/lib/admin-security";
-import { gmailReady, sendGmail } from "@/lib/gmail";
+import { emailReady } from "@/lib/email/config";
+import { sendEmail } from "@/lib/email/resend";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 const generic = () =>
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
           "SELECT id FROM admins WHERE email=$1",
           [email],
         );
-        if (result.rows[0] && gmailReady()) {
+        if (result.rows[0] && emailReady()) {
           // Never build reset links from Host or forwarded request headers.
           const url = new URL(
             process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
@@ -59,11 +60,11 @@ export async function POST(request: Request) {
           const link = new URL("/admin/reset-password", url.origin);
           link.hash = `token=${token}`;
           try {
-            await sendGmail(
-              email,
-              "Reset your Quite Logic admin password",
-              `Use this one-time link within 30 minutes to reset your password:\n\n${link.toString()}\n\nIf you did not request this, you can ignore this email. Your password has not changed.`,
-            );
+            await sendEmail({
+              to: email,
+              subject: "Reset your Quite Logic admin password",
+              text: `Use this one-time link within 30 minutes to reset your password:\n\n${link.toString()}\n\nIf you did not request this, you can ignore this email. Your password has not changed.`,
+            });
           } catch {
             await database().query(
               "DELETE FROM password_resets WHERE token_hash=$1",

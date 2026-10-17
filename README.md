@@ -1,5 +1,8 @@
 # Quite Logic
 
+> **Current outgoing email:** Resend SMTP is now used through Nodemailer. See [SMTP-SETUP.md](./SMTP-SETUP.md) for the active configuration and domain verification checklist. The signed Resend inbound webhook remains in use. SMTP does not provide the HTTP API idempotency guarantee described in the original implementation; uncertain sends are held for manual review.
+
+
 Next.js App Router website built with TypeScript, MUI, React Three Fiber, Three.js, Drei, Framer Motion, and GSAP. The supplied `Demo/` and `snapshots/` references are preserved.
 
 ## Development
@@ -26,13 +29,13 @@ Use a host supporting Next.js 16 with Node.js 24, such as Vercel or a Node serve
 Before public launch:
 
 - Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS domain before building. It powers canonical URLs, structured data, social metadata, and the sitemap. Development falls back to localhost.
-- Configure hosted `DATABASE_URL` and `GMAIL_APP_PASSWORD`, run the migration, and create your admin using [ADMIN-SETUP.md](./ADMIN-SETUP.md).
+- Configure hosted `DATABASE_URL` and Resend environment settings, run the migration, and create your admin using [ADMIN-SETUP.md](./ADMIN-SETUP.md).
 - Shared PostgreSQL rate limits apply across serverless instances. Endpoints also validate origin, content, payload size, and honeypots. Contact limits are five inquiries per sender and 60 total per 15 minutes; reviews and login have separate limits.
 - Replace the explicitly labeled illustrative portfolio concepts with authorized client work when available. No customer results or testimonials are fabricated.
 - Replace the visibly marked social placeholders with real company profile links.
 - Review the privacy information needed for your business before collecting inquiries publicly.
 
-Contact inquiries are stored in PostgreSQL and notifications go to `company.quitelogic@gmail.com`. Gmail SMTP is the primary sender; existing `RESEND_API_KEY` and a verified `CONTACT_FROM_EMAIL` remain an optional notification fallback when Gmail is not configured. Notification failure does not discard a stored inquiry. Admin email always sends from the official Gmail account. Missing database configuration returns an honest unavailable state; failed forms preserve entered values. Live delivery requires private credentials and a separate delivery test.
+Contact inquiries are stored in PostgreSQL and Resend notifications go to `contact@quitelogic.com`. Admin compose/replies and password recovery use the same server-only provider. The protected Admin Inbox also receives direct email through verified Resend webhooks once receiving DNS is configured. See [RESEND-SETUP.md](./RESEND-SETUP.md) for the complete setup, routes, tests, and required manual DNS steps. Failed forms retain their values, and notification failures do not discard stored inquiries.
 
 “Book a Meeting” opens the official [Calendly page](https://calendly.com/company-quitelogic/30min) in an accessible modal from the header, contact page, and final CTAs. The iframe loads only when requested, with a direct-link fallback, fixed dimensions, close control, Escape dismissal, and focus restoration. Color parameters follow [Calendly’s documentation](https://calendly.com/help/how-to-customize-your-embed); Calendly controls embedded content and color customization may depend on its plan. No test bookings are created.
 
@@ -43,7 +46,7 @@ Contact inquiries are stored in PostgreSQL and notifications go to `company.quit
 - `data/content.ts`: editable navigation, services, project concepts, and process copy.
 - `theme/theme.ts` and `app/globals.css`: brand tokens, MUI customization, layout, motion, and responsive design.
 - `lib/contact.ts`: shared form schema and options.
-- `app/api/contact/route.ts`: persistent inquiry storage and Gmail/Resend notifications.
+- `app/api/contact/route.ts`: persistent inquiry storage and Resend notifications.
 - `app/admin/`, `app/api/admin/`, `database/`: authenticated review moderation, client records, and email history.
 - `public/logo/`: original supplied branding; `public/projects/`: local concept artwork.
 
@@ -71,7 +74,7 @@ Automated tests cover review moderation, authentication, server email payloads/f
 For an isolated local test server, run `$env:E2E_BASE_URL='http://localhost:3100'; npm.cmd run test:e2e`. Set the final site origin through `NEXT_PUBLIC_SITE_URL` for deployment; the test server port does not alter canonical configuration.
 ## Client reviews and admin
 
-See [ADMIN-SETUP.md](./ADMIN-SETUP.md) for hosted PostgreSQL, Gmail, database migration, secure admin creation, and integration-test instructions. Public reviews live at `/reviews`; moderation and client messaging live at `/admin`.
+See [ADMIN-SETUP.md](./ADMIN-SETUP.md) for hosted PostgreSQL, Resend, database migration, secure admin creation, and integration-test instructions. Public reviews live at `/reviews`; moderation and client messaging live at `/admin`.
 
 #   Q u i t e - L o g i c  
  #   Q u i t e - L o g i c  

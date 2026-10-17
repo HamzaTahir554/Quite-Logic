@@ -1,46 +1,43 @@
-import { test, expect } from "@playwright/test";
-import { deliverInquiry } from "../lib/contact-delivery";
+﻿import { test, expect } from "@playwright/test";
 import { contactSchema } from "../lib/contact";
-import { contactEmail } from "../lib/company";
-
-test("server email targets official inbox, uses reply-to and propagates delivery failure", async () => {
-  const input = contactSchema.parse({
-    name: "Test Person",
-    email: "visitor@example.com",
-    company: "Independent",
-    phone: "",
-    projectType: "Website",
-    budget: "Let’s discuss",
-    description: "A test inquiry with enough detail.",
-    website: "",
-  });
-  let payload: Record<string, unknown> = {};
-  const send: typeof fetch = async (url, options) => {
-    expect(url).toBe("https://api.resend.com/emails");
-    expect(options?.headers).toMatchObject({
-      Authorization: "Bearer test-credential",
-    });
-    payload = JSON.parse(String(options?.body));
-    return Response.json({ id: "test-id" });
+import { escapeHtml, messageTemplate } from "../lib/email/templates";
+test("contact validation supports the existing form and minimal API without accepting unexpected fields", () => {
+  const input = {
+    name: "  Test Person  ",
+    email: "  visitor@example.com  ",
+    message: "A test inquiry with enough meaningful detail.",
   };
-  const config = {
-    apiKey: "test-credential",
-    from: "studio@verified.example",
-    to: contactEmail,
-  };
-  await deliverInquiry(input, config, send);
-  expect(payload.to).toEqual(["company.quitelogic@gmail.com"]);
-  expect(payload.from).toBe(config.from);
-  expect(payload.reply_to).toBe(input.email);
-  expect(payload.text).toContain(input.description);
-  await expect(
-    deliverInquiry(
-      input,
-      config,
-      async () => new Response(null, { status: 403 }),
-    ),
-  ).rejects.toThrow("Delivery failed");
-  expect(contactSchema.safeParse({ ...input, website: "spam" }).success).toBe(
-    false,
+  const parsed = contactSchema.parse(input);
+  expect(parsed.name).toBe("Test Person");
+  expect(parsed.email).toBe("visitor@example.com");
+  expect(parsed.subject).toBe("");
+  for (const payload of [
+    { ...input, name: " " },
+    { ...input, email: "invalid" },
+    { ...input, message: " " },
+    { ...input, message: "x".repeat(5001) },
+    { ...input, subject: "bad\r\nBcc: attack@test.com" },
+    { ...input, unexpected: {} },
+    { ...input, website: "spam" },
+  ])
+    expect(contactSchema.safeParse(payload).success).toBe(false);
+  expect(
+    contactSchema.safeParse({
+      ...input,
+      message: undefined,
+      description: input.message,
+    }).success,
+  ).toBe(true);
+});
+test("email templates escape all user-supplied HTML", () => {
+  expect(escapeHtml('<img src=x onerror="alert(1)"> & test')).toBe(
+    "&lt;img src=x onerror=&quot;alert(1)&quot;&gt; &amp; test",
   );
+  const html = messageTemplate(
+    "<script>bad</script>",
+    '<img src=x onerror="alert(1)">\nSecond line',
+  );
+  expect(html).not.toContain("<script>");
+  expect(html).not.toContain("<img");
+  expect(html).toContain("<br>Second line");
 });

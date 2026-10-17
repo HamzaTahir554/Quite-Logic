@@ -110,7 +110,7 @@ test.describe("Account, managed portfolio and contact", () => {
       )
       .toBe(1);
     const mail = (await mails()).find((mail) => mail.to === email);
-    expect(mail.from.address).toBe("company.quitelogic@gmail.com");
+    expect(mail.from).toBe("Quiet Logic <contact@quitelogic.com>");
     const link = new URL(mail.text.match(/http[^\s]+/)[0]);
     expect(link.pathname).toBe("/admin/reset-password");
     expect(link.search).toBe("");
@@ -396,13 +396,13 @@ test.describe("Account, managed portfolio and contact", () => {
       data: input,
     });
     expect(response.status()).toBe(200);
-    expect((await response.json()).notified).toBe(true);
+    expect((await response.json()).success).toBe(true);
     await expect
       .poll(async () =>
         (await mails()).some(
           (mail) =>
             mail.replyTo === input.email &&
-            mail.to === "company.quitelogic@gmail.com",
+            mail.to === "contact@quitelogic.com",
         ),
       )
       .toBe(true);
@@ -410,13 +410,14 @@ test.describe("Account, managed portfolio and contact", () => {
       headers,
       data: { ...input, description: input.description + " [FAIL]" },
     });
-    expect((await failed.json()).message).toContain("saved for our team");
+    expect(failed.status()).toBe(500);
+    expect((await failed.json()).success).toBe(false);
     const denied = await request.post("/api/contact", {
       headers: { Origin: "https://evil.example" },
       data: input,
     });
     expect(denied.status()).toBe(403);
-    expect((await denied.json()).message).toContain("We couldn't send");
+    expect((await denied.json()).message).toContain("reload");
     await page.goto("/contact");
     await expect(
       page.locator("footer").getByRole("link", { name: "Admin Login" }),

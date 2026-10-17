@@ -1,18 +1,17 @@
 import { cookies } from "next/headers";
-import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { database } from "@/lib/database";
 import {
   apiError,
   digest,
   HttpError,
-  rateLimit,
   readJson,
   requireAdmin,
   sessionCookie,
 } from "@/lib/admin-security";
 import { reviewFields } from "@/lib/reviews";
-import { gmailReady, sendGmail } from "@/lib/gmail";
+import { emailReady } from "@/lib/email/config";
+import { GET as inboxGET, POST as composePOST } from "../emails/route";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ resource: string }> };
@@ -31,9 +30,9 @@ export async function GET(request: Request, context: Context) {
       ) * 25;
     if (resource === "dashboard") {
       const { rows } = await database().query(
-        "SELECT (SELECT count(*) FROM reviews) AS reviews,(SELECT count(*) FROM reviews WHERE status='Pending') AS pending,(SELECT count(*) FROM clients) AS clients,(SELECT count(*) FROM messages) AS messages",
+        "SELECT (SELECT count(*) FROM reviews) AS reviews,(SELECT count(*) FROM reviews WHERE status='Pending') AS pending,(SELECT count(*) FROM clients) AS clients,(SELECT count(*) FROM messages WHERE deleted_at IS NULL) AS messages",
       );
-      return json({ ...rows[0], gmailReady: gmailReady() });
+      return json({ ...rows[0], emailReady: emailReady() });
     }
     if (resource === "reviews") {
       const status = params.get("status") || "";
@@ -47,27 +46,13 @@ export async function GET(request: Request, context: Context) {
       const { rows } = await database().query(
         `SELECT c.*,
       (SELECT coalesce(json_agg(x),'[]') FROM (SELECT id,body,status,created_at FROM reviews WHERE client_id=c.id ORDER BY created_at DESC LIMIT 10) x) AS reviews,
-      (SELECT coalesce(json_agg(x),'[]') FROM (SELECT id,subject,body,details,delivery_status,created_at FROM messages WHERE client_id=c.id ORDER BY created_at DESC LIMIT 10) x) AS messages
+      (SELECT coalesce(json_agg(x),'[]') FROM (SELECT id,subject,body,details,delivery_status,created_at FROM messages WHERE client_id=c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 10) x) AS messages
       FROM clients c WHERE c.name ILIKE $1 OR c.email ILIKE $1 OR c.company ILIKE $1 OR c.id::text=$3 ORDER BY (c.id::text=$3) DESC,c.created_at DESC,c.id LIMIT 25 OFFSET $2`,
         [search, offset, (params.get("selected") || "").slice(0, 36)],
       );
       return json({ items: rows });
     }
-    if (resource === "messages") {
-      const { rows } = await database().query(
-        "SELECT m.*,c.name,c.email,c.company FROM messages m JOIN clients c ON c.id=m.client_id WHERE c.email ILIKE $1 OR m.body ILIKE $1 OR c.name ILIKE $1 ORDER BY m.created_at DESC,m.id LIMIT 25 OFFSET $2",
-        [search, offset],
-      );
-      const history = await database().query(
-        "SELECT id,recipient,subject,status,created_at FROM email_history ORDER BY created_at DESC,id LIMIT 25 OFFSET $1",
-        [offset],
-      );
-      return json({
-        items: rows,
-        history: history.rows,
-        gmailReady: gmailReady(),
-      });
-    }
+    if (resource === "messages") return inboxGET(request);
     throw new HttpError(404, "Not found.");
   } catch (error) {
     return apiError(error);
@@ -75,9 +60,10 @@ export async function GET(request: Request, context: Context) {
 }
 export async function POST(request: Request, context: Context) {
   try {
-    const admin = await requireAdmin();
-    const input = await readJson(request);
     const { resource } = await context.params;
+    if (resource === "email") return composePOST(request);
+    await requireAdmin();
+    const input = await readJson(request);
     if (resource === "logout") {
       const jar = await cookies();
       const token = jar.get(sessionCookie)?.value;
@@ -133,62 +119,6 @@ export async function POST(request: Request, context: Context) {
       return json({
         message: action === "Delete" ? "Review deleted." : "Review updated.",
       });
-    }
-    if (resource === "email") {
-      const parsed = z
-        .object({
-          clientId: z.uuid(),
-          subject: z
-            .string()
-            .trim()
-            .min(1)
-            .max(180)
-            .regex(/^[^\r\n]+$/),
-          body: z.string().trim().min(1).max(5000),
-        })
-        .safeParse(input);
-      if (!parsed.success)
-        throw new HttpError(
-          400,
-          "Choose a client and enter a subject and message.",
-        );
-      if (!gmailReady())
-        throw new HttpError(503, "Gmail sending is not configured yet.");
-      await rateLimit("admin:email:" + admin.id, 30, 3600);
-      const { rows } = await database().query(
-        "SELECT email FROM clients WHERE id=$1",
-        [parsed.data.clientId],
-      );
-      if (!rows[0]) throw new HttpError(404, "Client not found.");
-      const id = randomUUID();
-      await database().query(
-        "INSERT INTO email_history(id,client_id,admin_id,recipient,subject,body) VALUES($1,$2,$3,$4,$5,$6)",
-        [
-          id,
-          parsed.data.clientId,
-          admin.id,
-          rows[0].email,
-          parsed.data.subject,
-          parsed.data.body,
-        ],
-      );
-      try {
-        await sendGmail(rows[0].email, parsed.data.subject, parsed.data.body);
-      } catch {
-        await database().query(
-          "UPDATE email_history SET status='Failed' WHERE id=$1",
-          [id],
-        );
-        throw new HttpError(
-          502,
-          "Email could not be confirmed as sent. Check Gmail settings and history before retrying.",
-        );
-      }
-      await database().query(
-        "UPDATE email_history SET status='Sent' WHERE id=$1",
-        [id],
-      );
-      return json({ message: "Email sent." });
     }
     throw new HttpError(404, "Not found.");
   } catch (error) {

@@ -1,19 +1,15 @@
 import { Pool } from "pg";
 import { readFile, readdir } from "node:fs/promises";
 import { randomBytes, randomUUID, scryptSync } from "node:crypto";
+import { postgresConfig } from "../lib/postgres-config.mjs";
 class SetupInputError extends Error {}
 try {
   process.loadEnvFile(".env.local");
 } catch {}
 if (!process.env.DATABASE_URL)
   throw new Error("Set DATABASE_URL in .env.local or server settings.");
-const url = new URL(process.env.DATABASE_URL);
-const local = ["localhost", "127.0.0.1", "::1"].includes(url.hostname);
-for (const key of ["sslmode", "sslcert", "sslkey", "sslrootcert"])
-  url.searchParams.delete(key);
 const pool = new Pool({
-  connectionString: url.toString(),
-  ssl: local ? false : { rejectUnauthorized: true },
+  ...postgresConfig(process.env.DATABASE_URL),
   connectionTimeoutMillis: 10000,
 });
 try {

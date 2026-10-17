@@ -10,3 +10,4 @@ test-results/
 playwright-report/
 *.tsbuildinfo
 qa/.test-mailbox.jsonl
+qa/.test-inbound.json

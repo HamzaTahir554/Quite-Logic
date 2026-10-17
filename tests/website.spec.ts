@@ -192,7 +192,7 @@ test("contact validation, delivery failure, loading and simulated success", asyn
       status: 503,
       json: {
         message:
-          "Message delivery is not enabled yet. Please email company.quitelogic@gmail.com or book a meeting.",
+          "Message delivery is not enabled yet. Please email contact@quitelogic.com or book a meeting.",
       },
     }),
   );

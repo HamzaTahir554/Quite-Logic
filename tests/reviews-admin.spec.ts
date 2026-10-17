@@ -176,7 +176,9 @@ test.describe("Persistent review and admin workflows", () => {
         website: "",
       },
     });
-    expect(response.status(), await response.text()).toBe(200);
+    expect(response.status(), await response.text()).toBe(
+      process.env.E2E_MAIL_CAPTURE === "1" ? 200 : 500,
+    );
     const login = await page.request.post("/api/admin/login", {
       headers: { Origin: origin },
       data: {
@@ -203,9 +205,10 @@ test.describe("Persistent review and admin workflows", () => {
     await expect(
       page.getByRole("heading", { name: "Write an email" }),
     ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "Send email", exact: true }),
-    ).toBeDisabled();
+    if (process.env.E2E_MAIL_CAPTURE !== "1")
+      await expect(
+        page.getByRole("button", { name: "Send email", exact: true }),
+      ).toBeDisabled();
     const clients = await (
       await page.request.get("/api/admin/clients?q=contact-client")
     ).json();
@@ -220,7 +223,7 @@ test.describe("Persistent review and admin workflows", () => {
           },
         })
       ).status(),
-    ).toBe(503);
+    ).toBe(process.env.E2E_MAIL_CAPTURE === "1" ? 200 : 502);
     expect(
       (
         await page.request.post("/api/admin/email", {

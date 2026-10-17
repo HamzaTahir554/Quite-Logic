@@ -24,6 +24,7 @@ export default async function AdminPage({
       "portfolio",
       "clients",
       "messages",
+      "inbox",
       "account",
     ].includes(active)
   )

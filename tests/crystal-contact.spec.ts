@@ -78,11 +78,13 @@ test("booking stays on site, loads only on demand and closes accessibly", async 
   });
   await page.goto("/contact");
   await expect(
-    page.getByRole("link", {
-      name: "company.quitelogic@gmail.com",
-      exact: true,
-    }),
-  ).toHaveAttribute("href", "mailto:company.quitelogic@gmail.com");
+    page
+      .getByRole("link", {
+        name: "contact@quitelogic.com",
+        exact: true,
+      })
+      .first(),
+  ).toHaveAttribute("href", "mailto:contact@quitelogic.com");
   await expect(
     page.getByRole("heading", { name: "Send us a message", exact: true }),
   ).toBeVisible();

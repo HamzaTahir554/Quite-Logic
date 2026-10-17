@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { reviewServices, type PublicReview } from "@/lib/reviews";
 import AdminPortfolio from "./AdminPortfolio";
 import PasswordForm from "./PasswordForm";
+import AdminInbox from "./AdminInbox";
 type Review = PublicReview & { status: string; email: string };
 type Message = {
   id: string;
@@ -27,21 +28,13 @@ type Client = {
   reviews: Review[];
   messages: Message[];
 };
-type History = {
-  id: string;
-  recipient: string;
-  subject: string;
-  status: string;
-  created_at: string;
-};
 type Data = {
   items?: unknown[];
   reviews?: string;
   pending?: string;
   clients?: string;
   messages?: string;
-  gmailReady?: boolean;
-  history?: History[];
+  emailReady?: boolean;
 };
 const date = (value: string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -55,7 +48,7 @@ const tabs = [
   ["reviews", "Reviews"],
   ["portfolio", "Portfolio"],
   ["clients", "Clients"],
-  ["messages", "Messages / Email"],
+  ["inbox", "Inbox"],
   ["account", "Account"],
 ];
 export default function AdminPanel({
@@ -68,7 +61,7 @@ export default function AdminPanel({
   changePassword?: boolean;
 }) {
   const router = useRouter();
-  const params = useSearchParams();
+
   const actionLock = useRef(false);
   const [data, setData] = useState<Data>({}),
     [loading, setLoading] = useState(true),
@@ -82,9 +75,6 @@ export default function AdminPanel({
     [revision, setRevision] = useState(0);
   const [editing, setEditing] = useState<Review | null>(null),
     [deleting, setDeleting] = useState<string | null>(null);
-  const [clients, setClients] = useState<Client[]>([]),
-    [clientSearch, setClientSearch] = useState(""),
-    [recipient, setRecipient] = useState(params.get("client") || "");
   useEffect(() => {
     if (editing) {
       const region = document.querySelector<HTMLElement>(".admin-edit");
@@ -95,7 +85,7 @@ export default function AdminPanel({
     }
   }, [editing]);
   useEffect(() => {
-    if (section === "portfolio" || section === "account") {
+    if (["portfolio", "account", "inbox", "messages"].includes(section)) {
       setLoading(false);
       return;
     }
@@ -124,30 +114,6 @@ export default function AdminPanel({
       });
     return () => controller.abort();
   }, [section, search, status, page, revision, router]);
-  useEffect(() => {
-    if (section !== "messages") return;
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-      fetch(
-        `/api/admin/clients?q=${encodeURIComponent(clientSearch)}&selected=${encodeURIComponent(recipient)}`,
-        {
-          signal: controller.signal,
-        },
-      )
-        .then(async (response) => {
-          if (!response.ok) throw new Error("Could not load clients.");
-          return response.json();
-        })
-        .then((result) => setClients(result.items))
-        .catch((error) => {
-          if (!controller.signal.aborted) setError(error.message);
-        });
-    }, 200);
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [section, clientSearch, recipient]);
   async function action(resource: string, payload: unknown) {
     if (actionLock.current) return false;
     actionLock.current = true;
@@ -186,19 +152,6 @@ export default function AdminPanel({
     )
       setEditing(null);
   }
-  async function send(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const values = new FormData(form);
-    if (
-      await action("email", {
-        clientId: recipient,
-        subject: values.get("subject"),
-        body: values.get("body"),
-      })
-    )
-      form.reset();
-  }
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
@@ -211,7 +164,11 @@ export default function AdminPanel({
             <Link
               key={key}
               href={key === "dashboard" ? "/admin" : `/admin/${key}`}
-              aria-current={section === key ? "page" : undefined}
+              aria-current={
+                (section === "messages" ? "inbox" : section) === key
+                  ? "page"
+                  : undefined
+              }
             >
               {label}
             </Link>
@@ -236,7 +193,13 @@ export default function AdminPanel({
       <div className="admin-content">
         <header className="admin-heading">
           <span className="eyebrow">QUITE LOGIC ADMIN</span>
-          <h1>{tabs.find(([key]) => key === section)?.[1]}</h1>
+          <h1>
+            {
+              tabs.find(
+                ([key]) => key === (section === "messages" ? "inbox" : section),
+              )?.[1]
+            }
+          </h1>
           <p>
             {section === "reviews"
               ? "Only approved reviews appear on your website."
@@ -251,7 +214,9 @@ export default function AdminPanel({
             {error}
           </p>
         </div>
-        {section === "portfolio" ? (
+        {section === "inbox" || section === "messages" ? (
+          <AdminInbox />
+        ) : section === "portfolio" ? (
           <AdminPortfolio />
         ) : section === "account" ? (
           changePassword ? (
@@ -293,7 +258,7 @@ export default function AdminPanel({
               ].map(([key, label]) => (
                 <Link
                   className="glass-panel"
-                  href={`/admin/${key === "pending" ? "reviews" : key}`}
+                  href={`/admin/${key === "pending" ? "reviews" : key === "messages" ? "inbox" : key}`}
                   key={key}
                 >
                   <span>{label}</span>
@@ -313,10 +278,10 @@ export default function AdminPanel({
                 Review submissions ↗
               </Link>
               <p>
-                Gmail:{" "}
-                {data.gmailReady
+                SMTP (Resend):{" "}
+                {data.emailReady
                   ? "Configured"
-                  : "Not configured — add GMAIL_APP_PASSWORD in server settings."}
+                  : "Not configured — check the server SMTP settings and credentials."}
               </p>
             </div>
           </>
@@ -519,7 +484,7 @@ export default function AdminPanel({
                           <td>
                             <Link
                               className="ql-button"
-                              href={`/admin/messages?client=${client.id}`}
+                              href={`/admin/inbox?client=${client.id}`}
                             >
                               Write email ↗
                             </Link>
@@ -528,35 +493,6 @@ export default function AdminPanel({
                       ))}
                     </tbody>
                   </table>
-                </div>
-              )}
-              {!loading && section === "messages" && (
-                <div className="admin-message-list">
-                  {((data.items as Message[]) || []).map((message) => (
-                    <article className="glass-panel" key={message.id}>
-                      <span className="status-chip">
-                        {message.delivery_status}
-                      </span>
-                      <h2>{message.subject}</h2>
-                      <small>
-                        {message.name} · {message.email} · {message.company} ·{" "}
-                        {date(message.created_at)}
-                      </small>
-                      <p>{message.body}</p>
-                      <small>
-                        {[message.details?.phone, message.details?.budget]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </small>
-                      <a
-                        className="ql-button"
-                        href="#compose"
-                        onClick={() => setRecipient(message.client_id)}
-                      >
-                        Reply ↗
-                      </a>
-                    </article>
-                  ))}
                 </div>
               )}
             </div>
@@ -577,97 +513,6 @@ export default function AdminPanel({
                 Next
               </button>
             </div>
-          </>
-        )}
-        {section === "messages" && (
-          <>
-            <section className="glass-panel admin-compose" id="compose">
-              <h2>Write an email</h2>
-              <p>From company.quitelogic@gmail.com</p>
-              {!data.gmailReady && (
-                <p className="ql-error">
-                  Gmail sending is not configured yet. Add the app password to
-                  your server environment.
-                </p>
-              )}
-              <form className="ql-form" onSubmit={send}>
-                <label>
-                  Find a client
-                  <input
-                    value={clientSearch}
-                    onChange={(event) => setClientSearch(event.target.value)}
-                    placeholder="Search name or email"
-                  />
-                </label>
-                <label>
-                  Recipient
-                  <select
-                    required
-                    value={recipient}
-                    onChange={(event) => setRecipient(event.target.value)}
-                  >
-                    <option value="">Select a client</option>
-                    {recipient &&
-                      !clients.some((client) => client.id === recipient) && (
-                        <option value={recipient}>
-                          Loading selected client…
-                        </option>
-                      )}
-                    {clients.map((client) => (
-                      <option key={client.id} value={client.id}>
-                        {client.name} — {client.email}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Subject
-                  <input name="subject" required maxLength={180} />
-                </label>
-                <label>
-                  Message
-                  <textarea name="body" rows={6} required maxLength={5000} />
-                </label>
-                <button
-                  className="ql-button primary"
-                  disabled={
-                    busy ||
-                    !data.gmailReady ||
-                    !clients.some((client) => client.id === recipient)
-                  }
-                >
-                  {busy ? "Sending…" : "Send email"}
-                </button>
-              </form>
-            </section>
-            <section className="admin-history">
-              <h2>Email history</h2>
-              <div className="admin-table-wrap">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Recipient</th>
-                      <th>Subject</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.history?.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.recipient}</td>
-                        <td>{item.subject}</td>
-                        <td>{date(item.created_at)}</td>
-                        <td>
-                          <span className="status-chip">{item.status}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {!data.history?.length && <p>No emails sent yet.</p>}
-            </section>
           </>
         )}
         {editing && (

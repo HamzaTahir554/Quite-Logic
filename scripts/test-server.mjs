@@ -46,10 +46,21 @@ const app = spawn(
       ...process.env,
       NODE_ENV: "production",
       DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5434/postgres",
-      GMAIL_APP_PASSWORD: capture ? "isolated-test-credential" : "",
+      // Match the default build-time canonical origin; tests visit the app on 3100.
+      NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+      EMAIL_FROM: "Quiet Logic <contact@quitelogic.com>",
+      EMAIL_REPLY_FROM: "Quiet Logic <contact@quitelogic.com>",
+      EMAIL_TO: "contact@quitelogic.com",
+      SMTP_HOST: "smtp.resend.com",
+      SMTP_PORT: "465",
+      SMTP_SECURE: "true",
+      SMTP_USER: "resend",
+      SMTP_PASSWORD: capture ? "isolated-test-smtp-credential" : "",
       QUIET_TEST_MAILBOX: capture ? mailbox : "",
-      RESEND_API_KEY: "",
-      CONTACT_FROM_EMAIL: "",
+      RESEND_API_KEY: capture ? "isolated-test-credential" : "",
+      RESEND_WEBHOOK_SECRET:
+        "whsec_" +
+        Buffer.from("isolated-webhook-test-secret-12345").toString("base64"),
     },
   },
 );

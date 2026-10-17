@@ -1,0 +1,36 @@
+BEGIN;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS source text NOT NULL DEFAULT 'contact_form' CHECK (source IN ('contact_form','inbound_email'));
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS from_name text;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS from_email text;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS to_email text NOT NULL DEFAULT 'contact@quitelogic.com';
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS html_body text;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS provider_message_id text;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS provider_event_id text;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS rfc_message_id text;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS contact_key text;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS inbox_status text NOT NULL DEFAULT 'inbox' CHECK (inbox_status IN ('inbox','replied','archived'));
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_read boolean NOT NULL DEFAULT false;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS received_at timestamptz;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS sending_at timestamptz;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS deleted_at timestamptz;
+UPDATE messages m SET from_name=c.name,from_email=c.email,received_at=m.created_at FROM clients c WHERE c.id=m.client_id AND m.from_email IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS messages_provider_id ON messages(provider_message_id) WHERE source='inbound_email';
+CREATE UNIQUE INDEX IF NOT EXISTS messages_event_id ON messages(provider_event_id);
+CREATE UNIQUE INDEX IF NOT EXISTS messages_rfc_id ON messages(rfc_message_id) WHERE source='inbound_email' AND rfc_message_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS messages_contact_key ON messages(contact_key);
+CREATE INDEX IF NOT EXISTS inbox_status_date ON messages(inbox_status,received_at DESC) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS inbox_read_date ON messages(is_read,received_at DESC) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS inbox_sender ON messages(from_email);
+ALTER TABLE email_history ADD COLUMN IF NOT EXISTS message_id uuid REFERENCES messages(id) ON DELETE SET NULL;
+ALTER TABLE email_history ADD COLUMN IF NOT EXISTS provider_message_id text;
+ALTER TABLE email_history ADD COLUMN IF NOT EXISTS idempotency_key text;
+ALTER TABLE email_history ADD COLUMN IF NOT EXISTS sending_at timestamptz;
+ALTER TABLE email_history ADD COLUMN IF NOT EXISTS sent_at timestamptz;
+CREATE UNIQUE INDEX IF NOT EXISTS emails_idempotency ON email_history(idempotency_key);
+CREATE INDEX IF NOT EXISTS emails_message ON email_history(message_id,created_at DESC);
+-- The app uses its private owner/server connection. In Supabase these records
+-- must never become available through anonymous/authenticated browser APIs.
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_history ENABLE ROW LEVEL SECURITY;
+COMMIT;
