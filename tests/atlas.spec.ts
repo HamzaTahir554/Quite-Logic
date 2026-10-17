@@ -6,7 +6,13 @@ test("Atlas replaces the project across routes, metadata, breadcrumbs and sitema
 }) => {
   for (const path of ["/", "/portfolio"]) {
     await page.goto(path);
-    const card = page.locator(".atlas-showcase");
+    const card =
+      path === "/"
+        ? page.locator(".atlas-showcase")
+        : page
+            .locator(".managed-project-card")
+            .filter({ hasText: "Atlas / Cloud" });
+    if (path !== "/") await card.getByRole("button").click();
     await expect(card.getByRole("heading")).toHaveText("Atlas / Cloud");
     await expect(card).toContainText(
       "Developer-facing infrastructure interface with quick observability, deployments and system status.",

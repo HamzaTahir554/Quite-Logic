@@ -1,16 +1,42 @@
 "use client";
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { projects } from "@/data/content";
-import ProjectCard from "@/components/ui/ProjectCard";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Reveal from "@/components/ui/Reveal";
-const filters = ["All", "Web", "Mobile", "AI", "Automation", "Computer Vision"];
-export default function Portfolio() {
+import type { ManagedProject } from "@/lib/portfolio";
+import { projects as originalConcepts } from "@/data/content";
+const baseFilters = [
+  "All",
+  "Web",
+  "Mobile",
+  "AI",
+  "Automation",
+  "Computer Vision",
+];
+export default function Portfolio({
+  projects,
+  unavailable = false,
+}: {
+  projects: ManagedProject[];
+  unavailable?: boolean;
+}) {
   const [filter, setFilter] = useState("All");
-  const reduced = useReducedMotion();
+  const categories = (project: ManagedProject) => {
+    const original = originalConcepts.find(
+      (concept) => concept.slug === project.source_slug,
+    );
+    if (original && project.category === original.category)
+      return [...original.categories];
+    return project.category
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+  };
+  const filters = [
+    ...new Set([...baseFilters, ...projects.flatMap(categories)]),
+  ];
   const selected = projects.filter(
-    (p) =>
-      filter === "All" || (p.categories as readonly string[]).includes(filter),
+    (project) => filter === "All" || categories(project).includes(filter),
   );
   return (
     <section className="container portfolio-section">
@@ -19,60 +45,133 @@ export default function Portfolio() {
         role="group"
         aria-label="Filter projects"
       >
-        {filters.map((f) => (
+        {filters.map((value) => (
           <button
-            key={f}
-            onClick={() => setFilter(f)}
-            aria-pressed={f === filter}
-            className={f === filter ? "selected" : ""}
+            key={value}
+            onClick={() => setFilter(value)}
+            aria-pressed={filter === value}
+            className={filter === value ? "selected" : ""}
           >
-            {f}
+            {value}
           </button>
         ))}
       </div>
       <p className="small muted portfolio-count" aria-live="polite">
-        {selected.length} illustrative{" "}
-        {selected.length === 1 ? "concept" : "concepts"} · These are design
-        explorations, not client case studies.
+        {selected.length} published{" "}
+        {selected.length === 1 ? "project" : "projects"}. Projects marked
+        “Concept” are illustrative explorations.
       </p>
-      <motion.div layout={!reduced} className="project-list">
-        <AnimatePresence mode="popLayout">
-          {selected.map((p, index) => (
-            <motion.div
-              layout={!reduced}
-              key={p.id}
-              initial={{
-                opacity: 0,
-                scale: 0.96,
-                clipPath: "inset(0 0 12% 0 round 28px)",
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                clipPath: "inset(0 0 0% 0 round 28px)",
-              }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{
-                duration: reduced ? 0 : 0.3,
-                ease: [0.2, 0.7, 0.2, 1],
-              }}
-            >
-              <Reveal delay={index * 0.07}>
-                <ProjectCard project={p} />
-              </Reveal>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
-      {selected.length === 0 && (
+      <div className="managed-project-grid">
+        {selected.map((project) => (
+          <Reveal key={project.id}>
+            <PortfolioCard project={project} />
+          </Reveal>
+        ))}
+      </div>
+      {!selected.length && (
         <div className="portfolio-empty" role="status">
-          <h2>More possibilities ahead.</h2>
-          <p>There are no published concepts in this discipline yet.</p>
-          <button className="button secondary" onClick={() => setFilter("All")}>
-            Explore all concepts <span aria-hidden="true">↗</span>
-          </button>
+          <h2>
+            {unavailable ? "We'll be right back." : "More possibilities ahead."}
+          </h2>
+          <p>
+            {unavailable
+              ? "The portfolio is temporarily unavailable. Please check back soon."
+              : "There are no published projects in this discipline yet."}
+          </p>
+          {filter !== "All" && (
+            <button
+              className="button secondary"
+              onClick={() => setFilter("All")}
+            >
+              Explore all projects ↗
+            </button>
+          )}
         </div>
       )}
     </section>
+  );
+}
+function PortfolioCard({ project }: { project: ManagedProject }) {
+  const [expanded, setExpanded] = useState(false),
+    [hovered, setHovered] = useState(false),
+    [focused, setFocused] = useState(false);
+  const router = useRouter();
+  const open = expanded || hovered || focused;
+  function select() {
+    if (expanded && project.project_url) {
+      if (project.project_url.startsWith("/")) router.push(project.project_url);
+      else window.location.assign(project.project_url);
+    } else setExpanded((value) => !value);
+  }
+  return (
+    <article
+      className="managed-project-card glass-panel"
+      data-open={open}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setHovered(true);
+      }}
+      onPointerLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget))
+          setFocused(false);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          setExpanded(false);
+          setFocused(false);
+          setHovered(false);
+        }
+      }}
+    >
+      <button
+        className="project-identity-button"
+        aria-label={`Show details for ${project.title}`}
+        aria-expanded={open}
+        aria-controls={`project-description-${project.id}`}
+        onClick={select}
+        data-cursor="VIEW"
+      >
+        <span className="managed-project-logo">
+          {project.image_url ? (
+            <img
+              src={`${project.image_url}${project.image_url.startsWith("/api/") ? `?v=${encodeURIComponent(project.updated_at)}` : ""}`}
+              alt={`${project.title} logo`}
+              width={240}
+              height={160}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span aria-hidden="true">{project.title.slice(0, 1)}</span>
+          )}
+        </span>
+        <span role="heading" aria-level={2} className="managed-project-title">
+          {project.title}
+        </span>
+        <span className="project-disclosure-hint">
+          {project.source_slug ? "Concept · " : ""}Explore project{" "}
+          <span aria-hidden="true">↗</span>
+        </span>
+      </button>
+      <div
+        id={`project-description-${project.id}`}
+        className="managed-project-description"
+        aria-hidden={!open}
+        inert={!open}
+      >
+        <p>{project.description}</p>
+        {project.project_url && (
+          <Link
+            href={project.project_url}
+            className="text-link"
+            data-cursor="OPEN"
+          >
+            {project.source_slug ? "Explore concept" : "Open project"}
+            <span aria-hidden="true">↗</span>
+          </Link>
+        )}
+      </div>
+    </article>
   );
 }

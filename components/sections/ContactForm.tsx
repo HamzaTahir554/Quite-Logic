@@ -47,7 +47,14 @@ export default function ContactForm() {
         body: JSON.stringify(parsed.data),
       });
       const data: { message: string } = await response.json();
-      if (!response.ok) throw new Error(data.message);
+      if (!response.ok)
+        throw new Error(
+          response.status === 400
+            ? "Please check the form fields and try again."
+            : response.status === 429
+              ? "You've sent several messages recently. Please wait a little or email us directly."
+              : "We couldn't send your message right now. Please try again or email company.quitelogic@gmail.com directly.",
+        );
       setStatus("success");
       setMessage(data.message);
       form.reset();
@@ -55,7 +62,10 @@ export default function ContactForm() {
     } catch (e) {
       setStatus("error");
       setMessage(
-        e instanceof Error
+        (e instanceof Error && e.message.startsWith("We couldn't")) ||
+          (e instanceof Error &&
+            (e.message.startsWith("Please check") ||
+              e.message.startsWith("You've sent")))
           ? e.message
           : "Unable to send your message. Please try again.",
       );

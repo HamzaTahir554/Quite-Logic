@@ -120,18 +120,27 @@ test("mobile navigation and portfolio interactions", async ({ page }) => {
   await expect(page).toHaveURL("/services");
   await expect(nav).not.toBeVisible();
   await visit(page, "/portfolio");
-  await expect(page.locator(".project-card")).toHaveCount(3);
+  await expect(page.locator(".managed-project-card")).toHaveCount(3);
+  await page.getByRole("button", { name: "Mobile", exact: true }).click();
+  await expect(page.locator(".managed-project-card")).toHaveCount(1);
+  await expect(page.locator(".managed-project-card")).toContainText(
+    "Pulse / CRM",
+  );
   await page
     .getByRole("button", { name: "Computer Vision", exact: true })
     .click();
-  await expect(page.locator(".project-card")).toHaveCount(0);
+  await expect(page.locator(".managed-project-card")).toHaveCount(0);
   await expect(page.locator(".portfolio-empty")).toContainText(
-    "no published concepts",
+    "no published projects",
   );
-  await page.getByRole("button", { name: "Explore all concepts" }).click();
-  await expect(page.locator(".project-card")).toHaveCount(3);
+  await page.getByRole("button", { name: "Explore all projects" }).click();
+  await expect(page.locator(".managed-project-card")).toHaveCount(3);
   await page
-    .locator(".atlas-showcase")
+    .getByRole("button", { name: "Show details for Atlas / Cloud" })
+    .click();
+  await page
+    .locator(".managed-project-card")
+    .filter({ hasText: "Atlas / Cloud" })
     .getByRole("link", { name: "Explore concept" })
     .click();
   await expect(page).toHaveURL("/portfolio/atlas-cloud");
@@ -190,7 +199,7 @@ test("contact validation, delivery failure, loading and simulated success", asyn
   await page.getByRole("button", { name: "Send Project Inquiry" }).click();
   await expect(
     page.getByRole("form", { name: "Project inquiry" }).getByRole("alert"),
-  ).toContainText("not enabled yet");
+  ).toContainText("We couldn't send your message right now");
   await expect(page.getByRole("textbox", { name: "Your name" })).toHaveValue(
     "Test Person",
   );

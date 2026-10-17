@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  serverExternalPackages: ["nodemailer"],
   async redirects() {
     return [
       {
@@ -17,6 +18,7 @@ const config: NextConfig = {
         headers: [
           { key: "X-Robots-Tag", value: "noindex, nofollow" },
           { key: "Cache-Control", value: "private, no-store" },
+          { key: "Referrer-Policy", value: "no-referrer" },
         ],
       },
       {

@@ -1,0 +1,124 @@
+[33m00b5e10[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Initial commit
+ .backups/before-editorial-refresh.zip        |  Bin [31m0[m -> [32m116711[m bytes
+ .backups/before-reviews-admin.zip            |  Bin [31m0[m -> [32m131770[m bytes
+ .env.example                                 |   11 [32m+[m
+ .gitignore                                   |   11 [32m+[m
+ .nvmrc                                       |    1 [32m+[m
+ .vscode/settings.json                        |    3 [32m+[m
+ ADMIN-SETUP.md                               |   54 [32m+[m
+ Demo/README.txt                              |   35 [32m+[m
+ Demo/assets/quietlogic-icon.png              |  Bin [31m0[m -> [32m673475[m bytes
+ Demo/assets/quietlogic-wordmark.png          |  Bin [31m0[m -> [32m913313[m bytes
+ Demo/index.html                              |  240 [32m++[m
+ Demo/script.js                               |   67 [32m+[m
+ Demo/styles.css                              |  210 [32m++[m
+ README.md                                    |   75 [32m+[m
+ app/about/page.tsx                           |  116 [32m+[m
+ app/admin/[[...section]]/page.tsx            |   25 [32m+[m
+ app/admin/layout.tsx                         |   12 [32m+[m
+ app/admin/login/page.tsx                     |    4 [32m+[m
+ app/api/admin/[resource]/route.ts            |  197 [32m++[m
+ app/api/admin/login/route.ts                 |   47 [32m+[m
+ app/api/contact/route.ts                     |   76 [32m+[m
+ app/api/review-images/[id]/route.ts          |   31 [32m+[m
+ app/api/reviews/route.ts                     |  109 [32m+[m
+ app/atlas-motion.css                         | 1056 [32m++++++++[m
+ app/contact/page.tsx                         |   84 [32m+[m
+ app/crystal.css                              |  335 [32m+++[m
+ app/error.tsx                                |   18 [32m+[m
+ app/globals.css                              | 1575 [32m++++++++++++[m
+ app/hero.css                                 |  471 [32m++++[m
+ app/interaction.css                          |  106 [32m+[m
+ app/layout.tsx                               |   46 [32m+[m
+ app/loading.tsx                              |   14 [32m+[m
+ app/manifest.ts                              |   13 [32m+[m
+ app/not-found.tsx                            |   15 [32m+[m
+ app/page.tsx                                 |   24 [32m+[m
+ app/portfolio/[slug]/page.tsx                |   94 [32m+[m
+ app/portfolio/page.tsx                       |   25 [32m+[m
+ app/reviews-admin.css                        |  728 [32m++++++[m
+ app/reviews/page.tsx                         |   17 [32m+[m
+ app/robots.ts                                |    8 [32m+[m
+ app/service-cube.css                         |  550 [32m++++[m
+ app/services-editorial.css                   |  171 [32m++[m
+ app/services/page.tsx                        |   25 [32m+[m
+ app/sitemap.ts                               |   18 [32m+[m
+ app/social-image/route.tsx                   |   40 [32m+[m
+ app/studio.css                               | 1117 [32m++++++++[m
+ app/template.tsx                             |   17 [32m+[m
+ app/work/page.tsx                            |   46 [32m+[m
+ components/Providers.tsx                     |   17 [32m+[m
+ components/admin/AdminLogin.tsx              |   75 [32m+[m
+ components/admin/AdminPanel.tsx              |  703 [32m+++++[m
+ components/booking/BookingProvider.tsx       |   90 [32m+[m
+ components/layout/Footer.tsx                 |   60 [32m+[m
+ components/layout/Header.tsx                 |   85 [32m+[m
+ components/layout/SiteChrome.tsx             |   33 [32m+[m
+ components/motion/BannerMotion.tsx           |  147 [32m++[m
+ components/motion/CrystalReflection.tsx      |   13 [32m+[m
+ components/motion/MagneticLink.tsx           |   25 [32m+[m
+ components/motion/MotionSurface.tsx          |   20 [32m+[m
+ components/motion/ServiceEditorialMotion.tsx |  120 [32m+[m
+ components/motion/StudioCursor.tsx           |  143 [32m++[m
+ components/motion/StudioMotion.tsx           |  126 [32m+[m
+ components/motion/TextMotion.tsx             |   56 [32m+[m
+ components/projects/AtlasShowcase.tsx        |  114 [32m+[m
+ components/projects/DeploymentTerminal.tsx   |  130 [32m+[m
+ components/projects/ProjectArtwork.tsx       |   50 [32m+[m
+ components/reviews/PublicReviews.tsx         |   22 [32m+[m
+ components/reviews/ReviewForm.tsx            |  175 [32m++[m
+ components/reviews/ReviewsSection.tsx        |  148 [32m++[m
+ components/sections/AboutPreview.tsx         |   48 [32m+[m
+ components/sections/ContactForm.tsx          |  255 [32m++[m
+ components/sections/Hero.tsx                 |   98 [32m+[m
+ components/sections/PhilosophyStory.tsx      |   77 [32m+[m
+ components/sections/Portfolio.tsx            |   78 [32m+[m
+ components/sections/Process.tsx              |  131 [32m+[m
+ components/sections/SelectedWork.tsx         |   31 [32m+[m
+ components/sections/ServiceExplorer.tsx      |  441 [32m++++[m
+ components/sections/Services.tsx             |   26 [32m+[m
+ components/sections/ServicesShowcase.tsx     |   71 [32m+[m
+ components/seo/StructuredData.tsx            |   68 [32m+[m
+ components/three/HeroScene.tsx               |   96 [32m+[m
+ components/three/SceneBoundary.tsx           |   19 [32m+[m
+ components/three/ServiceDice.tsx             |  242 [32m++[m
+ components/ui/BrandName.tsx                  |    8 [32m+[m
+ components/ui/BrandText.tsx                  |   14 [32m+[m
+ components/ui/Elements.tsx                   |  126 [32m+[m
+ components/ui/ProjectCard.tsx                |   82 [32m+[m
+ components/ui/Reveal.tsx                     |  118 [32m+[m
+ data/content.ts                              |  178 [32m++[m
+ data/serviceFaces.ts                         |   22 [32m+[m
+ database/001-reviews.sql                     |   32 [32m+[m
+ hooks/useCrystalPointer.ts                   |  114 [32m+[m
+ hooks/useMotionPreference.ts                 |   16 [32m+[m
+ hooks/useSceneActivity.ts                    |   51 [32m+[m
+ lib/admin-security.ts                        |  122 [32m+[m
+ lib/client-store.ts                          |   13 [32m+[m
+ lib/company.ts                               |    2 [32m+[m
+ lib/contact-delivery.ts                      |   27 [32m+[m
+ lib/contact.ts                               |   46 [32m+[m
+ lib/database.ts                              |   24 [32m+[m
+ lib/gmail.ts                                 |   38 [32m+[m
+ lib/reviews.ts                               |   27 [32m+[m
+ lib/seo.ts                                   |   30 [32m+[m
+ next-env.d.ts                                |    7 [32m+[m
+ next.config.ts                               |   41 [32m+[m
+ package-lock.json                            | 3522 [32m++++++++++++++++++++++++++[m
+ package.json                                 |   52 [32m+[m
+ playwright.config.ts                         |   21 [32m+[m
+ public/logo/icon.png                         |  Bin [31m0[m -> [32m673475[m bytes
+ public/logo/wordmark.png                     |  Bin [31m0[m -> [32m913313[m bytes
+ public/projects/atlas-cloud.svg              |    1 [32m+[m
+ public/projects/nexa.svg                     |    1 [32m+[m
+ public/projects/pulse.svg                    |    1 [32m+[m
+ public/services/Ai.png                       |  Bin [31m0[m -> [32m1878923[m bytes
+ public/services/App.png                      |  Bin [31m0[m -> [32m1740077[m bytes
+ public/services/Web.png                      |  Bin [31m0[m -> [32m1874237[m bytes
+ public/services/ai_vision.png                |  Bin [31m0[m -> [32m897056[m bytes
+ public/services/custom_software.png          |  Bin [31m0[m -> [32m793096[m bytes
+ qa-home.png                                  |  Bin [31m0[m -> [32m506993[m bytes
+ qa-mobile.png                                |  Bin [31m0[m -> [32m1403559[m bytes
+ qa/ATLAS-REPORT.md                           |   26 [32m+[m
+ qa/DESIGN-SYSTEM-REPORT.md                   |   26 [32m+[m
+ qa/REFERENCE-REPOR

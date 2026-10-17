@@ -53,6 +53,9 @@ export default function Footer() {
           <span>© {new Date().getFullYear()} All rights reserved.</span>
           <span>Built with intention. Every detail.</span>
           <a href="#main">Back to top ↑</a>
+          <Link className="footer-admin-link" href="/admin/login">
+            Admin Login
+          </Link>
         </div>
       </MotionSurface>
     </footer>

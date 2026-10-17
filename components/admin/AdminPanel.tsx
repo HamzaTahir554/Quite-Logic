@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { reviewServices, type PublicReview } from "@/lib/reviews";
+import AdminPortfolio from "./AdminPortfolio";
+import PasswordForm from "./PasswordForm";
 type Review = PublicReview & { status: string; email: string };
 type Message = {
   id: string;
@@ -51,15 +53,19 @@ const date = (value: string) =>
 const tabs = [
   ["dashboard", "Dashboard"],
   ["reviews", "Reviews"],
+  ["portfolio", "Portfolio"],
   ["clients", "Clients"],
   ["messages", "Messages / Email"],
+  ["account", "Account"],
 ];
 export default function AdminPanel({
   section,
   email,
+  changePassword = false,
 }: {
   section: string;
   email: string;
+  changePassword?: boolean;
 }) {
   const router = useRouter();
   const params = useSearchParams();
@@ -89,6 +95,10 @@ export default function AdminPanel({
     }
   }, [editing]);
   useEffect(() => {
+    if (section === "portfolio" || section === "account") {
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController();
     setLoading(true);
     setError("");
@@ -241,7 +251,38 @@ export default function AdminPanel({
             {error}
           </p>
         </div>
-        {section === "dashboard" ? (
+        {section === "portfolio" ? (
+          <AdminPortfolio />
+        ) : section === "account" ? (
+          changePassword ? (
+            <PasswordForm mode="change" />
+          ) : (
+            <section className="glass-panel admin-note">
+              <h2>Account security</h2>
+              <p>Change your password or end your current session.</p>
+              <div className="admin-actions">
+                <Link
+                  className="ql-button primary"
+                  href="/admin/change-password"
+                >
+                  Change Password
+                </Link>
+                <button
+                  className="ql-button"
+                  disabled={busy}
+                  onClick={async () => {
+                    if (await action("logout", {})) {
+                      router.replace("/admin/login");
+                      router.refresh();
+                    }
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </section>
+          )
+        ) : section === "dashboard" ? (
           <>
             <div className="admin-stats">
               {[

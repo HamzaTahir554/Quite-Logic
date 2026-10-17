@@ -3,6 +3,7 @@ import { createHash, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { cookies } from "next/headers";
 import { database } from "./database";
+import { isAllowedOrigin } from "./request-origin";
 
 export const sessionCookie = "quite_admin";
 export const digest = (value: string) =>
@@ -31,14 +32,13 @@ export async function requireAdmin() {
   return admin;
 }
 export function sameOrigin(request: Request) {
-  const origin = request.headers.get("origin");
-  const expected = new URL(request.url).origin;
-  if (
-    !origin ||
-    (origin !== expected &&
-      origin !== process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, ""))
-  )
-    throw new HttpError(403, "This request is not allowed.");
+  if (!isAllowedOrigin(request))
+    throw new HttpError(403, "Please reload this page and try again.");
+}
+export async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const hash = (await promisify(scrypt)(password, salt, 64)) as Buffer;
+  return `${salt}:${hash.toString("hex")}`;
 }
 export async function readJson(request: Request, max = 20000) {
   sameOrigin(request);

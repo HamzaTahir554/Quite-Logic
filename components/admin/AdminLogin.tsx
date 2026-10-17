@@ -69,6 +69,7 @@ export default function AdminLogin() {
         <p role="alert" className="ql-error">
           {error}
         </p>
+        <Link href="/admin/forgot-password">Forgot password?</Link>
       </form>
     </div>
   );

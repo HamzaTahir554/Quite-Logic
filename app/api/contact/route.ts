@@ -7,6 +7,7 @@ import { saveClient } from "@/lib/client-store";
 import { apiError, HttpError, rateLimit, readJson } from "@/lib/admin-security";
 import { gmailReady, sendGmail } from "@/lib/gmail";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 export async function POST(request: Request) {
   try {
     const parsed = contactSchema.safeParse(await readJson(request, 16000));
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
     } finally {
       connection.release();
     }
+    let notified = false;
     try {
       if (gmailReady())
         await sendGmail(
@@ -60,6 +62,7 @@ export async function POST(request: Request) {
         "UPDATE messages SET delivery_status='Notified' WHERE id=$1",
         [id],
       );
+      notified = true;
     } catch {
       // The inquiry remains available to the admin even when notification fails.
       await database().query(
@@ -68,9 +71,23 @@ export async function POST(request: Request) {
       );
     }
     return Response.json({
-      message: "Thank you. Your inquiry has been received by Quite Logic.",
+      message: notified
+        ? "Thank you. Your inquiry has been sent to Quite Logic."
+        : "Your message has been saved for our team, but the email notification couldn't be delivered. For an urgent request, please email company.quitelogic@gmail.com directly.",
+      notified,
     });
   } catch (error) {
-    return apiError(error);
+    if (error instanceof HttpError && [400, 413, 429].includes(error.status))
+      return apiError(error);
+    return Response.json(
+      {
+        message:
+          "We couldn't send your message right now. Please try again or email company.quitelogic@gmail.com directly.",
+      },
+      {
+        status: error instanceof HttpError ? error.status : 503,
+        headers: { "Cache-Control": "no-store" },
+      },
+    );
   }
 }

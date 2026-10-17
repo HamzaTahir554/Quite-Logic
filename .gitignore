@@ -9,3 +9,4 @@ out/
 test-results/
 playwright-report/
 *.tsbuildinfo
+qa/.test-mailbox.jsonl

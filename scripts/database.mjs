@@ -1,6 +1,7 @@
 import { Pool } from "pg";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { randomBytes, randomUUID, scryptSync } from "node:crypto";
+class SetupInputError extends Error {}
 try {
   process.loadEnvFile(".env.local");
 } catch {}
@@ -19,15 +20,17 @@ try {
   if (process.argv.includes("--admin")) {
     const email = process.env.ADMIN_SETUP_EMAIL?.trim().toLowerCase();
     const password = process.env.ADMIN_SETUP_PASSWORD;
-    if (
-      !email ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-      !password ||
-      password.length < 16 ||
-      password.length > 200
-    )
-      throw new Error(
-        "Set ADMIN_SETUP_EMAIL and ADMIN_SETUP_PASSWORD (16–200 characters) in your private environment.",
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      throw new SetupInputError(
+        "Set ADMIN_SETUP_EMAIL to a valid email address in .env.local or your private environment.",
+      );
+    if (!password)
+      throw new SetupInputError(
+        "Set ADMIN_SETUP_PASSWORD in .env.local or your private environment.",
+      );
+    if (password.length < 16 || password.length > 200)
+      throw new SetupInputError(
+        "ADMIN_SETUP_PASSWORD must contain 16–200 characters. Update it in .env.local or your private environment, then run npm run admin:setup again.",
       );
     const salt = randomBytes(16).toString("hex");
     const hash = `${salt}:${scryptSync(password, salt, 64).toString("hex")}`;
@@ -52,17 +55,18 @@ try {
       connection.release();
     }
   } else {
-    await pool.query(
-      await readFile(
-        new URL("../database/001-reviews.sql", import.meta.url),
-        "utf8",
-      ),
-    );
+    const directory = new URL("../database/", import.meta.url);
+    for (const file of (await readdir(directory))
+      .filter((file) => /^\d+.*\.sql$/.test(file))
+      .sort())
+      await pool.query(await readFile(new URL(file, directory), "utf8"));
     console.log("Database migration complete.");
   }
-} catch {
+} catch (error) {
   console.error(
-    "Database setup failed. Check connectivity, migration, and private setup settings.",
+    error instanceof SetupInputError
+      ? error.message
+      : "Database setup failed. Check connectivity, migration, and private setup settings.",
   );
   process.exitCode = 1;
 } finally {

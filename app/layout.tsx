@@ -12,6 +12,7 @@ import "./services-editorial.css";
 import "./interaction.css";
 import "./crystal.css";
 import "./reviews-admin.css";
+import "./account-portfolio.css";
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",

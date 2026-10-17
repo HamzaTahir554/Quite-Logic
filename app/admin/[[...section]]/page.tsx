@@ -18,7 +18,14 @@ export default async function AdminPage({
   const active = section?.[0] || "dashboard";
   if (
     (section?.length || 0) > 1 ||
-    !["dashboard", "reviews", "clients", "messages"].includes(active)
+    ![
+      "dashboard",
+      "reviews",
+      "portfolio",
+      "clients",
+      "messages",
+      "account",
+    ].includes(active)
   )
     notFound();
   return <AdminPanel key={active} section={active} email={session.email} />;
