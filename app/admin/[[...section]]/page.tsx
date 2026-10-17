@@ -16,6 +16,7 @@ export default async function AdminPage({
   if (!session) redirect("/admin/login");
   const { section } = await params;
   const active = section?.[0] || "dashboard";
+  if (active === "inbox" && section?.length === 1) redirect("/admin/messages");
   if (
     (section?.length || 0) > 1 ||
     ![
@@ -24,7 +25,6 @@ export default async function AdminPage({
       "portfolio",
       "clients",
       "messages",
-      "inbox",
       "account",
     ].includes(active)
   )

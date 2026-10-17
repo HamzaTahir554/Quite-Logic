@@ -10,8 +10,6 @@ import {
   sessionCookie,
 } from "@/lib/admin-security";
 import { reviewFields } from "@/lib/reviews";
-import { emailReady } from "@/lib/email/config";
-import { GET as inboxGET, POST as composePOST } from "../emails/route";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ resource: string }> };
@@ -30,12 +28,14 @@ export async function GET(request: Request, context: Context) {
       ) * 25;
     if (resource === "dashboard") {
       const { rows } = await database().query(
-        "SELECT (SELECT count(*) FROM reviews) AS reviews,(SELECT count(*) FROM reviews WHERE status='Pending') AS pending,(SELECT count(*) FROM clients) AS clients,(SELECT count(*) FROM messages WHERE deleted_at IS NULL) AS messages",
+        "SELECT (SELECT count(*) FROM reviews) AS reviews,(SELECT count(*) FROM reviews WHERE status='Pending') AS pending,(SELECT count(*) FROM clients) AS clients,(SELECT count(*) FROM messages WHERE deleted_at IS NULL AND source='contact_form') AS messages",
       );
-      return json({ ...rows[0], emailReady: emailReady() });
+      return json(rows[0]);
     }
     if (resource === "reviews") {
       const status = params.get("status") || "";
+      if (!["", "Pending", "Approved", "Rejected"].includes(status))
+        throw new HttpError(400, "Choose a valid review status.");
       const { rows } = await database().query(
         "SELECT r.id,r.name,r.company,r.role,r.service,r.rating,r.body,r.status,r.created_at,(r.image IS NOT NULL) AS has_image,c.email FROM reviews r JOIN clients c ON c.id=r.client_id WHERE ($1='' OR r.status=$1) AND (r.name ILIKE $2 OR r.company ILIKE $2 OR r.body ILIKE $2 OR c.email ILIKE $2) ORDER BY r.created_at DESC,r.id LIMIT 25 OFFSET $3",
         [status, search, offset],
@@ -46,13 +46,23 @@ export async function GET(request: Request, context: Context) {
       const { rows } = await database().query(
         `SELECT c.*,
       (SELECT coalesce(json_agg(x),'[]') FROM (SELECT id,body,status,created_at FROM reviews WHERE client_id=c.id ORDER BY created_at DESC LIMIT 10) x) AS reviews,
-      (SELECT coalesce(json_agg(x),'[]') FROM (SELECT id,subject,body,details,delivery_status,created_at FROM messages WHERE client_id=c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 10) x) AS messages
+      (SELECT coalesce(json_agg(x),'[]') FROM (SELECT id,subject,body,details,delivery_status,created_at FROM messages WHERE client_id=c.id AND deleted_at IS NULL AND source='contact_form' ORDER BY created_at DESC LIMIT 10) x) AS messages
       FROM clients c WHERE c.name ILIKE $1 OR c.email ILIKE $1 OR c.company ILIKE $1 OR c.id::text=$3 ORDER BY (c.id::text=$3) DESC,c.created_at DESC,c.id LIMIT 25 OFFSET $2`,
         [search, offset, (params.get("selected") || "").slice(0, 36)],
       );
       return json({ items: rows });
     }
-    if (resource === "messages") return inboxGET(request);
+    if (resource === "messages") {
+      const { rows } = await database().query(
+        `SELECT m.id,m.client_id,m.from_name AS name,m.from_email AS email,c.company,m.subject,m.body,m.details,m.created_at
+         FROM messages m LEFT JOIN clients c ON c.id=m.client_id
+         WHERE m.deleted_at IS NULL AND m.source='contact_form'
+         AND (m.from_name ILIKE $1 OR m.from_email ILIKE $1 OR m.subject ILIKE $1 OR m.body ILIKE $1 OR c.company ILIKE $1)
+         ORDER BY m.created_at DESC,m.id LIMIT 25 OFFSET $2`,
+        [search, offset],
+      );
+      return json({ items: rows });
+    }
     throw new HttpError(404, "Not found.");
   } catch (error) {
     return apiError(error);
@@ -61,7 +71,6 @@ export async function GET(request: Request, context: Context) {
 export async function POST(request: Request, context: Context) {
   try {
     const { resource } = await context.params;
-    if (resource === "email") return composePOST(request);
     await requireAdmin();
     const input = await readJson(request);
     if (resource === "logout") {

@@ -1,5 +1,7 @@
 # Reviews and admin setup
 
+Admin email tools have been removed. Contact Messages remains a read-only view of website inquiries. Public contact notifications and password-recovery email still use server-side SMTP. Existing stored messages/history are retained.
+
 > **Current outgoing email:** Resend SMTP is now used through Nodemailer. See [SMTP-SETUP.md](./SMTP-SETUP.md) for the active configuration and domain verification checklist. The signed Resend inbound webhook remains in use. SMTP does not provide the HTTP API idempotency guarantee described in the original implementation; uncertain sends are held for manual review.
 
 
@@ -21,7 +23,7 @@ EMAIL_REPLY_FROM="Quiet Logic <contact@quitelogic.com>"
 
 Use the **Supabase PostgreSQL session-pooler URL** for the Hostinger Node.js app, preferably in the same region as the website. Store it as `DATABASE_URL` in `.env.local` and in Hostinger's private environment variables. `SUPABASE_DATABASE_URL` was used only for the completed migration and is not a runtime setting. Remote connections verify TLS certificates. The app opens at most three connections per server instance. Do not expose the database to a browser or enable public table access. Enable provider backups and restrict access to production credentials.
 
-All email uses Resend and the official contact@quitelogic.com address. See [RESEND-SETUP.md](./RESEND-SETUP.md) for sending-domain verification, receiving MX records, signed webhooks, environment settings, and tests. Contact messages are saved before notification; delivery failure returns a friendly error and keeps the inquiry in the Inbox.
+All email uses Resend and the official contact@quitelogic.com address. See [RESEND-SETUP.md](./RESEND-SETUP.md) for sending-domain verification, receiving MX records, signed webhooks, environment settings, and tests. Contact messages are saved before notification; delivery failure returns a friendly error and keeps the inquiry in Contact Messages.
 
 ## Initialize the database and admin
 
@@ -61,7 +63,7 @@ Behind another reverse proxy, set the exact public origin in `NEXT_PUBLIC_SITE_U
 - `/reviews`: client submission with private email, optional profile/logo, consent, rating, and service. Images are limited to 2 MB / 16 megapixels and re-encoded to 256px WebP with metadata removed. New reviews always start Pending, even if a caller tries to supply another status.
 - `/admin/reviews`: search/filter, approve, reject, edit, and permanently delete reviews. Only approval makes a review public. Rejection/deletion also removes public access to its image. Editing preserves its current moderation status.
 - `/admin/clients`: normalized email groups contact messages and reviews under one client. Details show the ten most recent submissions of each kind; the Reviews and Messages sections provide paginated access to all submissions.
-- `/admin/inbox`: read/unread, search/filter, pagination, compose, replies and history, archive, and soft deletion. `/admin/messages` remains a compatibility route. Email sends through Resend as contact@quitelogic.com. Failed delivery is recorded without discarding the inquiry. See [RESEND-SETUP.md](./RESEND-SETUP.md).
+- `/admin/messages`: searchable, paginated, read-only website contact submissions. `/admin/inbox` redirects here. Admin compose/reply/send/history tools and their endpoints have been removed.
 - Public and admin endpoints use persistent shared rate limits. Forms also include validation, request size limits, and honeypots. Contact/review forms remain functional without motion.
 
 Client information is private to admins; review consent covers the submitted public name, company, role, review, and image. Keep database access restricted and manage your business's retention policy. Review deletion removes that review and image; client and message records remain for relationship management.

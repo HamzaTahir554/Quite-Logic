@@ -2,9 +2,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-export default function AdminLogin() {
+export default function AdminLogin({
+  initialError = "",
+}: {
+  initialError?: string;
+}) {
   const [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(initialError);
   const router = useRouter();
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

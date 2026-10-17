@@ -81,15 +81,17 @@ export async function rateLimit(key: string, maximum: number, seconds = 900) {
   );
 }
 export async function verifyPassword(password: string, stored?: string) {
+  const validStored =
+    typeof stored === "string" && /^[a-f0-9]{32}:[a-f0-9]{128}$/.test(stored);
   const [salt, expected] = (
-    stored || "00000000000000000000000000000000:" + "0".repeat(128)
+    validStored ? stored : "00000000000000000000000000000000:" + "0".repeat(128)
   ).split(":");
   const actual = (await promisify(scrypt)(password, salt, 64)) as Buffer;
   const compare = Buffer.from(expected, "hex");
   return (
     compare.length === actual.length &&
     timingSafeEqual(actual, compare) &&
-    !!stored
+    validStored
   );
 }
 export async function createSession(adminId: string) {
@@ -109,11 +111,13 @@ export async function createSession(adminId: string) {
 }
 export function apiError(error: unknown) {
   if (!(error instanceof HttpError))
-    console.error(JSON.stringify({
-      event: "api.server_failure",
-      category: safeErrorCategory(error),
-      at: new Date().toISOString(),
-    }));
+    console.error(
+      JSON.stringify({
+        event: "api.server_failure",
+        category: safeErrorCategory(error),
+        at: new Date().toISOString(),
+      }),
+    );
   return Response.json(
     {
       message:

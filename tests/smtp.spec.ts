@@ -34,7 +34,7 @@ test("SMTP requires verified TLS, uses the Resend key privately, and distinguish
   expect(smtpRetryIsSafe({ responseCode: 550, command: "DATA" })).toBe(true);
 });
 
-test("SMTP contact and admin uncertain sends remain recorded and are not automatically resent", async ({
+test("SMTP contact uncertain sends remain recorded and are not automatically resent", async ({
   request,
 }) => {
   test.skip(
@@ -70,47 +70,13 @@ test("SMTP contact and admin uncertain sends remain recorded and are not automat
         )
       ).rows[0].delivery_status,
     ).toBe("Delivery uncertain");
-    expect(
-      (
-        await request.post("/api/admin/login", {
-          headers,
-          data: {
-            email: "admin@example.test",
-            password: "Local-Test-Only-123456!",
-          },
-        })
-      ).status(),
-    ).toBe(200);
-    const key = randomUUID();
-    const message = {
-      to: email,
-      subject: "SMTP uncertainty test",
-      body: "[UNCERTAIN] An admin message with a lost SMTP acknowledgement.",
-    };
-    for (const status of [502, 409])
-      expect(
-        (
-          await request.post("/api/admin/emails", {
-            headers: { ...headers, "Idempotency-Key": key },
-            data: message,
-          })
-        ).status(),
-      ).toBe(status);
-    expect(
-      (
-        await pool.query(
-          "SELECT status FROM email_history WHERE recipient=$1",
-          [email],
-        )
-      ).rows[0].status,
-    ).toBe("Delivery uncertain");
     const mails = (await readFile("qa/.test-mailbox.jsonl", "utf8"))
       .trim()
       .split("\n")
       .filter(Boolean)
       .map((line) => JSON.parse(line));
     expect(mails.filter((entry) => entry.replyTo === email)).toHaveLength(1);
-    expect(mails.filter((entry) => entry.to === email)).toHaveLength(1);
+    expect(mails.filter((entry) => entry.to === email)).toHaveLength(0);
   } finally {
     await pool.end();
   }

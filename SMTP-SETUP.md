@@ -1,6 +1,6 @@
 # Quiet Logic — Resend SMTP setup
 
-Outgoing contact notifications, admin compose/replies, and password resets now use Nodemailer over authenticated Resend SMTP. The official sender/recipient remains **contact@quitelogic.com**. Existing Supabase data, admin authentication, and public pages are preserved.
+Outgoing contact notifications and password resets now use Nodemailer over authenticated Resend SMTP. The official sender/recipient remains **contact@quitelogic.com**. Existing Supabase data, admin authentication, and public pages are preserved.
 
 ## Configuration
 
@@ -24,7 +24,7 @@ Hostinger deployment needs the same SMTP settings, private RESEND_API_KEY, exist
 
 - Live SMTP connection and authentication: **passed** on smtp.resend.com:465.
 - Production build and TypeScript checks: **passed**.
-- Targeted contact, SMTP, admin Inbox, recovery/account, portfolio, and review regressions: **17 passed** using isolated fixtures.
+- Historical test results preceded removal of admin email tools; see the latest admin cleanup report for current checks.
 - Missing-SMTP-credentials variant: **1 passed**; inquiry is retained, sending is disabled appropriately, and errors remain friendly.
 - Configured credential values scanned against the generated frontend files: **0 matches**.
 - Resend account already had quitelogic.net verified. A new quitelogic.com verification entry was created for the requested sender; its DNS verification is still pending.
@@ -40,18 +40,18 @@ Hostinger deployment needs the same SMTP settings, private RESEND_API_KEY, exist
 
 The existing quitelogic.net verification was preserved. No DNS records, domain registrations, or subscription changes were made.
 
-## Receiving and Admin Inbox
+## Receiving and contact submissions
 
-SMTP provides **outgoing delivery**. It does not fetch inbound messages. Website contact submissions continue to be saved directly into Admin Inbox before sending their SMTP notification.
+SMTP provides **outgoing delivery**. It does not fetch inbound messages. Website contact submissions continue to be saved directly into Contact Messages before sending their SMTP notification.
 
 Direct email receiving still uses the existing verified Resend email.received webhook and Receiving API. Keep RESEND_API_KEY and RESEND_WEBHOOK_SECRET configured for that flow. Receiving requires its own verified MX configuration; sending DNS alone does not activate it. Review [RESEND-SETUP.md](RESEND-SETUP.md) for receiving instructions. Existing mailbox MX services must be considered before changing receiving routes.
 
 ## Delivery behavior and security
 
-- The visitor's email is Reply-To, never From. Admin replies use the official server-configured sender.
+- The visitor's email is Reply-To, never From. The admin dashboard has no email composer or reply tools.
 - Existing validation, rate limits, request-origin checks, spam honeypot, HTML escaping, authentication, and private database storage remain active.
 - Database records and send locks prevent simultaneous/duplicate submissions. Message-ID is deterministic for the stored operation; SMTP itself has no provider idempotency guarantee.
-- Explicit rejection or failure before SMTP submission is retryable. A disconnect after DATA, expired in-progress send, or uncertain database update is recorded as **Delivery uncertain**. Repeating that operation is blocked until the admin checks the mailbox/history, reducing accidental duplicates. A stable Message-ID alone cannot guarantee recipient-side deduplication.
+- Explicit rejection or failure before SMTP submission is retryable. A disconnect after DATA, expired in-progress send, or uncertain database update is recorded as **Delivery uncertain**. Repeating that operation is blocked until the admin checks the provider logs, reducing accidental duplicates. A stable Message-ID alone cannot guarantee recipient-side deduplication.
 - SMTP credentials, full provider errors, message bodies, and raw SMTP conversations are never logged or returned to the browser. SMTP cannot access arbitrary local files or external content through Nodemailer.
 
 Official references: [Resend SMTP](https://resend.com/docs/send-with-smtp), [Nodemailer SMTP/TLS](https://nodemailer.com/smtp).

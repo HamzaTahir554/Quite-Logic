@@ -24,9 +24,15 @@ try {
       throw new SetupInputError(
         "Set ADMIN_SETUP_PASSWORD in .env.local or your private environment.",
       );
-    if (password.length < 16 || password.length > 200)
+    if (
+      password.length < 16 ||
+      password.length > 200 ||
+      !/[A-Za-z]/.test(password) ||
+      !/[^A-Za-z\s]/.test(password) ||
+      new Set(password).size < 6
+    )
       throw new SetupInputError(
-        "ADMIN_SETUP_PASSWORD must contain 16–200 characters. Update it in .env.local or your private environment, then run npm run admin:setup again.",
+        "ADMIN_SETUP_PASSWORD must contain 16–200 characters, a letter and a number or symbol, and at least six distinct characters. Update it privately, then run npm run admin:setup again.",
       );
     const salt = randomBytes(16).toString("hex");
     const hash = `${salt}:${scryptSync(password, salt, 64).toString("hex")}`;
@@ -38,6 +44,9 @@ try {
         [randomUUID(), email, hash],
       );
       await connection.query("DELETE FROM admin_sessions WHERE admin_id=$1", [
+        result.rows[0].id,
+      ]);
+      await connection.query("DELETE FROM password_resets WHERE admin_id=$1", [
         result.rows[0].id,
       ]);
       await connection.query("COMMIT");

@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { reviewServices, type PublicReview } from "@/lib/reviews";
 import AdminPortfolio from "./AdminPortfolio";
 import PasswordForm from "./PasswordForm";
-import AdminInbox from "./AdminInbox";
 type Review = PublicReview & { status: string; email: string };
 type Message = {
   id: string;
@@ -34,7 +33,6 @@ type Data = {
   pending?: string;
   clients?: string;
   messages?: string;
-  emailReady?: boolean;
 };
 const date = (value: string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -48,7 +46,7 @@ const tabs = [
   ["reviews", "Reviews"],
   ["portfolio", "Portfolio"],
   ["clients", "Clients"],
-  ["inbox", "Inbox"],
+  ["messages", "Contact Messages"],
   ["account", "Account"],
 ];
 export default function AdminPanel({
@@ -85,7 +83,7 @@ export default function AdminPanel({
     }
   }, [editing]);
   useEffect(() => {
-    if (["portfolio", "account", "inbox", "messages"].includes(section)) {
+    if (["portfolio", "account"].includes(section)) {
       setLoading(false);
       return;
     }
@@ -164,11 +162,7 @@ export default function AdminPanel({
             <Link
               key={key}
               href={key === "dashboard" ? "/admin" : `/admin/${key}`}
-              aria-current={
-                (section === "messages" ? "inbox" : section) === key
-                  ? "page"
-                  : undefined
-              }
+              aria-current={section === key ? "page" : undefined}
             >
               {label}
             </Link>
@@ -193,13 +187,7 @@ export default function AdminPanel({
       <div className="admin-content">
         <header className="admin-heading">
           <span className="eyebrow">QUITE LOGIC ADMIN</span>
-          <h1>
-            {
-              tabs.find(
-                ([key]) => key === (section === "messages" ? "inbox" : section),
-              )?.[1]
-            }
-          </h1>
+          <h1>{tabs.find(([key]) => key === section)?.[1]}</h1>
           <p>
             {section === "reviews"
               ? "Only approved reviews appear on your website."
@@ -214,9 +202,7 @@ export default function AdminPanel({
             {error}
           </p>
         </div>
-        {section === "inbox" || section === "messages" ? (
-          <AdminInbox />
-        ) : section === "portfolio" ? (
+        {section === "portfolio" ? (
           <AdminPortfolio />
         ) : section === "account" ? (
           changePassword ? (
@@ -258,7 +244,7 @@ export default function AdminPanel({
               ].map(([key, label]) => (
                 <Link
                   className="glass-panel"
-                  href={`/admin/${key === "pending" ? "reviews" : key === "messages" ? "inbox" : key}`}
+                  href={`/admin/${key === "pending" ? "reviews" : key}`}
                   key={key}
                 >
                   <span>{label}</span>
@@ -271,18 +257,12 @@ export default function AdminPanel({
             <div className="glass-panel admin-note">
               <h2>Your next step</h2>
               <p>
-                Review new submissions, keep client details together, and reply
-                from one workspace.
+                Review new submissions, manage projects, and keep client details
+                together.
               </p>
               <Link className="ql-button" href="/admin/reviews">
                 Review submissions ↗
               </Link>
-              <p>
-                SMTP (Resend):{" "}
-                {data.emailReady
-                  ? "Configured"
-                  : "Not configured — check the server SMTP settings and credentials."}
-              </p>
             </div>
           </>
         ) : (
@@ -445,7 +425,6 @@ export default function AdminPanel({
                       <tr>
                         <th>Client</th>
                         <th>Submissions</th>
-                        <th>Contact</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -481,14 +460,40 @@ export default function AdminPanel({
                               ))}
                             </details>
                           </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {!loading && section === "messages" && (
+                <div className="admin-table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Client</th>
+                        <th>Contact message</th>
+                        <th>Received</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {((data.items as Message[]) || []).map((message) => (
+                        <tr key={message.id}>
                           <td>
-                            <Link
-                              className="ql-button"
-                              href={`/admin/inbox?client=${client.id}`}
-                            >
-                              Write email ↗
-                            </Link>
+                            <strong>{message.name}</strong>
+                            <small>{message.email}</small>
+                            <small>{message.company}</small>
                           </td>
+                          <td>
+                            <strong>{message.subject}</strong>
+                            <p className="admin-message-body">{message.body}</p>
+                            {message.details?.projectType && (
+                              <small>
+                                Service: {message.details.projectType}
+                              </small>
+                            )}
+                          </td>
+                          <td>{date(message.created_at)}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -156,7 +156,7 @@ test.describe("Persistent review and admin workflows", () => {
       ).status(),
     ).toBe(401);
   });
-  test("contact is retained, clients are searchable, email errors are honest, mobile UI is usable", async ({
+  test("contact is retained, clients are searchable, admin email is removed, mobile UI is usable", async ({
     page,
     request,
   }) => {
@@ -201,41 +201,26 @@ test.describe("Persistent review and admin workflows", () => {
     await expect(
       page.getByText("A clear project inquiry", { exact: false }),
     ).toBeVisible();
-    await page.getByRole("link", { name: "Write email" }).click();
+    await expect(page.getByRole("link", { name: "Write email" })).toHaveCount(
+      0,
+    );
+    await page
+      .getByRole("link", { name: "Contact Messages", exact: true })
+      .click();
     await expect(
-      page.getByRole("heading", { name: "Write an email" }),
+      page.getByRole("heading", { name: "Contact Messages", exact: true }),
     ).toBeVisible();
-    if (process.env.E2E_MAIL_CAPTURE !== "1")
-      await expect(
-        page.getByRole("button", { name: "Send email", exact: true }),
-      ).toBeDisabled();
-    const clients = await (
-      await page.request.get("/api/admin/clients?q=contact-client")
-    ).json();
+    await expect(
+      page.getByText("A clear project inquiry", { exact: false }),
+    ).toBeVisible();
     expect(
       (
         await page.request.post("/api/admin/email", {
           headers: { Origin: origin },
-          data: {
-            clientId: clients.items[0].id,
-            subject: "Test",
-            body: "Message",
-          },
+          data: { subject: "Removed", body: "Must not send" },
         })
       ).status(),
-    ).toBe(process.env.E2E_MAIL_CAPTURE === "1" ? 200 : 502);
-    expect(
-      (
-        await page.request.post("/api/admin/email", {
-          headers: { Origin: origin },
-          data: {
-            clientId: clients.items[0].id,
-            subject: "Bad\r\nBcc: x@example.test",
-            body: "Message",
-          },
-        })
-      ).status(),
-    ).toBe(400);
+    ).toBe(404);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
