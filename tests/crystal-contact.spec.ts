@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { widgetScript } from "./fixtures/calendly";
 
 test("banner layers react within bounds on all pages and reset with reduced motion", async ({
   page,
@@ -25,10 +26,10 @@ test("banner layers react within bounds on all pages and reset with reduced moti
     );
     const banner = page.locator(
       route === "/"
-        ? ".reference-hero"
+        ? ".reference-hero:visible"
         : route === "/portfolio/atlas-cloud"
-          ? ".atlas-primary"
-          : ".banner-motion",
+          ? ".atlas-primary:visible"
+          : ".banner-motion:visible",
     );
     await banner.scrollIntoViewIfNeeded();
     const bounds = (await banner.boundingBox())!;
@@ -36,7 +37,7 @@ test("banner layers react within bounds on all pages and reset with reduced moti
       bounds.x + bounds.width * 0.85,
       bounds.y + bounds.height * 0.6,
     );
-    const heading = page.locator("h1");
+    const heading = page.locator("h1:visible");
     await expect
       .poll(() =>
         heading.evaluate(
@@ -69,6 +70,11 @@ test("booking stays on site, loads only on demand and closes accessibly", async 
   page,
 }) => {
   let requests = 0;
+  await page.route(
+    "https://assets.calendly.com/assets/external/widget.js",
+    (route) =>
+      route.fulfill({ contentType: "text/javascript", body: widgetScript }),
+  );
   await page.route("https://calendly.com/**", async (route) => {
     requests++;
     await route.fulfill({

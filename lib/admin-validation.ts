@@ -1,4 +1,30 @@
 import { z } from "zod";
+import { socialPlatforms } from "./social-links";
+
+export const socialLinkSchema = z
+  .object({
+    platform: z.enum(socialPlatforms, { error: "Choose a social platform." }),
+    url: z
+      .string()
+      .trim()
+      .max(2000)
+      .refine((value) => {
+        try {
+          const url = new URL(value);
+          return (
+            ["https:", "http:"].includes(url.protocol) &&
+            Boolean(url.hostname) &&
+            !url.username &&
+            !url.password
+          );
+        } catch {
+          return false;
+        }
+      }, "Enter a complete HTTP or HTTPS URL, such as https://www.linkedin.com/company/your-company."),
+    enabled: z.boolean(),
+    order: z.number().int().min(0).max(1000000),
+  })
+  .strict();
 
 export const emailSchema = z
   .string()

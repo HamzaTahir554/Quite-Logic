@@ -4,10 +4,6 @@ export default async function ReviewsPage() {
   await requireAdminPage();
   return (
     <section>
-      <h1>Reviews</h1>
-      <p className="muted">
-        Only approved reviews appear on the public website.
-      </p>
       <ReviewManager />
     </section>
   );

@@ -30,7 +30,15 @@ export function endpoint(handler: (request: Request) => Promise<Response>) {
         return json({ error: error.message }, error.status);
       if (error instanceof ZodError)
         return json(
-          { error: error.issues[0]?.message || "Invalid input." },
+          {
+            error: error.issues[0]?.message || "Invalid input.",
+            fields: Object.fromEntries(
+              error.issues.map((issue) => [
+                String(issue.path[0] || "form"),
+                issue.message,
+              ]),
+            ),
+          },
           400,
         );
       if (error instanceof SyntaxError)
@@ -41,7 +49,16 @@ export function endpoint(handler: (request: Request) => Promise<Response>) {
         "code" in error &&
         error.code === 11000
       )
-        return json({ error: "That slug is already in use." }, 409);
+        return json(
+          {
+            error:
+              "keyPattern" in error &&
+              (error.keyPattern as Record<string, unknown>)?.platform
+                ? "That platform already has a social link. Edit the existing link instead."
+                : "That slug is already in use.",
+          },
+          409,
+        );
       // Never log credentials, request bodies, connection URIs, or reset links.
       console.error(
         "API operation failed:",

@@ -15,12 +15,17 @@ export async function GET(
     });
     if (!published && !(await currentAdmin()))
       throw new ApiError(404, "Image not found.");
-    const image = await ProjectImage.findById(id).select("+data");
+    const image = await ProjectImage.findById(id).select("+data +thumbnail");
     if (!image) throw new ApiError(404, "Image not found.");
-    return new Response(new Uint8Array(image.data), {
+    const data =
+      new URL(request.url).searchParams.get("size") === "card" &&
+      image.thumbnail
+        ? image.thumbnail
+        : image.data;
+    return new Response(new Uint8Array(data), {
       headers: {
         "Content-Type": image.contentType,
-        "Content-Length": String(image.size),
+        "Content-Length": String(data.length),
         "Cache-Control": "private, no-store",
         "X-Content-Type-Options": "nosniff",
       },

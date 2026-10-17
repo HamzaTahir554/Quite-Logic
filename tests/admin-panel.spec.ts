@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
 
 test("admin login and recovery screens remain accessible at desktop, tablet and mobile sizes", async ({
   page,
@@ -28,6 +29,7 @@ test("admin login and recovery screens remain accessible at desktop, tablet and 
     "/admin/reviews",
     "/admin/portfolio",
     "/admin/account",
+    "/admin/settings",
   ]) {
     const response = await request.get(route, { maxRedirects: 0 });
     expect(response.status()).toBe(307);
@@ -46,6 +48,7 @@ test("portfolio supports desktop hover, touch reveal and keyboard controls", asy
     reducedMotion: "no-preference",
   });
   const page = await desktop.newPage();
+  await mkdir("qa/admin-ux", { recursive: true });
   try {
     await page.goto("/portfolio");
     const card = page.locator(".managed-project-card").first();
@@ -63,6 +66,7 @@ test("portfolio supports desktop hover, touch reveal and keyboard controls", asy
       "filter",
       "none",
     );
+    await page.locator(".managed-project-grid").screenshot({ path: "qa/admin-ux/public-cards-desktop.png" });
     await page.mouse.move(0, 0);
     await card.getByRole("button").focus();
     await page.keyboard.press("Space");
@@ -71,9 +75,22 @@ test("portfolio supports desktop hover, touch reveal and keyboard controls", asy
       "true",
     );
     await page.keyboard.press("Tab");
+    await expect(card.getByRole("region")).toBeFocused();
+    await page.keyboard.press("Tab");
     await expect(card.getByRole("link")).toBeFocused();
+    const destination = await card.getByRole("link").getAttribute("href");
     await page.keyboard.press("Escape");
     await expect(card).toHaveAttribute("data-open", "false");
+    await card.getByRole("button").click();
+    await expect(page).toHaveURL(destination!);
+    await page.goto("/portfolio");
+    await card.hover();
+    await card.click();
+    await expect(page).toHaveURL(destination!);
+    await page.goto("/portfolio");
+    await card.hover();
+    await card.locator(".project-description-copy").click();
+    await expect(page).toHaveURL(destination!);
   } finally {
     await desktop.close();
   }
@@ -90,9 +107,12 @@ test("portfolio supports desktop hover, touch reveal and keyboard controls", asy
       await page.goto("/portfolio");
       const card = page.locator(".managed-project-card").first();
       await expect(card).toHaveAttribute("data-open", "false");
+      await expect(card.locator(".project-touch-hint")).toBeVisible();
+      await card.screenshot({ path: `qa/admin-ux/public-card-${width}-default.png` });
       await card.getByRole("button").tap();
       await expect(card).toHaveAttribute("data-open", "true");
       await expect(page).toHaveURL("/portfolio");
+      await card.screenshot({ path: `qa/admin-ux/public-card-${width}-open.png` });
       const destination = await card.getByRole("link").getAttribute("href");
       await card.getByRole("link").tap();
       await expect(page).toHaveURL(destination!);
@@ -100,4 +120,41 @@ test("portfolio supports desktop hover, touch reveal and keyboard controls", asy
       await touch.close();
     }
   }
+});
+
+test("portfolio filters show skeletons, recover from errors, and use a safe logo fallback", async ({
+  page,
+}) => {
+  await page.route("**/projects/pulse.svg", (route) => route.abort());
+  await page.goto("/portfolio");
+  await expect(
+    page.getByRole("img", { name: "Pulse / CRM logo placeholder" }),
+  ).toBeVisible();
+  let release: (() => void) | undefined;
+  const paused = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/api/projects?**", async (route) => {
+    await paused;
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ error: "Unavailable" }),
+    });
+  });
+  await page
+    .getByRole("button", { name: "Computer Vision", exact: true })
+    .click();
+  await expect(
+    page.getByRole("status", { name: "Loading projects" }),
+  ).toBeVisible();
+  release!();
+  await expect(
+    page.locator(".portfolio-section").getByRole("alert"),
+  ).toContainText("couldn’t be loaded");
+  await page.unroute("**/api/projects?**");
+  await page.getByRole("button", { name: "Try again" }).click();
+  await expect(page.locator(".portfolio-empty")).toContainText("no projects");
+  await page.getByRole("button", { name: "All", exact: true }).click();
+  await expect(page.locator(".managed-project-card")).toHaveCount(3);
 });

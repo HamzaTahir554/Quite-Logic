@@ -9,7 +9,7 @@ import Reveal from "@/components/ui/Reveal";
 import ProjectArtwork from "@/components/projects/ProjectArtwork";
 import LegacyProjectRedirect from "@/components/projects/LegacyProjectRedirect";
 import { getProjectDetail } from "@/lib/project-detail";
-import Image from "next/image";
+import ProjectLogo from "@/components/projects/ProjectLogo";
 export const dynamic = "force-dynamic";
 export function generateStaticParams() {
   return [...projects.map((p) => ({ slug: p.slug })), { slug: "lens-insight" }];
@@ -66,6 +66,11 @@ export default async function ProjectPage({
           name={managed.title}
           parents={[{ name: "Portfolio", path: "/portfolio" }]}
         />
+        <nav className="project-breadcrumbs container" aria-label="Breadcrumb">
+          <Link href="/portfolio">← Back to Portfolio</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{managed.title}</span>
+        </nav>
         <PageHero
           label={managed.category || "Project"}
           title={managed.title}
@@ -73,25 +78,38 @@ export default async function ProjectPage({
           variant="project"
         />
         <section className="container case-study">
-          <Image
-            unoptimized
-            src={managed.logo}
-            alt={`${managed.title} logo`}
-            width={400}
-            height={240}
-            style={{ objectFit: "contain", maxWidth: "100%" }}
-          />
-          <p style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
-            {managed.description}
-          </p>
-          {managed.technologies.length > 0 && (
-            <p>{managed.technologies.join(" · ")}</p>
-          )}
-          {managed.projectUrl && (
-            <a className="text-link" href={managed.projectUrl}>
-              View project ↗
-            </a>
-          )}
+          <div className="managed-project-overview glass-panel">
+            <div className="managed-detail-logo">
+              <ProjectLogo
+                src={managed.logo}
+                title={managed.title}
+                width={400}
+                height={240}
+              />
+            </div>
+            <div>
+              <span className="eyebrow">PROJECT OVERVIEW</span>
+              <h2>{managed.title}</h2>
+              <p style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
+                {managed.description}
+              </p>
+              {managed.technologies.length > 0 && (
+                <ul
+                  className="project-technology-list"
+                  aria-label="Technologies"
+                >
+                  {managed.technologies.map((technology: string) => (
+                    <li key={technology}>{technology}</li>
+                  ))}
+                </ul>
+              )}
+              {managed.projectUrl && (
+                <a className="text-link" href={managed.projectUrl}>
+                  Visit project ↗
+                </a>
+              )}
+            </div>
+          </div>
           <p>
             <Link className="text-link" href="/portfolio">
               ← Back to portfolio

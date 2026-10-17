@@ -1,10 +1,9 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import Reveal from "@/components/ui/Reveal";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import type { PortfolioProject } from "@/lib/portfolio";
-import { projects as originalConcepts } from "@/data/content";
+import PortfolioCard from "@/components/projects/PortfolioCard";
+import PortfolioSkeleton from "@/components/projects/PortfolioSkeleton";
 const baseFilters = [
   "All",
   "Web",
@@ -13,54 +12,75 @@ const baseFilters = [
   "Automation",
   "Computer Vision",
 ];
+type Page = { projects: PortfolioProject[]; total: number; page: number };
 export default function Portfolio({
   projects,
   total = projects.length,
+  categories = [],
   unavailable = false,
 }: {
   projects: PortfolioProject[];
   total?: number;
+  categories?: string[];
   unavailable?: boolean;
 }) {
-  const [filter, setFilter] = useState("All");
-  const [additional, setAdditional] = useState<PortfolioProject[]>([]),
+  const [filter, setFilter] = useState("All"),
+    [data, setData] = useState<Page>({ projects, total, page: 1 }),
     [loading, setLoading] = useState(false),
-    [error, setError] = useState("");
-  const allProjects = [...projects, ...additional];
-  async function loadMore() {
+    [error, setError] = useState(""),
+    [interacted, setInteracted] = useState(false);
+  const controller = useRef<AbortController | null>(null);
+  const cached = useRef(
+    new Map<string, Page>([["All", { projects, total, page: 1 }]]),
+  );
+  const reduced = useReducedMotion();
+  useEffect(() => () => controller.current?.abort(), []);
+  async function load(category: string, page = 1) {
+    setInteracted(true);
+    controller.current?.abort();
+    if (page === 1 && cached.current.has(category)) {
+      setFilter(category);
+      setData(cached.current.get(category)!);
+      setError("");
+      setLoading(false);
+      return;
+    }
+    const request = new AbortController();
+    controller.current = request;
+    setFilter(category);
     setLoading(true);
     setError("");
+    if (page === 1) setData({ projects: [], total: 0, page: 1 });
     try {
       const response = await fetch(
-        `/api/projects?page=${Math.floor(allProjects.length / 24) + 1}&limit=24`,
+        `/api/projects?${new URLSearchParams({ category: category === "All" ? "" : category, page: String(page), limit: "24" })}`,
+        { signal: request.signal },
       );
-      const data = await response.json();
-      if (!response.ok)
-        throw new Error("Projects could not be loaded. Please try again.");
-      setAdditional((previous) => [...previous, ...data.projects]);
-    } catch (error) {
-      setError((error as Error).message);
+      const result = await response.json();
+      if (!response.ok) throw new Error();
+      if (request.signal.aborted) return;
+      const previous =
+        page > 1 ? cached.current.get(category)?.projects || [] : [];
+      const unique = new Map(
+        [...previous, ...result.projects].map((project: PortfolioProject) => [
+          project.id,
+          project,
+        ]),
+      );
+      const next = {
+        projects: [...unique.values()],
+        total: result.total,
+        page,
+      };
+      cached.current.set(category, next);
+      setData(next);
+    } catch {
+      if (!request.signal.aborted)
+        setError("Projects couldn’t be loaded. Please try again.");
     } finally {
-      setLoading(false);
+      if (!request.signal.aborted) setLoading(false);
     }
   }
-  const categories = (project: PortfolioProject) => {
-    const original = originalConcepts.find(
-      (concept) => concept.slug === project.source_slug,
-    );
-    if (original && project.category === original.category)
-      return [...original.categories];
-    return project.category
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean);
-  };
-  const filters = [
-    ...new Set([...baseFilters, ...allProjects.flatMap(categories)]),
-  ];
-  const selected = allProjects.filter(
-    (project) => filter === "All" || categories(project).includes(filter),
-  );
   return (
     <section className="container portfolio-section">
       <div
@@ -68,10 +88,12 @@ export default function Portfolio({
         role="group"
         aria-label="Filter projects"
       >
-        {filters.map((value) => (
+        {[...new Set([...baseFilters, ...categories])].map((value) => (
           <button
             key={value}
-            onClick={() => setFilter(value)}
+            onClick={() => {
+              if (filter !== value) void load(value);
+            }}
             aria-pressed={filter === value}
             className={filter === value ? "selected" : ""}
           >
@@ -80,124 +102,72 @@ export default function Portfolio({
         ))}
       </div>
       <p className="small muted portfolio-count" aria-live="polite">
-        {selected.length} published{" "}
-        {selected.length === 1 ? "project" : "projects"}. Projects marked
-        “Concept” are illustrative explorations.
+        {loading && data.projects.length === 0
+          ? "Finding projects…"
+          : `${data.total} published ${data.total === 1 ? "project" : "projects"}${filter === "All" ? "" : ` in ${filter}`}.`}{" "}
+        Projects marked “Concept” are illustrative explorations.
       </p>
-      <div className="managed-project-grid">
-        {selected.map((project) => (
-          <Reveal key={project.id}>
-            <PortfolioCard project={project} />
-          </Reveal>
-        ))}
-      </div>
-      {allProjects.length < total && (
-        <p>
+      {loading && data.projects.length === 0 ? (
+        <PortfolioSkeleton />
+      ) : (
+        <div className="managed-project-grid" aria-busy={loading}>
+          {data.projects.map((project) => (
+            <motion.div
+              key={`${filter}-${project.id}`}
+              initial={reduced || !interacted ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.28 }}
+            >
+              <PortfolioCard project={project} />
+            </motion.div>
+          ))}
+        </div>
+      )}
+      {error && (
+        <div className="portfolio-empty" role="alert">
+          <p>{error}</p>
           <button
             className="button secondary"
-            disabled={loading}
-            onClick={loadMore}
+            onClick={() =>
+              load(filter, data.projects.length ? data.page + 1 : 1)
+            }
           >
-            {loading ? "Loading…" : "Load more projects"}
+            Try again
           </button>
-        </p>
+        </div>
       )}
-      {error && <p role="alert">{error}</p>}
-      {!selected.length && (
+      {!loading && !error && data.projects.length === 0 && (
         <div className="portfolio-empty" role="status">
-          <h2>More possibilities ahead.</h2>
+          <h2>
+            {filter === "All" && !unavailable
+              ? "New projects are coming soon."
+              : "More possibilities ahead."}
+          </h2>
           <p>
             {unavailable
               ? "Projects are temporarily unavailable. Please check back soon."
-              : "There are no projects in this discipline yet."}
+              : filter === "All"
+                ? "We’re preparing new work to share. Come back soon."
+                : "There are no projects in this discipline yet."}
           </p>
           {filter !== "All" && (
-            <button
-              className="button secondary"
-              onClick={() => setFilter("All")}
-            >
+            <button className="button secondary" onClick={() => load("All")}>
               Explore all projects ↗
             </button>
           )}
         </div>
       )}
-    </section>
-  );
-}
-function PortfolioCard({ project }: { project: PortfolioProject }) {
-  const [expanded, setExpanded] = useState(false),
-    [hovered, setHovered] = useState(false),
-    [focused, setFocused] = useState(false);
-  const open = expanded || hovered || focused;
-  function select() {
-    setExpanded((value) => !value);
-  }
-  return (
-    <article
-      className="managed-project-card glass-panel"
-      data-open={open}
-      onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") setHovered(true);
-      }}
-      onPointerLeave={() => setHovered(false)}
-      onFocusCapture={() => setFocused(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget))
-          setFocused(false);
-      }}
-      onKeyDown={(event) => {
-        if (event.key === "Escape") {
-          setExpanded(false);
-          setFocused(false);
-          setHovered(false);
-        }
-      }}
-    >
-      <button
-        className="project-identity-button"
-        aria-label={`Show details for ${project.title}`}
-        aria-expanded={open}
-        aria-controls={`project-description-${project.id}`}
-        onClick={select}
-        data-cursor="VIEW"
-      >
-        <span className="managed-project-logo">
-          {project.image_url ? (
-            <Image
-              unoptimized
-              src={project.image_url}
-              alt={`${project.title} logo`}
-              width={240}
-              height={160}
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <span aria-hidden="true">{project.title.slice(0, 1)}</span>
-          )}
-        </span>
-        <span role="heading" aria-level={2} className="managed-project-title">
-          {project.title}
-        </span>
-      </button>
-      <div
-        id={`project-description-${project.id}`}
-        className="managed-project-description"
-        aria-hidden={!open}
-        inert={!open}
-      >
-        <p>{project.description}</p>
-        {project.project_url && (
-          <Link
-            href={project.project_url}
-            className="text-link"
-            data-cursor="OPEN"
+      {data.projects.length < data.total && !error && (
+        <p className="portfolio-load-more">
+          <button
+            className="button secondary"
+            disabled={loading}
+            onClick={() => load(filter, data.page + 1)}
           >
-            {project.source_slug ? "Explore concept" : "Open project"}
-            <span aria-hidden="true">↗</span>
-          </Link>
-        )}
-      </div>
-    </article>
+            {loading ? "Loading projects…" : "Load more projects"}
+          </button>
+        </p>
+      )}
+    </section>
   );
 }

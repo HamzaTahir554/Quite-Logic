@@ -4,28 +4,41 @@ export function ListControls({
   status,
   setStatus,
   statuses,
+  sort,
+  setSort,
+  noun = "items",
+  disabled = false,
 }: {
   search: string;
   setSearch: (value: string) => void;
   status: string;
   setStatus: (value: string) => void;
   statuses: string[];
+  sort?: string;
+  setSort?: (value: string) => void;
+  noun?: string;
+  disabled?: boolean;
 }) {
   return (
-    <div className="admin-controls">
+    <div
+      className={`admin-controls ${setSort && noun === "projects" ? "has-sort" : ""}`}
+    >
       <label>
-        Search
+        Search {noun}
         <input
           type="search"
           value={search}
           maxLength={100}
+          disabled={disabled}
+          placeholder={`Search ${noun}…`}
           onChange={(event) => setSearch(event.target.value)}
         />
       </label>
       <label>
-        Status
+        Filter by status
         <select
           value={status}
+          disabled={disabled}
           onChange={(event) => setStatus(event.target.value)}
         >
           <option value="">All statuses</option>
@@ -36,6 +49,20 @@ export function ListControls({
           ))}
         </select>
       </label>
+      {setSort && noun === "projects" && (
+        <label>
+          Sort projects
+          <select
+            value={sort}
+            disabled={disabled}
+            onChange={(event) => setSort(event.target.value)}
+          >
+            <option value="order">Display order</option>
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
+      )}
     </div>
   );
 }
@@ -43,22 +70,39 @@ export function Pagination({
   page,
   total,
   setPage,
+  loading = false,
 }: {
   page: number;
   total: number;
   setPage: (page: number) => void;
+  loading?: boolean;
 }) {
   return (
-    <div className="admin-actions">
-      <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-        Previous
-      </button>
+    <nav className="admin-pagination" aria-label="List pages">
       <span>
-        Page {page} of {Math.max(1, Math.ceil(total / 12))} · {total} total
+        {total === 0
+          ? "0 items"
+          : `${(page - 1) * 12 + 1}–${Math.min(page * 12, total)} of ${total} items`}
       </span>
-      <button disabled={page * 12 >= total} onClick={() => setPage(page + 1)}>
-        Next
-      </button>
-    </div>
+      <div className="admin-actions">
+        <button
+          className="admin-button"
+          disabled={loading || page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          ← Previous
+        </button>
+        <span className="small">
+          Page {page} of {Math.max(1, Math.ceil(total / 12))}
+        </span>
+        <button
+          className="admin-button"
+          disabled={loading || page * 12 >= total}
+          onClick={() => setPage(page + 1)}
+        >
+          Next →
+        </button>
+      </div>
+    </nav>
   );
 }

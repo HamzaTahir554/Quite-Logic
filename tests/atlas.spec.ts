@@ -12,13 +12,15 @@ test("Atlas replaces the project across routes, metadata, breadcrumbs and sitema
         : page
             .locator(".managed-project-card")
             .filter({ hasText: "Atlas / Cloud" });
-    if (path !== "/") await card.getByRole("button").click();
+    if (path !== "/") await card.hover();
     await expect(card.getByRole("heading")).toHaveText("Atlas / Cloud");
     await expect(card).toContainText(
       "Developer-facing infrastructure interface with quick observability, deployments and system status.",
     );
     await expect(
-      card.getByRole("link", { name: "Explore concept" }),
+      card.getByRole("link", {
+        name: path === "/" ? "Explore concept" : "View Project",
+      }),
     ).toHaveAttribute("href", "/portfolio/atlas-cloud");
   }
   await page.goto("/portfolio/atlas-cloud");

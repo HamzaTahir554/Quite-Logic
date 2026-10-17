@@ -134,21 +134,25 @@ test("mobile navigation and portfolio interactions", async ({ page }) => {
   await page.getByRole("button", { name: "Explore all projects" }).click();
   await expect(page.locator(".managed-project-card")).toHaveCount(3);
   await page
-    .getByRole("button", { name: "Show details for Atlas / Cloud" })
-    .click();
+    .getByRole("button", { name: "View details for Atlas / Cloud" })
+    .focus();
+  await page.keyboard.press("Space");
   await page
     .locator(".managed-project-card")
     .filter({ hasText: "Atlas / Cloud" })
-    .getByRole("link", { name: "Explore concept" })
+    .getByRole("link", { name: "View Project" })
     .click();
   await expect(page).toHaveURL("/portfolio/atlas-cloud");
 });
-test("contact prepares an email draft without backend requests or false success", async ({
+test("contact prepares an email draft without submission requests or false success", async ({
   page,
 }) => {
   const apiCalls: string[] = [];
   page.on("request", (request) => {
-    if (new URL(request.url()).pathname.startsWith("/api/"))
+    const path = new URL(request.url()).pathname;
+    // The shared footer reads enabled social profiles independently of this form.
+    if (path === "/api/socials" && request.method() === "GET") return;
+    if (path.startsWith("/api/"))
       apiCalls.push(request.url());
   });
   await visit(page, "/contact");

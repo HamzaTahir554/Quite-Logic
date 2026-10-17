@@ -5,6 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 import { contactEmail } from "@/lib/company";
 import { BookingButton } from "@/components/booking/BookingProvider";
 import CrystalReflection from "@/components/motion/CrystalReflection";
+import Reveal from "@/components/ui/Reveal";
 export const metadata = pageMetadata(
   "Start a Project",
   "Tell Quite Logic about your website, mobile application, AI automation, computer vision, or custom software project.",
@@ -54,16 +55,18 @@ export default function ContactPage() {
             aria-labelledby="book-call-title"
           >
             <CrystalReflection />
-            <span className="overline">Prefer a conversation?</span>
-            <h2 id="book-call-title">Book a call</h2>
-            <p>
-              A focused, 30-minute meeting to talk through your goals and a
-              useful next step.
-            </p>
-            <BookingButton />
-            <p className="small booking-note">
-              Choose a time in your timezone. Booking opens right here.
-            </p>
+            <Reveal className="booking-invitation">
+              <span className="overline">Prefer a conversation?</span>
+              <h2 id="book-call-title">Book a call</h2>
+              <p>
+                A focused, 30-minute meeting to talk through your goals and a
+                useful next step.
+              </p>
+              <BookingButton />
+              <p className="small booking-note">
+                Choose a time in your timezone. Booking opens right here.
+              </p>
+            </Reveal>
           </section>
           <div className="contact-expectations">
             <h3>What happens next?</h3>

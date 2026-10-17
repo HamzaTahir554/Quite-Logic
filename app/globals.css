@@ -1050,7 +1050,9 @@ main:focus {
   padding-bottom: 100px;
 }
 .loading-shell {
-  min-height: 75vh;
+  /* Keep the footer below the viewport while Next streams the page content. */
+  min-height: 100vh;
+  min-height: 100svh;
   padding-top: 210px;
 }
 .loading-shell > div {

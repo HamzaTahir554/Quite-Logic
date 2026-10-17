@@ -17,9 +17,15 @@ import {
   Session,
   ProjectImage,
   RateLimit,
+  SocialLink,
 } from "../lib/models";
 import { hashPassword, randomToken, tokenHash } from "../lib/passwords";
 import { windowsTestMongoBinary } from "./test-mongo-binary.mjs";
+import {
+  testSocialApi,
+  testSocialBrowser,
+  testPortfolioLayout,
+} from "./test-socials";
 
 const port = Number(process.env.ADMIN_TEST_PORT || 3217),
   smtpPort = port + 1;
@@ -152,8 +158,8 @@ try {
   process.env.MONGODB_URI = database.getUri("quietlogic_test");
   await connectDB();
   await Promise.all(
-    [Admin, Project, Review, Session, ProjectImage, RateLimit].map((model) =>
-      model.init(),
+    [Admin, Project, Review, Session, ProjectImage, RateLimit, SocialLink].map(
+      (model) => model.init(),
     ),
   );
   await mongoose.disconnect();
@@ -197,15 +203,20 @@ try {
     "/admin/reviews",
     "/admin/portfolio",
     "/admin/account",
+    "/admin/settings",
   ]) {
     const response = await call(path, "GET", undefined, false);
     check(
       response.status === 307 &&
         response.headers.get("location") === "/admin/login",
-      "Protected page redirects",
+      `Protected page redirects: ${path}`,
     );
   }
-  for (const path of ["/api/admin/reviews", "/api/admin/projects"])
+  for (const path of [
+    "/api/admin/reviews",
+    "/api/admin/projects",
+    "/api/admin/socials",
+  ])
     check(
       (await call(path, "GET", undefined, false)).status === 401,
       "Admin reads require authentication",
@@ -219,6 +230,10 @@ try {
     ["/api/admin/projects/reorder", "POST"],
     ["/api/admin/uploads", "POST"],
     ["/api/admin/change-password", "POST"],
+    ["/api/admin/socials", "POST"],
+    ["/api/admin/socials/000000000000000000000000", "PATCH"],
+    ["/api/admin/socials/000000000000000000000000", "DELETE"],
+    ["/api/admin/socials/reorder", "POST"],
   ])
     check(
       (await call(path, method, {}, false)).status === 401,
@@ -272,6 +287,10 @@ try {
     "Pagination is bounded",
   );
 
+  console.log(
+    "Testing MongoDB social links, URL safety, visibility and ordering…",
+  );
+  await testSocialApi(call, check);
   console.log("Testing review submission, moderation, pagination and privacy…");
   const reviewInput = {
     clientName: "Test Client",
@@ -375,7 +394,7 @@ try {
     "Oversized image rejected",
   );
   const png = await sharp({
-    create: { width: 100, height: 100, channels: 4, background: "#a9caff" },
+    create: { width: 1000, height: 500, channels: 4, background: "#a9caff" },
   })
     .png()
     .toBuffer();
@@ -462,6 +481,21 @@ try {
     (await call(logo, "GET", undefined, false)).status === 200,
     "Published logo public",
   );
+  const thumbnailResponse = await call(
+    `${logo}?size=card`,
+    "GET",
+    undefined,
+    false,
+  );
+  const thumbnail = await sharp(
+    Buffer.from(await thumbnailResponse.arrayBuffer()),
+  ).metadata();
+  check(
+    thumbnailResponse.status === 200 &&
+      (thumbnail.width || 0) <= 480 &&
+      (thumbnail.height || 0) <= 320,
+    "Published cards receive a bounded logo thumbnail",
+  );
   check(
     (await call(`/portfolio/${input.slug}`, "GET", undefined, false)).status ===
       200,
@@ -501,6 +535,39 @@ try {
       .length === 1,
     "Public pagination works",
   );
+  const fixtures = await Project.insertMany(
+    Array.from({ length: 26 }, (_, index) => ({
+      title: `Pagination fixture ${index}`,
+      slug: `pagination-fixture-${index}`,
+      logo: "/projects/pulse.svg",
+      description:
+        "A temporary project used to check category filtering beyond the first page.",
+      category: index === 25 ? "Research" : "Web",
+      status: "published",
+      order: 100 + index,
+      createdAt: new Date(Date.UTC(2020, 0, index + 1)),
+    })),
+  );
+  const research = await (await call("/api/projects?category=Research")).json();
+  check(
+    research.total === 1 &&
+      research.projects[0].id === String(fixtures[25]._id),
+    "Category filters include projects beyond the first page",
+  );
+  const oldest = await (
+    await call("/api/admin/projects?sort=oldest&limit=1")
+  ).json();
+  check(
+    oldest.items[0]._id === String(fixtures[0]._id),
+    "Projects can be sorted oldest first",
+  );
+  check(
+    (await call("/api/admin/projects?sort=invalid")).status === 400,
+    "Unknown sort options are rejected",
+  );
+  await Project.deleteMany({
+    _id: { $in: fixtures.map((project) => project._id) },
+  });
 
   console.log(
     "Testing reset email delivery, token expiration/consumption, and session revocation…",
@@ -670,9 +737,9 @@ try {
     "Logout invalidates session",
   );
   // Limits are shared across requests/processes and persist in MongoDB.
-  const window = Math.floor(Date.now() / (900 * 1000));
+  const rateWindow = Math.floor(Date.now() / (900 * 1000));
   await RateLimit.updateOne(
-    { key: tokenHash(`login-email:${email}:${window}`) },
+    { key: tokenHash(`login-email:${email}:${rateWindow}`) },
     { $set: { count: 10 } },
   );
   check(
@@ -691,6 +758,8 @@ try {
     });
     const page = await context.newPage();
     const errors: string[] = [];
+    await mkdir("qa/admin-ux", { recursive: true });
+    await mkdir("qa/socials-portfolio", { recursive: true });
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/admin/login");
     await page.getByLabel("Email address").fill(email);
@@ -699,6 +768,21 @@ try {
     await expect(page).toHaveURL(origin + "/admin");
     for (const width of [375, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 950 });
+      if (width < 900) {
+        const menu = page.getByRole("button", {
+          name: "Open admin navigation",
+        });
+        await menu.click();
+        await expect(
+          page.getByRole("button", { name: "Close navigation" }),
+        ).toBeVisible();
+        await page.screenshot({
+          path: `qa/admin-ux/navigation-${width}.png`,
+          fullPage: true,
+        });
+        await page.keyboard.press("Escape");
+        await expect(menu).toBeFocused();
+      }
       for (const path of [
         "/admin",
         "/admin/reviews",
@@ -707,6 +791,11 @@ try {
       ]) {
         await page.goto(path);
         await expect(page.locator("h1")).toBeVisible();
+        if (path === "/admin")
+          await page.screenshot({
+            path: `qa/admin-ux/dashboard-${width}.png`,
+            fullPage: true,
+          });
         check(
           await page.evaluate(
             () => document.documentElement.scrollWidth <= innerWidth,
@@ -724,26 +813,85 @@ try {
             ),
             "Editor is responsive",
           );
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.screenshot({
+            path: `qa/admin-ux/editor-${width}.png`,
+            fullPage: true,
+          });
         }
       }
     }
-    await mkdir("qa/admin", { recursive: true });
+    await testSocialBrowser(page, check);
+    await Project.updateMany({}, { $set: { status: "draft" } });
+    try {
+      await testPortfolioLayout(page, check);
+    } finally {
+      await Project.updateMany({}, { $set: { status: "published" } });
+    }
     await page.goto("/admin/portfolio");
     await page
       .getByRole("button", { name: "Add project", exact: true })
       .click();
+    const editor = page.locator(".admin-editor");
+    await editor
+      .getByRole("button", { name: "Save Draft", exact: true })
+      .click();
+    await expect(page.locator("#project-title")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     await page.getByLabel("Project title").fill("Browser Project");
     await page
-      .getByLabel("Project description", { exact: true })
+      .getByLabel("Project description")
       .fill(
         "A project created through the real browser editor to verify the end-to-end upload and publish workflow.",
       );
     await page
-      .getByLabel("Project logo", { exact: true })
+      .locator("#project-logo")
       .setInputFiles({ name: "logo.png", mimeType: "image/png", buffer: png });
     await expect(page.getByAltText("Project logo preview")).toBeVisible();
-    await page
-      .getByRole("button", { name: "Save project", exact: true })
+    await editor.getByRole("button", { name: "Preview", exact: true }).click();
+    const preview = page.getByRole("dialog", { name: "Project preview" });
+    await expect(
+      preview.getByRole("heading", { name: "Browser Project", exact: true }),
+    ).toBeVisible();
+    await preview.getByRole("tab", { name: "Project card" }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(
+      preview.getByRole("tab", { name: "Project details" }),
+    ).toHaveAttribute("aria-selected", "true");
+    await preview.getByRole("button", { name: "Close preview" }).click();
+    let failedPosts = 0;
+    await page.route("**/api/admin/projects", async (route) => {
+      if (route.request().method() !== "POST") return route.continue();
+      failedPosts++;
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({
+          error: "The save couldn’t finish. Please try again.",
+        }),
+      });
+    });
+    await editor
+      .getByRole("button", { name: "Save Draft", exact: true })
+      .evaluate((button) => {
+        (button as HTMLButtonElement).click();
+        (button as HTMLButtonElement).click();
+      });
+    await expect(editor.getByRole("alert")).toContainText(
+      "Your entered information is still here",
+    );
+    await expect(page.getByLabel("Project title")).toHaveValue(
+      "Browser Project",
+    );
+    check(
+      failedPosts === 1,
+      "Duplicate submissions are prevented and failed saves keep entered data",
+    );
+    await page.unroute("**/api/admin/projects");
+    await editor
+      .getByRole("button", { name: "Save Draft", exact: true })
       .click();
     const browserProject = page.locator(".admin-record").filter({
       has: page.getByRole("heading", {
@@ -752,6 +900,16 @@ try {
       }),
     });
     await expect(browserProject).toBeVisible();
+    await expect(browserProject.locator(".admin-badge")).toHaveText("draft");
+    check(
+      !(await (await call("/api/projects")).text()).includes("Browser Project"),
+      "Saved browser draft remains private",
+    );
+    await browserProject
+      .getByRole("button", { name: "Preview", exact: true })
+      .click();
+    await expect(preview).toBeVisible();
+    await preview.getByRole("button", { name: "Close preview" }).click();
     await browserProject
       .getByRole("button", { name: "Publish", exact: true })
       .click();
@@ -763,9 +921,69 @@ try {
       page.getByRole("heading", { name: "Browser Project", exact: true }),
     ).toBeVisible();
     await page.goto("/admin/portfolio");
-    page.once("dialog", (dialog) => dialog.accept());
+    await browserProject
+      .getByRole("button", { name: "Edit", exact: true })
+      .click();
+    await page.getByLabel("Project title").fill("Unsaved project title");
+    await page
+      .getByRole("navigation", { name: "Admin navigation" })
+      .getByRole("link", { name: "Reviews" })
+      .click();
+    const leave = page.getByRole("dialog", { name: "Leave without saving?" });
+    await expect(leave).toBeVisible();
+    await leave.getByRole("button", { name: "Cancel", exact: true }).click();
+    await expect(page.getByLabel("Project title")).toHaveValue(
+      "Unsaved project title",
+    );
+    await editor.getByRole("button", { name: "Cancel", exact: true }).click();
+    await page
+      .getByRole("dialog", { name: "Discard your changes?" })
+      .getByRole("button", { name: "Discard changes", exact: true })
+      .click();
+    await expect(editor).toHaveCount(0);
+    await browserProject
+      .getByRole("button", { name: "Edit", exact: true })
+      .click();
+    await page
+      .getByLabel("Project description")
+      .fill(
+        "An updated project description saved from the published-project editor.",
+      );
+    await editor
+      .getByRole("button", { name: "Publish Project", exact: true })
+      .click();
+    await expect(editor).toHaveCount(0);
+    await browserProject
+      .getByRole("button", { name: "Unpublish", exact: true })
+      .click();
+    await expect(browserProject.locator(".admin-badge")).toHaveText("draft");
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({
+      path: "qa/admin-ux/portfolio-desktop.png",
+      fullPage: true,
+    });
+    await page.setViewportSize({ width: 375, height: 950 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({
+      path: "qa/admin-ux/portfolio-mobile.png",
+      fullPage: true,
+    });
+    await page.setViewportSize({ width: 1440, height: 950 });
     await browserProject
       .getByRole("button", { name: "Delete", exact: true })
+      .click();
+    const deleteProject = page.getByRole("dialog", {
+      name: "Delete this project?",
+    });
+    await deleteProject
+      .getByRole("button", { name: "Cancel", exact: true })
+      .click();
+    await expect(browserProject).toBeVisible();
+    await browserProject
+      .getByRole("button", { name: "Delete", exact: true })
+      .click();
+    await deleteProject
+      .getByRole("button", { name: "Delete project", exact: true })
       .click();
     await expect(browserProject).toHaveCount(0);
     await page.goto("/reviews");
@@ -789,17 +1007,39 @@ try {
       .locator(".admin-record")
       .filter({ hasText: "Browser Client" });
     await browserReview
+      .getByRole("button", { name: "View Full Review" })
+      .click();
+    const fullReview = page.getByRole("dialog", { name: "Full review" });
+    await expect(fullReview).toContainText("browser@example.test");
+    await page.screenshot({
+      path: "qa/admin-ux/review-detail.png",
+      fullPage: true,
+    });
+    await fullReview
       .getByRole("button", { name: "Approve", exact: true })
       .click();
+    await expect(fullReview.locator(".admin-badge")).toHaveText("approved");
+    await fullReview.getByRole("button", { name: "Close review" }).click();
     await expect(browserReview.locator(".admin-badge")).toHaveText("approved");
     await page.goto("/reviews");
     await expect(
       page.locator(".review-card").filter({ hasText: "Browser Client" }),
     ).toBeVisible();
     await page.goto("/admin/reviews");
-    page.once("dialog", (dialog) => dialog.accept());
+    await browserReview
+      .getByRole("button", { name: "Reject", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", { name: "Reject this review?" })
+      .getByRole("button", { name: "Reject review", exact: true })
+      .click();
+    await expect(browserReview.locator(".admin-badge")).toHaveText("rejected");
     await browserReview
       .getByRole("button", { name: "Delete", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", { name: "Delete this review?" })
+      .getByRole("button", { name: "Delete review", exact: true })
       .click();
     await expect(browserReview).toHaveCount(0);
     check(
@@ -808,7 +1048,12 @@ try {
       "Browser project and review workflows succeed and clean up",
     );
     await page.goto("/admin");
-    await page.screenshot({ path: "qa/admin/dashboard.png", fullPage: true });
+    await page.getByRole("button", { name: "Logout", exact: true }).click();
+    await page
+      .getByRole("dialog", { name: "Sign out?" })
+      .getByRole("button", { name: "Sign out", exact: true })
+      .click();
+    await expect(page).toHaveURL(origin + "/admin/login");
     check(errors.length === 0, "No admin browser errors");
     await context.close();
   } finally {

@@ -1,4 +1,5 @@
 import mongoose, { Schema, type InferSchemaType, type Model } from "mongoose";
+import { socialPlatforms } from "./social-links";
 
 const adminSchema = new Schema(
   {
@@ -72,6 +73,7 @@ projectSchema.index({ status: 1, order: 1, _id: 1 });
 const imageSchema = new Schema(
   {
     data: { type: Buffer, required: true, select: false },
+    thumbnail: { type: Buffer, select: false },
     contentType: { type: String, required: true },
     size: { type: Number, required: true },
     createdBy: { type: Schema.Types.ObjectId, required: true },
@@ -83,6 +85,21 @@ const rateSchema = new Schema({
   count: { type: Number, required: true, default: 0 },
   expiresAt: { type: Date, required: true, expires: 0 },
 });
+const socialLinkSchema = new Schema(
+  {
+    platform: {
+      type: String,
+      enum: socialPlatforms,
+      required: true,
+      unique: true,
+    },
+    url: { type: String, required: true, maxlength: 2000 },
+    enabled: { type: Boolean, default: false, required: true },
+    order: { type: Number, default: 0, required: true, min: 0, max: 1000000 },
+  },
+  { timestamps: true },
+);
+socialLinkSchema.index({ enabled: 1, order: 1, _id: 1 });
 
 function model<T>(name: string, schema: Schema<T>): Model<T> {
   return (mongoose.models[name] as Model<T>) || mongoose.model<T>(name, schema);
@@ -95,3 +112,4 @@ export const Review = model("Review", reviewSchema);
 export const Project = model("Project", projectSchema);
 export const ProjectImage = model("ProjectImage", imageSchema);
 export const RateLimit = model("RateLimit", rateSchema);
+export const SocialLink = model("SocialLink", socialLinkSchema);

@@ -69,16 +69,32 @@ test("reference hero is centered, readable, and correctly branded", async ({
 test("initial hero layout remains stable", async ({ page }) => {
   await page.addInitScript(() => {
     (window as unknown as { layoutShifts: number[] }).layoutShifts = [];
+    (window as unknown as { shiftDetails: unknown[] }).shiftDetails = [];
     new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         const shift = entry as PerformanceEntry & {
           hadRecentInput: boolean;
           value: number;
+          sources?: {
+            node?: Element;
+            previousRect: DOMRectReadOnly;
+            currentRect: DOMRectReadOnly;
+          }[];
         };
-        if (!shift.hadRecentInput)
+        if (!shift.hadRecentInput) {
           (window as unknown as { layoutShifts: number[] }).layoutShifts.push(
             shift.value,
           );
+          (window as unknown as { shiftDetails: unknown[] }).shiftDetails.push({
+            value: shift.value,
+            sources: shift.sources?.map((source) => ({
+              tag: source.node?.tagName,
+              className: source.node?.className,
+              previous: source.previousRect,
+              current: source.currentRect,
+            })),
+          });
+        }
       }
     }).observe({ type: "layout-shift", buffered: true });
   });
@@ -93,5 +109,8 @@ test("initial hero layout remains stable", async ({ page }) => {
       0,
     ),
   );
-  expect(cls).toBeLessThan(0.1);
+  const details = await page.evaluate(
+    () => (window as unknown as { shiftDetails: unknown[] }).shiftDetails,
+  );
+  expect(cls, JSON.stringify(details)).toBeLessThan(0.1);
 });

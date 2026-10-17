@@ -4,6 +4,7 @@ import { navigation, services } from "@/data/content";
 import BrandName from "@/components/ui/BrandName";
 import MotionSurface from "@/components/motion/MotionSurface";
 import Reveal from "@/components/ui/Reveal";
+import SocialLinks from "./SocialLinks";
 export default function Footer() {
   return (
     <footer className="footer container">
@@ -39,14 +40,7 @@ export default function Footer() {
                 </Link>
               ))}
             </div>
-            <div>
-              <h3>Elsewhere</h3>
-              <span className="social-placeholder">LinkedIn · Coming soon</span>
-              <span className="social-placeholder">GitHub · Coming soon</span>
-              <span className="social-placeholder">
-                Instagram · Coming soon
-              </span>
-            </div>
+            <SocialLinks />
           </div>
         </Reveal>
         <div className="footer-bottom">

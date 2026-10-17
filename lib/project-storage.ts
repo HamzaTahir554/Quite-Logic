@@ -54,6 +54,15 @@ export async function storeLogo(
     throw new ApiError(413, "Processed image is too large.");
   const image = await ProjectImage.create({
     data,
+    thumbnail: await sharp(data)
+      .resize({
+        width: 480,
+        height: 320,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 80 })
+      .toBuffer(),
     contentType: "image/webp",
     size: data.length,
     createdBy: adminId,

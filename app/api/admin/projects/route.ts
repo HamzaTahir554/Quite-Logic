@@ -7,6 +7,9 @@ import { validateLogoReference } from "@/lib/project-storage";
 export const GET = endpoint(async (request) => {
   await requireAdmin(request);
   const { skip, limit, page, search, status } = pagination(request);
+  const sort = z
+    .enum(["order", "newest", "oldest"])
+    .parse(new URL(request.url).searchParams.get("sort") || "order");
   const filter = {
     ...(status ? { status: z.enum(["draft", "published"]).parse(status) } : {}),
     ...(search
@@ -19,7 +22,13 @@ export const GET = endpoint(async (request) => {
   };
   const [items, total] = await Promise.all([
     Project.find(filter)
-      .sort({ order: 1, _id: 1 })
+      .sort(
+        sort === "newest"
+          ? { createdAt: -1, _id: -1 }
+          : sort === "oldest"
+            ? { createdAt: 1, _id: 1 }
+            : { order: 1, _id: 1 },
+      )
       .skip(skip)
       .limit(limit)
       .lean(),

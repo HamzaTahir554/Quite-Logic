@@ -19,7 +19,7 @@ export function publicProject(
     description: p.description,
     category: p.category,
     image_url: p.logo,
-    project_url: p.projectUrl || `/portfolio/${p.slug}`,
+    project_url: `/portfolio/${p.slug}`,
     source_slug: p.sourceSlug || null,
   };
 }
@@ -38,17 +38,38 @@ export function publicReview(r: ReviewRecord & { _id: unknown }): PublicReview {
 }
 export const getPublishedProjects = cache(async () => {
   if (!process.env.MONGODB_URI)
-    return { projects: [], total: 0, unavailable: true };
+    return {
+      projects: [],
+      total: 0,
+      categories: [] as string[],
+      unavailable: true,
+    };
   try {
     await connectDB();
     const filter = { status: "published" };
-    const [records, total] = await Promise.all([
+    const [records, total, categories] = await Promise.all([
       Project.find(filter).sort({ order: 1, _id: 1 }).limit(24).lean(),
       Project.countDocuments(filter),
+      Project.distinct("category", filter),
     ]);
-    return { projects: records.map(publicProject), total, unavailable: false };
+    return {
+      projects: records.map(publicProject),
+      total,
+      categories: categories.flatMap((category: string) =>
+        category
+          .split(",")
+          .map((value) => value.trim())
+          .filter(Boolean),
+      ),
+      unavailable: false,
+    };
   } catch {
-    return { projects: [], total: 0, unavailable: true };
+    return {
+      projects: [],
+      total: 0,
+      categories: [] as string[],
+      unavailable: true,
+    };
   }
 });
 export const getApprovedReviews = cache(async (full: boolean) => {

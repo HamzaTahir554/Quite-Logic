@@ -13,6 +13,7 @@ import "./interaction.css";
 import "./crystal.css";
 import "./reviews.css";
 import "./portfolio.css";
+import "./booking.css";
 const manrope = localFont({
   src: "../public/fonts/manrope-latin.woff2",
   weight: "200 800",

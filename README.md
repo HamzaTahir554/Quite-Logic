@@ -26,18 +26,23 @@ MongoDB must be available to manage content. Missing/unavailable database config
 
 ## Admin
 
-Visit `/admin/login` or the subtle footer link. Navigation includes Dashboard, Reviews, Portfolio, Account and Logout.
+Visit `/admin/login` or the subtle footer link. Navigation includes Dashboard, Reviews, Portfolio, Social Links, Account and Logout.
+
+The workspace uses a desktop sidebar and a mobile drawer. Projects include private card/detail previews, inline validation, Save Draft/Publish actions, sorting, image fallbacks and unsaved-change warnings. Review summaries open a full detail dialog. Confirmations protect removals and rejection; toasts and inline errors provide feedback. See [the UX report](qa/ADMIN-UX-REPORT.md) for behavior, screenshots and validation.
 
 - Reviews: clients submit at `/reviews#share-review`; new reviews are pending. Search/filter, approve, reject or delete at `/admin/reviews`. Public queries include approved reviews only, with email omitted.
 - Portfolio: add/edit title, slug, logo, description, category, technologies, URL, featured flag and order at `/admin/portfolio`. Drafts remain private. Publish/unpublish, move earlier/later, edit display order or delete. Lower order appears first. Reordering uses a transaction and works across list pages.
 - New managed projects have `/portfolio/[slug]` detail pages automatically. The original illustrative case-study routes and their animations remain available as editorial content independently of portfolio listing publication. Original slugs retain those curated detail pages.
-- Desktop portfolio hover reveals descriptions in 250–300 ms. Touch reveals details on the first tap; the separate CTA opens the project. Tab, Enter/Space and Escape are supported; reduced motion is honored.
+- Desktop portfolio hover reveals descriptions in 250–300 ms; clicking the logo, title or card opens its detail page. Touch reveals details on the first tap, then View Project opens the page. Keyboard focus/Space reveal details; the scrollable description and CTA are separate Tab targets, Enter opens the project and Escape closes the reveal. Reduced motion is honored.
 - Account: verify the current password before changing it. A successful change revokes every session and requires sign-in again.
+- Social Links: manage LinkedIn, Instagram, GitHub, Facebook, X / Twitter and YouTube at `/admin/settings`. Each platform has one profile URL, an enabled switch and display order. New links are disabled by default. Save, edit, reorder with arrows or confirm deletion; only enabled links appear in the public footer. No social URLs are hardcoded or automatically seeded. The footer fetches fresh data on navigation and when returning to the tab, without rebuilding public pages. Existing MongoDB configuration and replica-set support are reused; no new environment variables or packages are needed.
 - Forgot password: enter email at `/admin/forgot-password`. The response does not disclose account existence. SMTP sends a link valid for 30 minutes. Only its SHA-256 hash is stored. Atomic consumption prevents reuse, including concurrent requests. Resetting also revokes all sessions.
 
 ## Storage and security
 
 Small logos are stored persistently in MongoDB as WebP, behind a storage utility in `lib/project-storage.ts`. Upload accepts PNG/JPEG/WebP, up to 2 MB and 16 megapixels. Sharp decodes and re-encodes the image, checks MIME against its actual format, removes metadata, rejects SVG and animated images, and bounds output dimensions. No writable server disk or third-party storage account is required. The adapter can later be replaced with S3 or Cloudinary.
+
+New uploads also store a small card thumbnail. Existing uploads continue to work through a fallback. Restart a running development server after updating the image schema so its model includes the thumbnail field.
 
 Images are publicly accessible only while referenced by a published project. Authenticated admins can preview drafts. Abandoned/replaced uploads remain in MongoDB for safe reuse; periodically remove unreferenced images after a retention period if storage grows. Back up MongoDB, including the image collection.
 
@@ -56,6 +61,8 @@ This application now requires a **Node.js server**. Static `out/` deployment can
 7. Verify login/logout, a real password-reset email, logo uploads and publication on the final HTTPS domain. Monitor delivery failures and MongoDB availability, and enable backups.
 
 See [implementation report](qa/MONGODB-ADMIN-REPORT.md) for files, routes and validation results.
+See [portfolio and Social Links update](qa/SOCIALS-PORTFOLIO-REPORT.md) for the latest layout, compact header CTA and reduced-motion-aware admin animation changes.
+See [booking experience](qa/BOOKING-REPORT.md) for the official Calendly embed, progress events, motion, validation and account-side branding setup. The booking shell keeps the existing meeting URL and loads Calendly only when opened. Branding removal is controlled by the Calendly account; internal Calendly dates, times and fields retain their vendor behavior.
 
 ## Validation
 
