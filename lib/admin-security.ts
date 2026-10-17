@@ -4,6 +4,7 @@ import { promisify } from "node:util";
 import { cookies } from "next/headers";
 import { database } from "./database";
 import { isAllowedOrigin } from "./request-origin";
+import { safeErrorCategory } from "./server-diagnostics.mjs";
 
 export const sessionCookie = "quite_admin";
 export const digest = (value: string) =>
@@ -107,6 +108,12 @@ export async function createSession(adminId: string) {
   });
 }
 export function apiError(error: unknown) {
+  if (!(error instanceof HttpError))
+    console.error(JSON.stringify({
+      event: "api.server_failure",
+      category: safeErrorCategory(error),
+      at: new Date().toISOString(),
+    }));
   return Response.json(
     {
       message:

@@ -1,5 +1,5 @@
-// Only server configuration is trusted for proxy/public origins; forwarded headers
-// alone never expand this allowlist.
+// Forwarded headers alone never expand this allowlist. Browser-confirmed HTTPS
+// same-origin requests may match Host when a proxy exposes an internal URL.
 export function isAllowedOrigin(
   request: Request,
   env: Record<string, string | undefined> = process.env,
@@ -35,6 +35,19 @@ export function isAllowedOrigin(
     })
   )
     return true;
+  const host = request.headers.get("host");
+  if (
+    origin.protocol === "https:" &&
+    request.headers.get("sec-fetch-site") === "same-origin" &&
+    host &&
+    !/[\s,/@\\?#]/.test(host)
+  ) {
+    try {
+      // Host is the addressed authority; Sec-Fetch-Site is browser-controlled.
+      // Never substitute x-forwarded-host supplied by an arbitrary caller.
+      if (new URL("https://" + host).origin === origin.origin) return true;
+    } catch {}
+  }
   const loopback = (host: string) =>
     ["localhost", "127.0.0.1", "[::1]"].includes(host);
   return (

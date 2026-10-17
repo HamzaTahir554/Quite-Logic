@@ -19,7 +19,7 @@ EMAIL_TO=contact@quitelogic.com
 EMAIL_REPLY_FROM="Quiet Logic <contact@quitelogic.com>"
 ```
 
-Use a **pooled PostgreSQL URL** from Neon, Supabase, or your database provider, preferably in the same region as the website. Remote connections verify TLS certificates. The app opens at most three connections per server instance; provider connection pooling is important for serverless scaling. Do not expose the database to a browser or enable public table access. Enable provider backups and restrict access to production credentials.
+Use the **Supabase PostgreSQL session-pooler URL** for the Hostinger Node.js app, preferably in the same region as the website. Store it as `DATABASE_URL` in `.env.local` and in Hostinger's private environment variables. `SUPABASE_DATABASE_URL` was used only for the completed migration and is not a runtime setting. Remote connections verify TLS certificates. The app opens at most three connections per server instance. Do not expose the database to a browser or enable public table access. Enable provider backups and restrict access to production credentials.
 
 All email uses Resend and the official contact@quitelogic.com address. See [RESEND-SETUP.md](./RESEND-SETUP.md) for sending-domain verification, receiving MX records, signed webhooks, environment settings, and tests. Contact messages are saved before notification; delivery failure returns a friendly error and keeps the inquiry in the Inbox.
 
