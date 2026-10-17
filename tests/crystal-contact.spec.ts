@@ -80,11 +80,11 @@ test("booking stays on site, loads only on demand and closes accessibly", async 
   await expect(
     page
       .getByRole("link", {
-        name: "contact@quitelogic.com",
+        name: "company.quitelogic@gmail.com",
         exact: true,
       })
       .first(),
-  ).toHaveAttribute("href", "mailto:contact@quitelogic.com");
+  ).toHaveAttribute("href", "mailto:company.quitelogic@gmail.com");
   await expect(
     page.getByRole("heading", { name: "Send us a message", exact: true }),
   ).toBeVisible();

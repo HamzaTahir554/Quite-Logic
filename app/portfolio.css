@@ -1,0 +1,130 @@
+.managed-project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.managed-project-grid > div {
+  min-width: 0;
+}
+.managed-project-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 440px;
+  border-radius: 26px;
+  transition:
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+.project-identity-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 26px;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  color: #f0f1f8;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.project-identity-button:focus-visible {
+  outline: 2px solid #a9caff;
+  outline-offset: -5px;
+  border-radius: 26px;
+}
+.managed-project-logo {
+  height: 120px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  transition: transform 300ms ease;
+}
+.managed-project-logo img {
+  width: 100%;
+  max-width: 240px;
+  height: 120px;
+  object-fit: contain;
+}
+.managed-project-logo > span {
+  font-size: 56px;
+  color: #a9caff;
+}
+.managed-project-title {
+  font-size: clamp(21px, 2vw, 30px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.project-disclosure-hint {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #dce9ff;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.managed-project-description {
+  position: absolute;
+  inset: auto 0 0;
+  background: linear-gradient(135deg, #46515d, #303944);
+  border-top: 1px solid #96bfff60;
+  padding: 24px;
+  display: grid;
+  gap: 15px;
+  max-height: 52%;
+  overflow: auto;
+  transform: translateY(101%);
+  opacity: 0;
+  transition:
+    transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 250ms ease;
+  pointer-events: none;
+}
+.managed-project-description p {
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0;
+  color: #edf0f7;
+  overflow-wrap: anywhere;
+}
+.managed-project-description .text-link {
+  font-size: 13px;
+}
+.managed-project-card[data-open="true"] {
+  border-color: #96bfff99;
+  box-shadow: 0 10px 32px #15233433;
+}
+.managed-project-card[data-open="true"] .managed-project-description {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.managed-project-card[data-open="true"] .managed-project-logo {
+  transform: translateY(-10px) scale(0.94);
+}
+@media (max-width: 1100px) {
+  .managed-project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .managed-project-grid {
+    grid-template-columns: 1fr;
+  }
+  .managed-project-card {
+    height: 430px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .managed-project-card,
+  .managed-project-logo,
+  .managed-project-description {
+    transition: none !important;
+  }
+}

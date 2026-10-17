@@ -130,9 +130,7 @@ test("mobile navigation and portfolio interactions", async ({ page }) => {
     .getByRole("button", { name: "Computer Vision", exact: true })
     .click();
   await expect(page.locator(".managed-project-card")).toHaveCount(0);
-  await expect(page.locator(".portfolio-empty")).toContainText(
-    "no published projects",
-  );
+  await expect(page.locator(".portfolio-empty")).toContainText("no projects");
   await page.getByRole("button", { name: "Explore all projects" }).click();
   await expect(page.locator(".managed-project-card")).toHaveCount(3);
   await page
@@ -145,90 +143,49 @@ test("mobile navigation and portfolio interactions", async ({ page }) => {
     .click();
   await expect(page).toHaveURL("/portfolio/atlas-cloud");
 });
-test("contact validation, delivery failure, loading and simulated success", async ({
+test("contact prepares an email draft without backend requests or false success", async ({
   page,
-  request,
 }) => {
-  expect(
-    (
-      await request.post("/api/contact", {
-        headers: {
-          origin: process.env.E2E_BASE_URL || "http://localhost:3000",
-        },
-        data: { name: "x" },
-      })
-    ).status(),
-  ).toBe(400);
-  expect(
-    (
-      await request.post("/api/contact", {
-        headers: { origin: "https://example.com" },
-        data: {},
-      })
-    ).status(),
-  ).toBe(403);
+  const apiCalls: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname.startsWith("/api/"))
+      apiCalls.push(request.url());
+  });
   await visit(page, "/contact");
-  await page.getByRole("button", { name: "Send Project Inquiry" }).click();
+  await page.getByRole("button", { name: "Prepare Email Draft" }).click();
   await expect(
     page.getByText("Please enter at least 2 characters."),
   ).toBeVisible();
-  await page.getByRole("textbox", { name: "Your name" }).fill("Test Person");
+  await page.getByRole("textbox", { name: "Your name" }).fill("Draft Client");
   await page
     .getByRole("textbox", { name: "Email address" })
-    .fill("test@example.com");
-  await page
-    .getByRole("textbox", { name: "Company", exact: true })
-    .fill("Independent");
-  await page.getByRole("combobox", { name: "Project type" }).click();
-  await page.getByRole("option", { name: "Website", exact: true }).click();
-  await page.getByRole("combobox", { name: "Budget range" }).click();
-  await page.getByRole("option", { name: "Let’s discuss" }).click();
+    .fill("client@example.test");
   await page
     .getByRole("textbox", { name: "Tell us about your project" })
-    .fill("We need a thoughtful website for our software product.");
-  // Keep regression runs independent of live mail credentials; never send test inquiries.
-  await page.route("**/api/contact", (route) =>
-    route.fulfill({
-      status: 503,
-      json: {
-        message:
-          "Message delivery is not enabled yet. Please email contact@quitelogic.com or book a meeting.",
-      },
-    }),
+    .fill("A detailed project inquiry prepared entirely in the browser.");
+  await page.getByRole("button", { name: "Prepare Email Draft" }).click();
+  const link = page.getByRole("link", { name: "Open email app" });
+  await expect(link).toHaveAttribute(
+    "href",
+    /^mailto:company\.quitelogic@gmail\.com\?/,
   );
-  await page.getByRole("button", { name: "Send Project Inquiry" }).click();
   await expect(
     page.getByRole("form", { name: "Project inquiry" }).getByRole("alert"),
-  ).toContainText("We couldn't send your message right now");
+  ).toContainText("Nothing has been sent automatically");
   await expect(page.getByRole("textbox", { name: "Your name" })).toHaveValue(
-    "Test Person",
+    "Draft Client",
   );
-  await page.unroute("**/api/contact");
-  await page.route("**/api/contact", async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    await route.fulfill({
-      json: {
-        message: "Thank you. Your inquiry has been sent to Quite Logic.",
-      },
-    });
-  });
-  await page.getByRole("button", { name: "Send Project Inquiry" }).click();
-  await expect(
-    page.getByRole("button", { name: "Sending your inquiry" }),
-  ).toBeDisabled();
-  await expect(
-    page.getByRole("form", { name: "Project inquiry" }).getByRole("alert"),
-  ).toContainText("has been sent");
-  await expect(page.getByRole("textbox", { name: "Your name" })).toHaveValue(
-    "",
-  );
+  await page.getByRole("textbox", { name: "Your name" }).fill("Updated Client");
+  await expect(link).toHaveCount(0);
+  expect(apiCalls).toEqual([]);
 });
+
 test("SEO endpoints and branded 404", async ({ page, request }) => {
   for (const route of [
     "/sitemap.xml",
     "/robots.txt",
     "/manifest.webmanifest",
-    "/social-image?title=Quite",
+    "/social-image.png",
   ])
     expect((await request.get(route)).status()).toBe(200);
   expect((await page.goto("/missing-page"))?.status()).toBe(404);

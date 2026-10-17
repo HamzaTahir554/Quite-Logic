@@ -1,17 +1,15 @@
 import ReviewsSection from "@/components/reviews/PublicReviews";
-import ReviewForm from "@/components/reviews/ReviewForm";
 import { pageMetadata } from "@/lib/seo";
+export const dynamic = "force-dynamic";
 export const metadata = pageMetadata(
   "Client Reviews",
-  "Client experiences with Quite Logic. Read approved reviews or share your project experience.",
+  "Client experiences and perspectives on working with Quite Logic.",
   "/reviews",
 );
-export const dynamic = "force-dynamic";
 export default function ReviewsPage() {
   return (
     <div className="reviews-page">
       <ReviewsSection full />
-      <ReviewForm />
     </div>
   );
 }

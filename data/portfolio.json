@@ -1,0 +1,29 @@
+[
+  {
+    "id": "10000000-0000-4000-8000-000000000002",
+    "title": "Pulse / CRM",
+    "description": "A calm CRM concept that brings pipeline, activity, and customer signals into one readable view.",
+    "category": "Web",
+    "project_url": "/portfolio/pulse-crm",
+    "source_slug": "pulse-crm",
+    "image_url": "/projects/pulse.svg"
+  },
+  {
+    "id": "10000000-0000-4000-8000-000000000001",
+    "title": "Nexa / Ops",
+    "description": "A command center for teams orchestrating AI workflows, approvals, and automations.",
+    "category": "AI",
+    "project_url": "/portfolio/nexa-ops",
+    "source_slug": "nexa-ops",
+    "image_url": "/projects/nexa.svg"
+  },
+  {
+    "id": "10000000-0000-4000-8000-000000000003",
+    "title": "Atlas / Cloud",
+    "description": "Developer-facing infrastructure interface with quick observability, deployments and system status.",
+    "category": "Web",
+    "project_url": "/portfolio/atlas-cloud",
+    "source_slug": "atlas-cloud",
+    "image_url": "/projects/atlas-cloud.svg"
+  }
+]

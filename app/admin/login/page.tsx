@@ -1,17 +1,10 @@
-import AdminLogin from "@/components/admin/AdminLogin";
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ unavailable?: string }>;
-}) {
-  const params = await searchParams;
+import AuthForm from "@/components/admin/AuthForm";
+export default function LoginPage() {
   return (
-    <AdminLogin
-      initialError={
-        params.unavailable === "1"
-          ? "The admin service could not connect. Please try again shortly."
-          : ""
-      }
-    />
+    <section className="admin-auth glass-panel">
+      <h1>Welcome back.</h1>
+      <p>Sign in to manage Quite Logic.</p>
+      <AuthForm mode="login" />
+    </section>
   );
 }

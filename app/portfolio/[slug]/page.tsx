@@ -7,8 +7,12 @@ import AtlasShowcase from "@/components/projects/AtlasShowcase";
 import StructuredData from "@/components/seo/StructuredData";
 import Reveal from "@/components/ui/Reveal";
 import ProjectArtwork from "@/components/projects/ProjectArtwork";
+import LegacyProjectRedirect from "@/components/projects/LegacyProjectRedirect";
+import { getProjectDetail } from "@/lib/project-detail";
+import Image from "next/image";
+export const dynamic = "force-dynamic";
 export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+  return [...projects.map((p) => ({ slug: p.slug })), { slug: "lens-insight" }];
 }
 export async function generateMetadata({
   params,
@@ -16,7 +20,26 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (slug === "lens-insight")
+    return {
+      ...pageMetadata(
+        "Atlas / Cloud — Product Concept",
+        "Explore the Atlas / Cloud product concept.",
+        "/portfolio/atlas-cloud",
+      ),
+      robots: { index: false, follow: true },
+    };
   const project = projects.find((p) => p.slug === slug);
+  if (!project) {
+    const managed = await getProjectDetail(slug);
+    return managed
+      ? pageMetadata(
+          managed.title,
+          managed.shortDescription || managed.description.slice(0, 160),
+          `/portfolio/${slug}`,
+        )
+      : {};
+  }
   return project
     ? pageMetadata(
         `${project.title} — Product Concept`,
@@ -31,8 +54,54 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (slug === "lens-insight") return <LegacyProjectRedirect />;
   const p = projects.find((p) => p.slug === slug);
-  if (!p) notFound();
+  if (!p) {
+    const managed = await getProjectDetail(slug);
+    if (!managed) notFound();
+    return (
+      <div className="project-detail">
+        <StructuredData
+          path={`/portfolio/${managed.slug}`}
+          name={managed.title}
+          parents={[{ name: "Portfolio", path: "/portfolio" }]}
+        />
+        <PageHero
+          label={managed.category || "Project"}
+          title={managed.title}
+          description={managed.shortDescription || ""}
+          variant="project"
+        />
+        <section className="container case-study">
+          <Image
+            unoptimized
+            src={managed.logo}
+            alt={`${managed.title} logo`}
+            width={400}
+            height={240}
+            style={{ objectFit: "contain", maxWidth: "100%" }}
+          />
+          <p style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
+            {managed.description}
+          </p>
+          {managed.technologies.length > 0 && (
+            <p>{managed.technologies.join(" · ")}</p>
+          )}
+          {managed.projectUrl && (
+            <a className="text-link" href={managed.projectUrl}>
+              View project ↗
+            </a>
+          )}
+          <p>
+            <Link className="text-link" href="/portfolio">
+              ← Back to portfolio
+            </Link>
+          </p>
+        </section>
+        <CTA />
+      </div>
+    );
+  }
   return (
     <div className="project-detail">
       <StructuredData
@@ -84,9 +153,9 @@ export default async function ProjectPage({
           the proposed direction; they do not represent a shipped client
           implementation or measured results.
         </p>
-        <a className="text-link" href="/portfolio">
+        <Link className="text-link" href="/portfolio">
           ← Back to all concepts
-        </a>
+        </Link>
       </section>
       <CTA />
     </div>

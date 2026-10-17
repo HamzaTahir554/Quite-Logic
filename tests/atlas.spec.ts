@@ -45,8 +45,8 @@ test("Atlas replaces the project across routes, metadata, breadcrumbs and sitema
   const legacy = await request.get("/portfolio/lens-insight", {
     maxRedirects: 0,
   });
-  expect(legacy.status()).toBe(308);
-  expect(legacy.headers().location).toBe("/portfolio/atlas-cloud");
+  expect(legacy.status()).toBe(200);
+  expect(await legacy.text()).toContain("/portfolio/atlas-cloud");
   await page.goto("/portfolio/lens-insight");
   await expect(page).toHaveURL("/portfolio/atlas-cloud");
 });

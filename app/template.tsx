@@ -3,8 +3,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
 export default function Template({ children }: { children: React.ReactNode }) {
   const reduced = useReducedMotion();
-  const admin = usePathname().startsWith("/admin");
-  if (admin) return <>{children}</>;
+  const pathname = usePathname();
+  if (pathname === "/admin" || pathname.startsWith("/admin/"))
+    return <>{children}</>;
   return (
     <motion.div
       initial={false}

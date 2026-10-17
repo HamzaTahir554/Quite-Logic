@@ -1,0 +1,227 @@
+.admin-shell {
+  max-width: 1120px;
+  margin: auto;
+  padding: 30px 24px 80px;
+  min-height: 100vh;
+  color: #edf0f7;
+}
+.admin-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #ffffff24;
+  margin-bottom: 24px;
+}
+.admin-brand a {
+  font-size: 24px;
+  font-weight: 700;
+}
+.admin-brand span,
+.admin-shell .muted {
+  color: #c2cbd7;
+}
+.admin-shell h1 {
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.2;
+  margin: 28px 0 12px;
+}
+.admin-shell h2 {
+  font-size: 22px;
+  line-height: 1.4;
+  margin: 0;
+}
+.admin-shell p {
+  line-height: 1.7;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.admin-auth {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 20px;
+}
+.admin-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+}
+.admin-shell label,
+.review-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+.admin-shell input,
+.admin-shell textarea,
+.admin-shell select,
+.review-form input,
+.review-form textarea,
+.review-form select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #a9caff55;
+  border-radius: 9px;
+  background: #252d36;
+  color: #f3f6fb;
+  font: inherit;
+}
+.admin-shell textarea {
+  resize: vertical;
+}
+.admin-shell :focus-visible,
+.review-form :focus-visible {
+  outline: 2px solid #a9caff;
+  outline-offset: 3px;
+}
+.admin-shell button {
+  cursor: pointer;
+  font: inherit;
+}
+.admin-shell button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.admin-nav,
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.admin-nav {
+  margin-bottom: 35px;
+}
+.admin-nav a,
+.admin-nav button,
+.admin-actions button {
+  padding: 10px 16px;
+  border: 1px solid #a9caff44;
+  border-radius: 9px;
+  color: #edf0f7;
+  background: #ffffff0a;
+  text-decoration: none;
+}
+.admin-nav [aria-current="page"] {
+  background: #a9caff25;
+  border-color: #a9caff;
+}
+.admin-nav button {
+  margin-left: auto;
+}
+.admin-controls {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 18px;
+  margin: 28px 0;
+}
+.admin-list {
+  display: grid;
+  gap: 18px;
+  margin: 24px 0;
+}
+.admin-record,
+.admin-editor {
+  border-radius: 18px;
+  padding: 24px;
+  min-width: 0;
+}
+.admin-record-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+.admin-record blockquote {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 18px 0;
+}
+.admin-badge {
+  padding: 5px 12px;
+  border-radius: 99px;
+  text-transform: capitalize;
+  font-size: 12px;
+  background: #bfa96830;
+  color: #ffe3a6;
+}
+.admin-badge[data-status="approved"],
+.admin-badge[data-status="published"] {
+  background: #79c89c22;
+  color: #b3f5cf;
+}
+.admin-badge[data-status="rejected"] {
+  background: #ec8f8f22;
+  color: #ffc4c4;
+}
+.admin-shell .danger,
+.admin-error {
+  color: #ffc4c4;
+}
+.admin-success {
+  color: #b3f5cf;
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin: 28px 0;
+}
+.admin-stats a {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 16px;
+}
+.admin-stats strong {
+  font-size: 36px;
+}
+.admin-editor {
+  margin-top: 24px;
+}
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.admin-form .admin-checkbox {
+  display: flex;
+  align-items: center;
+}
+.admin-checkbox input {
+  width: auto;
+}
+.admin-logo-preview {
+  object-fit: contain;
+}
+.admin-shell .small {
+  font-size: 13px;
+}
+@media (max-width: 700px) {
+  .admin-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .admin-controls,
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-nav button {
+    margin-left: 0;
+  }
+  .admin-shell {
+    padding: 20px 16px 50px;
+  }
+  .admin-auth,
+  .admin-record,
+  .admin-editor {
+    padding: 20px;
+  }
+  .admin-brand {
+    align-items: start;
+    flex-direction: column;
+  }
+}

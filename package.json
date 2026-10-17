@@ -8,14 +8,21 @@
     "start": "next start",
     "dev": "next dev",
     "build": "next build",
+    "lint": "eslint .",
+    "admin:create": "tsx scripts/setup-admin.ts",
+    "db:check": "tsx scripts/check-db.ts",
+    "db:seed": "tsx scripts/seed-portfolio.ts",
+    "test:admin": "tsx scripts/test-admin.ts",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test",
-    "db:migrate": "node scripts/database.mjs",
-    "admin:setup": "node scripts/database.mjs --admin",
-    "test:server": "node scripts/test-server.mjs"
+    "test:e2e": "playwright test"
   },
   "engines": {
     "node": ">=24 <25"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "disablePostinstall": true
+    }
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -25,33 +32,33 @@
     "@mui/material-nextjs": "^9.5.0",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
-    "@supabase/ssr": "^0.12.7",
-    "@supabase/supabase-js": "^2.118.0",
     "framer-motion": "^14.3.0",
     "gsap": "^3.15.0",
-    "html-to-text": "^10.0.1",
+    "mongodb": "^7.7.0",
+    "mongoose": "^9.11.2",
     "next": "^16.4.1",
     "nodemailer": "^10.1.2",
-    "pg": "^8.23.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "resend": "^6.34.1",
+    "server-only": "^0.0.1",
     "sharp": "^0.35.5",
     "three": "^0.186.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.10",
-    "@electric-sql/pglite-socket": "^0.2.13",
     "@playwright/test": "^1.64.1",
-    "@types/html-to-text": "^9.0.4",
     "@types/node": "^26.6.5",
     "@types/nodemailer": "^8.0.2",
-    "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.186.0",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "mongodb-memory-server": "^11.3.0",
     "prettier": "^3.9.10",
-    "typescript": "^7.0.2"
+    "tsx": "^4.23.15",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-eslint": "^8.71.2"
   }
 }

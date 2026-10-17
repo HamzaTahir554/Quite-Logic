@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import localFont from "next/font/local";
 import Providers from "@/components/Providers";
 import SiteChrome from "@/components/layout/SiteChrome";
 import { siteUrl } from "@/lib/seo";
@@ -11,10 +11,11 @@ import "./service-cube.css";
 import "./services-editorial.css";
 import "./interaction.css";
 import "./crystal.css";
-import "./reviews-admin.css";
-import "./account-portfolio.css";
-const manrope = Manrope({
-  subsets: ["latin"],
+import "./reviews.css";
+import "./portfolio.css";
+const manrope = localFont({
+  src: "../public/fonts/manrope-latin.woff2",
+  weight: "200 800",
   variable: "--font-manrope",
   display: "swap",
 });

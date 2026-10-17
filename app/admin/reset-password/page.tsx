@@ -1,12 +1,18 @@
-import Link from "next/link";
-import PasswordForm from "@/components/admin/PasswordForm";
-export default function ResetPage() {
+import AuthForm from "@/components/admin/AuthForm";
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>;
+}) {
+  const { token } = await searchParams;
+  const valid = typeof token === "string" && /^[a-f0-9]{64}$/.test(token);
   return (
-    <div className="admin-login">
-      <Link className="admin-brand" href="/">
-        Quite Logic ↗
-      </Link>
-      <PasswordForm mode="reset" />
-    </div>
+    <section className="admin-auth glass-panel">
+      <h1>Reset password.</h1>
+      {!valid && (
+        <p role="alert">This reset link is invalid. Request a new link.</p>
+      )}
+      <AuthForm mode="reset-password" token={valid ? token : ""} />
+    </section>
   );
 }

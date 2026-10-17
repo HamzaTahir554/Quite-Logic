@@ -7,7 +7,7 @@ export function pageMetadata(
   description: string,
   path = "/",
 ): Metadata {
-  const image = `/social-image?title=${encodeURIComponent(title)}`;
+  const image = "/social-image.png";
   return {
     title,
     description,

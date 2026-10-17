@@ -1,83 +1,69 @@
 # Quite Logic
 
-> **Current outgoing email:** Resend SMTP is now used through Nodemailer. See [SMTP-SETUP.md](./SMTP-SETUP.md) for the active configuration and domain verification checklist. The signed Resend inbound webhook remains in use. SMTP does not provide the HTTP API idempotency guarantee described in the original implementation; uncertain sends are held for manual review.
+Existing Next.js 16.4.1 App Router website, React 19, strict TypeScript, MUI, Framer Motion, GSAP and Three.js. MongoDB now powers admin accounts, review moderation, and the public portfolio. Existing public pages, glass styling, animations, Calendly and the browser email-draft contact flow are retained.
 
+## Local setup
 
-Next.js App Router website built with TypeScript, MUI, React Three Fiber, Three.js, Drei, Framer Motion, and GSAP. The supplied `Demo/` and `snapshots/` references are preserved.
+Use Node.js 24. Copy `.env.example` to `.env.local` and fill in your own values. Keep `.env.local` private.
 
-## Development
+For local development, set both `APP_URL` and `NEXT_PUBLIC_SITE_URL` to `http://localhost:3000`. Use the final HTTPS origin in production.
 
-Requires Node.js 24 and npm.
-
-```powershell
-npm.cmd ci
-Copy-Item .env.example .env.local
-npm.cmd run dev
+```sh
+npm install
+npm run db:check
+npm run admin:create
+npm run db:seed
+npm run dev
 ```
 
-Open http://localhost:3000. On Windows, `npm.cmd` avoids the PowerShell script execution policy restriction.
+`admin:create` prompts for an email and hidden password. Passwords require 12–128 characters, uppercase and lowercase letters, a number, and a symbol. No default admin or public signup exists. Existing accounts are never overwritten by this command.
+
+`db:check` verifies MongoDB connectivity without creating an account or printing the connection string. If `MONGODB_URI` is missing, add your actual Atlas application connection string to `.env.local`, including the database name and database user credentials. Replace Atlas placeholders and URL-encode special characters in credentials. The admin creation command checks database readiness before asking for account details and reports configuration, connectivity, permission, and existing-account failures separately.
+
+`db:seed` imports the three existing portfolio concepts from `data/portfolio.json` into MongoDB without overwriting existing edits. This is an explicit, one-time migration; public portfolio cards subsequently use MongoDB. `data/reviews.json` is empty, so no testimonials are invented or migrated. Existing editorial case-study content remains in `data/content.ts`.
+
+MongoDB must be available to manage content. Missing/unavailable database configuration produces a friendly public empty state and generic API errors; it does not substitute fake database data. Build validation does not need production credentials.
+
+## Admin
+
+Visit `/admin/login` or the subtle footer link. Navigation includes Dashboard, Reviews, Portfolio, Account and Logout.
+
+- Reviews: clients submit at `/reviews#share-review`; new reviews are pending. Search/filter, approve, reject or delete at `/admin/reviews`. Public queries include approved reviews only, with email omitted.
+- Portfolio: add/edit title, slug, logo, description, category, technologies, URL, featured flag and order at `/admin/portfolio`. Drafts remain private. Publish/unpublish, move earlier/later, edit display order or delete. Lower order appears first. Reordering uses a transaction and works across list pages.
+- New managed projects have `/portfolio/[slug]` detail pages automatically. The original illustrative case-study routes and their animations remain available as editorial content independently of portfolio listing publication. Original slugs retain those curated detail pages.
+- Desktop portfolio hover reveals descriptions in 250–300 ms. Touch reveals details on the first tap; the separate CTA opens the project. Tab, Enter/Space and Escape are supported; reduced motion is honored.
+- Account: verify the current password before changing it. A successful change revokes every session and requires sign-in again.
+- Forgot password: enter email at `/admin/forgot-password`. The response does not disclose account existence. SMTP sends a link valid for 30 minutes. Only its SHA-256 hash is stored. Atomic consumption prevents reuse, including concurrent requests. Resetting also revokes all sessions.
+
+## Storage and security
+
+Small logos are stored persistently in MongoDB as WebP, behind a storage utility in `lib/project-storage.ts`. Upload accepts PNG/JPEG/WebP, up to 2 MB and 16 megapixels. Sharp decodes and re-encodes the image, checks MIME against its actual format, removes metadata, rejects SVG and animated images, and bounds output dimensions. No writable server disk or third-party storage account is required. The adapter can later be replaced with S3 or Cloudinary.
+
+Images are publicly accessible only while referenced by a published project. Authenticated admins can preview drafts. Abandoned/replaced uploads remain in MongoDB for safe reuse; periodically remove unreferenced images after a retention period if storage grows. Back up MongoDB, including the image collection.
+
+Server checks protect every admin page and API. Passwords use salted scrypt; opaque 256-bit sessions are stored as SHA-256 hashes and expire in eight hours. Cookies are HttpOnly, SameSite=Strict and Secure in production. Sessions are checked against an account version for immediate revocation. JSON bodies, upload streams, IDs, status values, URLs and slugs are validated. Browser mutations require the configured same origin. MongoDB-backed rate limits cover login, recovery, review submission and uploads; sessions and rate-limit records have TTL indexes. Expiration checks do not depend on TTL cleanup timing. Lists are paginated and public projections omit private fields. Public database reads are deduplicated per render and intentionally read current moderation/publication state.
 
 ## Production
 
-```powershell
-npm.cmd run build
-npm.cmd start
+This application now requires a **Node.js server**. Static `out/` deployment cannot run its admin panel or APIs. The old static preview/finalization scripts and Apache `.htaccess` are legacy artifacts and are not used by `build` or `start`.
+
+1. Create a MongoDB Atlas database/user with access limited to this application database. Allow the application host's network address. A replica set is required for transactional reordering; Atlas provides one.
+2. Set `MONGODB_URI` with the database name, `APP_URL` to the exact public HTTPS origin, and `NEXT_PUBLIC_SITE_URL` to the same origin. Rebuild when changing the public URL.
+3. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM` using a sender authorized by your mail provider. Port 465 uses TLS; 587 uses STARTTLS. Leave `SMTP_REQUIRE_TLS=true` for production. Verify real reset email delivery before relying on recovery.
+4. Run `npm run admin:create` and `npm run db:seed` against that database from a trusted machine. These initialize model indexes as well as content/accounts. Never use production credentials for tests.
+5. Run `npm run lint`, `npm run typecheck`, `npm run build`, then `npm start`. Set the host's `PORT` as needed. Deploy source/build and production dependencies to a Node-capable host, not an old static web root. Use HTTPS and a reverse proxy with body/time limits.
+6. Set `TRUST_PROXY=true` only when a trusted proxy overwrites `X-Forwarded-For`. Without it, IP-based limits safely share a bucket; per-email/admin limits remain active. Configure edge rate limiting for public reads and large/slow requests.
+7. Verify login/logout, a real password-reset email, logo uploads and publication on the final HTTPS domain. Monitor delivery failures and MongoDB availability, and enable backups.
+
+See [implementation report](qa/MONGODB-ADMIN-REPORT.md) for files, routes and validation results.
+
+## Validation
+
+```sh
+npm run lint
+npm run typecheck
+npm run build
+npm run test:admin
 ```
 
-Use a host supporting Next.js 16 with Node.js 24, such as Vercel or a Node server. This application includes a server-side contact endpoint and dynamic social images. It is not a static-only export. The first build needs network access to download Manrope through `next/font`; the generated site self-hosts the font.
-
-Before public launch:
-
-- Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS domain before building. It powers canonical URLs, structured data, social metadata, and the sitemap. Development falls back to localhost.
-- Configure hosted `DATABASE_URL` and Resend environment settings, run the migration, and create your admin using [ADMIN-SETUP.md](./ADMIN-SETUP.md).
-- Shared PostgreSQL rate limits apply across serverless instances. Endpoints also validate origin, content, payload size, and honeypots. Contact limits are five inquiries per sender and 60 total per 15 minutes; reviews and login have separate limits.
-- Replace the explicitly labeled illustrative portfolio concepts with authorized client work when available. No customer results or testimonials are fabricated.
-- Replace the visibly marked social placeholders with real company profile links.
-- Review the privacy information needed for your business before collecting inquiries publicly.
-
-Contact inquiries are stored in PostgreSQL and Resend notifications go to `contact@quitelogic.com`. Admin compose/replies and password recovery use the same server-only provider. The protected Admin Inbox also receives direct email through verified Resend webhooks once receiving DNS is configured. See [RESEND-SETUP.md](./RESEND-SETUP.md) for the complete setup, routes, tests, and required manual DNS steps. Failed forms retain their values, and notification failures do not discard stored inquiries.
-
-“Book a Meeting” opens the official [Calendly page](https://calendly.com/company-quitelogic/30min) in an accessible modal from the header, contact page, and final CTAs. The iframe loads only when requested, with a direct-link fallback, fixed dimensions, close control, Escape dismissal, and focus restoration. Color parameters follow [Calendly’s documentation](https://calendly.com/help/how-to-customize-your-embed); Calendly controls embedded content and color customization may depend on its plan. No test bookings are created.
-
-## Architecture
-
-- `app/`: homepage, services, about, work/process, portfolio, contact, concept detail pages, SEO endpoints, and branded loading/error/404 states.
-- `components/`: shared navigation, footer, page sections, UI, SEO, and dynamically loaded hero scene.
-- `data/content.ts`: editable navigation, services, project concepts, and process copy.
-- `theme/theme.ts` and `app/globals.css`: brand tokens, MUI customization, layout, motion, and responsive design.
-- `lib/contact.ts`: shared form schema and options.
-- `app/api/contact/route.ts`: persistent inquiry storage and Resend notifications.
-- `app/admin/`, `app/api/admin/`, `database/`: authenticated review moderation, client records, and email history.
-- `public/logo/`: original supplied branding; `public/projects/`: local concept artwork.
-
-The shared design system uses Smoky Gray `#4B5560` for the page, Slate `#303944` for contrast, Card Gray `#596572` for surfaces, Blue `#2F80FE` for accents, and Off White `#F0F1F8` for primary text. The shared brand component gives Quite and Logic their distinct colors.
-
-The homepage retains its six-faced service cube: Web, Apps, AI Automation, AI Vision, Custom Software, and Explore All. Desktop uses a lazy-loaded React Three Fiber scene with generated local textures, capped DPR, quaternion snapping, scroll selection, raycast face selection, drag, hover, and deliberate autoplay. Tablet/mobile use a lightweight CSS cube with horizontal touch swipes and native vertical scrolling. Accessible buttons and previous/next controls work in both renderers. Reduced motion disables autoplay, WebGL, pointer tilt, and transition animation without hiding service content. Unsupported WebGL and limited device capabilities retain the CSS experience. MUI Drawer provides mobile focus management and Escape dismissal.
-
-`components/motion/` contains sharp scale CTAs, the dot-and-ring cursor, progress/navigation effects, crystal reflections and page-banner treatments. Desktop banner text uses bounded, interpolated translation/rotation; touch and reduced-motion users retain still text. The Services page uses five alternating image/text editorials, matched by filename from `services images/` to `public/services/`, with reserved image space, mask reveals and bounded desktop image movement. Its old cube mount, sculpture markup, scroll controller and unused styles are removed. Three.js/R3F dependencies remain in use on the homepage. How We Work and Philosophy are removed only from Home; their other pages remain intact. Scene rendering and service autoplay pause outside the nearby viewport and in inactive tabs. Continuous decorative motion is scoped to visible sections and pauses in inactive tabs. Animation instances, textures, geometry, listeners, observers, timers, and GSAP contexts have cleanup paths. `app/studio.css` and `app/interaction.css` style the shared pages and interactions; `app/hero.css` implements the centered home hero and branding. `app/atlas-motion.css` styles project visuals, banners, and the Atlas showcase using shared gray tokens. `app/service-cube.css` styles the signature cube, lighter panels, and animated slate footer. Scrolling remains native.
-
-The cube follows the mouse on desktop, including its CSS fallback. Mobile uses passive face rotation, horizontal swipes, and buttons. The site does not access physical motion sensors or request motion permissions. Live reduced-motion preferences stop scene animation and autoplay without a reload.
-
-See [the design system report](qa/DESIGN-SYSTEM-REPORT.md) for the underlying visuals. Capture the signature interaction with `node qa/capture-cube.mjs`; run `node qa/audit-design.mjs` for a short desktop frame/CLS sample. These default to port 3100 and accept `E2E_BASE_URL`. Atlas / Cloud retains its shared illustrative terminal showcase on the homepage, portfolio, and `/portfolio/atlas-cloud` detail page. The previous project URL permanently redirects to the replacement. The earlier [Atlas report](qa/ATLAS-REPORT.md) records that feature's implementation.
-
-## Verification
-
-```powershell
-npm.cmd run typecheck
-npx.cmd playwright install chromium
-npm.cmd run build
-npm.cmd run test:e2e
-```
-
-Automated tests cover review moderation, authentication, server email payloads/failures, shared rate limiting, editorial services, crystal banner movement, modal booking, cursor states and edge tracking, the palette, six-face cube, desktop mouse input, mobile touch and native scrolling, absence of sensor access and permission controls, live reduced-motion preferences, Atlas, navigation, portfolio, contact, SEO, banner, branding, and layout checks. All core routes are checked at seven widths (320–1440px). Screenshots are captured in `qa/screenshots/`. Tests do not send live email.
-
-For an isolated local test server, run `$env:E2E_BASE_URL='http://localhost:3100'; npm.cmd run test:e2e`. Set the final site origin through `NEXT_PUBLIC_SITE_URL` for deployment; the test server port does not alter canonical configuration.
-## Client reviews and admin
-
-See [ADMIN-SETUP.md](./ADMIN-SETUP.md) for hosted PostgreSQL, Resend, database migration, secure admin creation, and integration-test instructions. Public reviews live at `/reviews`; moderation and client messaging live at `/admin`.
-
-#   Q u i t e - L o g i c  
- #   Q u i t e - L o g i c  
- #   Q u i t e - L o g i c  
- #   Q u i t e - L o g i c  
- 
+`test:admin` launches a disposable local MongoDB replica set, local SMTP sink and the production Next.js server on ports 3217/3218. It checks auth, CSRF, moderation/privacy, upload validation, project CRUD/reordering, reset email delivery and one-use/expired tokens, password changes, server restart/session persistence, responsive admin screens, then the existing Playwright browser suite. It never uses the production database or SMTP credentials. The first run downloads a MongoDB test binary; Chromium must be installed (`npx playwright install chromium`). Set `ADMIN_TEST_PORT` to use another port pair. All child services stop afterward. `npm run test:e2e` can also target an already configured local test server using `E2E_BASE_URL`.

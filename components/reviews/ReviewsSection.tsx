@@ -1,39 +1,44 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import type { PublicReview } from "@/lib/reviews";
 import Reveal from "@/components/ui/Reveal";
+import ReviewForm from "./ReviewForm";
+import { useState } from "react";
+import Image from "next/image";
 
 export default function ReviewsSection({
   full = false,
-  initialReviews,
+  reviews,
+  total = reviews.length,
+  unavailable = false,
 }: {
   full?: boolean;
-  initialReviews: PublicReview[] | null;
+  reviews: PublicReview[];
+  total?: number;
+  unavailable?: boolean;
 }) {
-  const [reviews, setReviews] = useState<PublicReview[]>(initialReviews || []);
-  const [state, setState] = useState(initialReviews ? "ready" : "error");
-  const [page, setPage] = useState(0);
-  const [more, setMore] = useState(initialReviews?.length === 12);
   const Heading = full ? "h1" : "h2";
-  useEffect(() => {
-    if (page === 0) return;
-    const controller = new AbortController();
-    fetch(`/api/reviews?page=${page}`, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        setReviews((previous) =>
-          page ? [...previous, ...data.reviews] : data.reviews,
-        );
-        setMore(data.reviews.length === 12);
-        setState("ready");
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) setState("error");
-      });
-    return () => controller.abort();
-  }, [page]);
+  const [additional, setAdditional] = useState<PublicReview[]>([]),
+    [loading, setLoading] = useState(false),
+    [error, setError] = useState("");
+  const allReviews = [...reviews, ...additional];
+  async function loadMore() {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        `/api/reviews?page=${Math.floor(allReviews.length / 24) + 1}&limit=24`,
+      );
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error("Reviews could not be loaded. Please try again.");
+      setAdditional((previous) => [...previous, ...data.reviews]);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <section
       className="reviews-section section"
@@ -49,17 +54,13 @@ export default function ReviewsSection({
               </Heading>
               <p>Experiences shared by the people we build with.</p>
             </div>
-            <Link className="ql-button" href="/reviews#submit-review">
-              Submit a Review <span aria-hidden="true">↗</span>
+            <Link className="ql-button" href="/reviews#share-review">
+              Share your experience <span aria-hidden="true">↗</span>
             </Link>
           </div>
         </Reveal>
-        <div
-          className="reviews-grid"
-          aria-live="polite"
-          aria-busy={state === "loading"}
-        >
-          {(full ? reviews : reviews.slice(0, 3)).map((review) => (
+        <div className="reviews-grid" aria-live="polite">
+          {(full ? allReviews : reviews.slice(0, 3)).map((review) => (
             <Reveal key={review.id}>
               <article className="review-card glass-panel">
                 <div className="review-top">
@@ -76,9 +77,10 @@ export default function ReviewsSection({
                 </div>
                 <blockquote>{review.body}</blockquote>
                 <div className="review-person">
-                  {review.has_image ? (
-                    <img
-                      src={`/api/review-images/${review.id}`}
+                  {review.image_url ? (
+                    <Image
+                      unoptimized
+                      src={review.image_url!}
                       alt=""
                       width={48}
                       height={48}
@@ -111,37 +113,31 @@ export default function ReviewsSection({
           {reviews.length === 0 && (
             <div className="review-empty glass-panel">
               <p>
-                {state === "loading"
-                  ? "Loading client perspectives…"
-                  : state === "error"
-                    ? "Client reviews are temporarily unavailable. Please check back soon."
-                    : "Our next chapter starts with your perspective."}
+                {unavailable
+                  ? "Reviews are temporarily unavailable."
+                  : "Our next chapter starts with your perspective."}
               </p>
               <span>
-                {state === "ready"
-                  ? "Worked with Quite Logic? Share your experience. Reviews appear after approval."
-                  : "We publish client reviews only after approval."}
+                Worked with Quite Logic? We&apos;d love to hear about your
+                experience.
               </span>
             </div>
           )}
         </div>
-        {full && more && (
-          <button
-            className="ql-button"
-            disabled={state === "loading"}
-            onClick={() => {
-              setState("loading");
-              setPage((value) => value + 1);
-            }}
-          >
-            Load more reviews
-          </button>
-        )}
-        {!full && reviews.length > 3 && (
+        {!full && total > 3 && (
           <Link className="ql-button" href="/reviews">
             Read all reviews ↗
           </Link>
         )}
+        {full && allReviews.length < total && (
+          <p>
+            <button className="ql-button" disabled={loading} onClick={loadMore}>
+              {loading ? "Loading…" : "Load more reviews"}
+            </button>
+          </p>
+        )}
+        {error && <p role="alert">{error}</p>}
+        {full && <ReviewForm />}
       </div>
     </section>
   );

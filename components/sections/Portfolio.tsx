@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Reveal from "@/components/ui/Reveal";
-import type { ManagedProject } from "@/lib/portfolio";
+import type { PortfolioProject } from "@/lib/portfolio";
 import { projects as originalConcepts } from "@/data/content";
 const baseFilters = [
   "All",
@@ -15,13 +15,36 @@ const baseFilters = [
 ];
 export default function Portfolio({
   projects,
+  total = projects.length,
   unavailable = false,
 }: {
-  projects: ManagedProject[];
+  projects: PortfolioProject[];
+  total?: number;
   unavailable?: boolean;
 }) {
   const [filter, setFilter] = useState("All");
-  const categories = (project: ManagedProject) => {
+  const [additional, setAdditional] = useState<PortfolioProject[]>([]),
+    [loading, setLoading] = useState(false),
+    [error, setError] = useState("");
+  const allProjects = [...projects, ...additional];
+  async function loadMore() {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        `/api/projects?page=${Math.floor(allProjects.length / 24) + 1}&limit=24`,
+      );
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error("Projects could not be loaded. Please try again.");
+      setAdditional((previous) => [...previous, ...data.projects]);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+  const categories = (project: PortfolioProject) => {
     const original = originalConcepts.find(
       (concept) => concept.slug === project.source_slug,
     );
@@ -33,9 +56,9 @@ export default function Portfolio({
       .filter(Boolean);
   };
   const filters = [
-    ...new Set([...baseFilters, ...projects.flatMap(categories)]),
+    ...new Set([...baseFilters, ...allProjects.flatMap(categories)]),
   ];
-  const selected = projects.filter(
+  const selected = allProjects.filter(
     (project) => filter === "All" || categories(project).includes(filter),
   );
   return (
@@ -68,15 +91,25 @@ export default function Portfolio({
           </Reveal>
         ))}
       </div>
+      {allProjects.length < total && (
+        <p>
+          <button
+            className="button secondary"
+            disabled={loading}
+            onClick={loadMore}
+          >
+            {loading ? "Loading…" : "Load more projects"}
+          </button>
+        </p>
+      )}
+      {error && <p role="alert">{error}</p>}
       {!selected.length && (
         <div className="portfolio-empty" role="status">
-          <h2>
-            {unavailable ? "We'll be right back." : "More possibilities ahead."}
-          </h2>
+          <h2>More possibilities ahead.</h2>
           <p>
             {unavailable
-              ? "The portfolio is temporarily unavailable. Please check back soon."
-              : "There are no published projects in this discipline yet."}
+              ? "Projects are temporarily unavailable. Please check back soon."
+              : "There are no projects in this discipline yet."}
           </p>
           {filter !== "All" && (
             <button
@@ -91,17 +124,13 @@ export default function Portfolio({
     </section>
   );
 }
-function PortfolioCard({ project }: { project: ManagedProject }) {
+function PortfolioCard({ project }: { project: PortfolioProject }) {
   const [expanded, setExpanded] = useState(false),
     [hovered, setHovered] = useState(false),
     [focused, setFocused] = useState(false);
-  const router = useRouter();
   const open = expanded || hovered || focused;
   function select() {
-    if (expanded && project.project_url) {
-      if (project.project_url.startsWith("/")) router.push(project.project_url);
-      else window.location.assign(project.project_url);
-    } else setExpanded((value) => !value);
+    setExpanded((value) => !value);
   }
   return (
     <article
@@ -134,8 +163,9 @@ function PortfolioCard({ project }: { project: ManagedProject }) {
       >
         <span className="managed-project-logo">
           {project.image_url ? (
-            <img
-              src={`${project.image_url}${project.image_url.startsWith("/api/") ? `?v=${encodeURIComponent(project.updated_at)}` : ""}`}
+            <Image
+              unoptimized
+              src={project.image_url}
               alt={`${project.title} logo`}
               width={240}
               height={160}
@@ -148,10 +178,6 @@ function PortfolioCard({ project }: { project: ManagedProject }) {
         </span>
         <span role="heading" aria-level={2} className="managed-project-title">
           {project.title}
-        </span>
-        <span className="project-disclosure-hint">
-          {project.source_slug ? "Concept · " : ""}Explore project{" "}
-          <span aria-hidden="true">↗</span>
         </span>
       </button>
       <div

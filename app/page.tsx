@@ -5,11 +5,11 @@ import ReviewsSection from "@/components/reviews/PublicReviews";
 import { CTA } from "@/components/ui/Elements";
 import StructuredData from "@/components/seo/StructuredData";
 import { pageMetadata } from "@/lib/seo";
+export const dynamic = "force-dynamic";
 export const metadata = pageMetadata(
   "Digital Products, AI & Automation",
   "Quite Logic designs and builds high-performance digital products, intelligent automation, and AI-powered systems for modern businesses.",
 );
-export const dynamic = "force-dynamic";
 export default function Home() {
   return (
     <>

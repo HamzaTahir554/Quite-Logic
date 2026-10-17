@@ -1573,3 +1573,18 @@ main:focus {
     display: none;
   }
 }
+.contact-draft-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block: 20px;
+}
+.contact-draft-preview {
+  margin-top: 16px;
+}
+.contact-draft-preview pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  line-height: 1.7;
+}

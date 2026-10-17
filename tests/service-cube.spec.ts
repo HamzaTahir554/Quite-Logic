@@ -170,8 +170,8 @@ test("WebGL cube scrolls, snaps, selects and drags without browser errors", asyn
     () =>
       new Promise<{ count: number; p95: number }>((resolve) => {
         const times: number[] = [];
-        let previous = performance.now(),
-          start = previous;
+        let previous = performance.now();
+        const start = previous;
         function frame(now: number) {
           times.push(now - previous);
           previous = now;

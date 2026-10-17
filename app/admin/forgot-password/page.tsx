@@ -1,12 +1,10 @@
-import Link from "next/link";
-import PasswordForm from "@/components/admin/PasswordForm";
-export default function ForgotPage() {
+import AuthForm from "@/components/admin/AuthForm";
+export default function ForgotPasswordPage() {
   return (
-    <div className="admin-login">
-      <Link className="admin-brand" href="/">
-        Quite Logic ↗
-      </Link>
-      <PasswordForm mode="forgot" />
-    </div>
+    <section className="admin-auth glass-panel">
+      <h1>Forgot password?</h1>
+      <p>Enter your admin email to request a reset link.</p>
+      <AuthForm mode="forgot-password" />
+    </section>
   );
 }

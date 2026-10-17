@@ -1,4 +1,5 @@
 node_modules/
+.backend-archive/
 .env
 .env.*
 !.env.example

@@ -1,47 +1,39 @@
 import { z } from "zod";
-import { cookies } from "next/headers";
-import { database } from "@/lib/database";
 import {
-  apiError,
-  createSession,
-  digest,
-  HttpError,
+  endpoint,
+  body,
+  checkOrigin,
+  clientAddress,
+  json,
   rateLimit,
-  readJson,
-  sessionCookie,
-  verifyPassword,
-} from "@/lib/admin-security";
-export const runtime = "nodejs";
-export async function POST(request: Request) {
-  try {
-    const parsed = z
-      .object({
-        email: z.string().trim().toLowerCase().pipe(z.email().max(254)),
-        password: z.string().min(1).max(200),
-      })
-      .safeParse(await readJson(request));
-    if (!parsed.success)
-      throw new HttpError(400, "Enter your admin email and password.");
-    const email = parsed.data.email.trim().toLowerCase();
-    await rateLimit("login:global", 60);
-    await rateLimit("login:" + email, 8);
-    const { rows } = await database().query(
-      "SELECT id,password_hash FROM admins WHERE email=$1",
-      [email],
-    );
-    if (!(await verifyPassword(parsed.data.password, rows[0]?.password_hash)))
-      throw new HttpError(401, "Email or password is incorrect.");
-    const previous = (await cookies()).get(sessionCookie)?.value;
-    if (previous)
-      await database().query("DELETE FROM admin_sessions WHERE token_hash=$1", [
-        digest(previous),
-      ]);
-    await createSession(rows[0].id);
-    return Response.json(
-      { message: "Signed in." },
-      { headers: { "Cache-Control": "no-store" } },
-    );
-  } catch (error) {
-    return apiError(error);
-  }
-}
+  ApiError,
+} from "@/lib/api";
+import { Admin } from "@/lib/models";
+import { emailSchema } from "@/lib/admin-validation";
+import { createSession, deleteSession } from "@/lib/admin-auth";
+import { verifyPassword, hashPassword } from "@/lib/passwords";
+
+let dummyHash: Promise<string> | undefined;
+export const POST = endpoint(async (request) => {
+  checkOrigin(request);
+  await rateLimit(`login-ip:${clientAddress(request)}`, 30, 900);
+  const input = await body(
+    request,
+    z
+      .object({ email: emailSchema, password: z.string().min(1).max(128) })
+      .strict(),
+  );
+  await rateLimit(`login-email:${input.email}`, 10, 900);
+  const admin = await Admin.findOne({ email: input.email }).select(
+    "+passwordHash",
+  );
+  dummyHash ??= hashPassword("unavailable-account-dummy-value");
+  const valid = await verifyPassword(
+    input.password,
+    admin?.passwordHash || (await dummyHash),
+  );
+  if (!admin || !valid) throw new ApiError(401, "Invalid email or password.");
+  await deleteSession();
+  await createSession(String(admin._id), admin.sessionVersion);
+  return json({ message: "Signed in." });
+});

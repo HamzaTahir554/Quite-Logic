@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Alert, Button, MenuItem, TextField } from "@mui/material";
 import BrandText from "@/components/ui/BrandText";
+import { contactDraft } from "@/lib/contact-draft";
 import { contactEmail } from "@/lib/company";
 import {
   budgets,
@@ -15,24 +16,21 @@ export default function ContactForm() {
   useEffect(() => setReady(true), []);
   const reduced = useReducedMotion();
   const revealed = useRef(false);
-  const submitting = useRef(false);
-  const submissionKey = useRef<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [draft, setDraft] = useState<ReturnType<typeof contactDraft> | null>(
+    null,
+  );
   const [message, setMessage] = useState("");
-  const [formVersion, setFormVersion] = useState(0);
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitting.current) return;
     const form = event.currentTarget;
-    const values = Object.fromEntries(new FormData(form));
-    const parsed = contactSchema.safeParse(values);
+    const parsed = contactSchema.safeParse(
+      Object.fromEntries(new FormData(form)),
+    );
     if (!parsed.success) {
       const nextErrors: Record<string, string> = {};
-      parsed.error.issues.forEach((i) => {
-        nextErrors[String(i.path[0])] = i.message;
+      parsed.error.issues.forEach((issue) => {
+        nextErrors[String(issue.path[0])] = issue.message;
       });
       setErrors(nextErrors);
       const first = form.elements.namedItem(
@@ -42,44 +40,22 @@ export default function ContactForm() {
       return;
     }
     setErrors({});
-    submitting.current = true;
-    submissionKey.current ??= crypto.randomUUID();
-    setStatus("loading");
+    setDraft(contactDraft(parsed.data));
+    setMessage(
+      "Your draft is ready. Open your email app, review the message, and send it there. Nothing has been sent automatically.",
+    );
+  }
+  async function copyDraft() {
+    if (!draft) return;
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Idempotency-Key": submissionKey.current,
-        },
-        body: JSON.stringify(parsed.data),
-      });
-      const data: { message: string } = await response.json();
-      if (!response.ok)
-        throw new Error(
-          response.status === 400
-            ? "Please check the form fields and try again."
-            : response.status === 429
-              ? "You've sent several messages recently. Please wait a little or email us directly."
-              : `We couldn't send your message right now. Please try again or email ${contactEmail} directly.`,
-        );
-      setStatus("success");
-      setMessage("Thank you! Your message has been sent successfully.");
-      submissionKey.current = null;
-      form.reset();
-      setFormVersion((value) => value + 1);
-    } catch (e) {
-      setStatus("error");
+      await navigator.clipboard.writeText(draft.subject + "\n\n" + draft.body);
       setMessage(
-        (e instanceof Error && e.message.startsWith("We couldn't")) ||
-          (e instanceof Error &&
-            (e.message.startsWith("Please check") ||
-              e.message.startsWith("You've sent")))
-          ? e.message
-          : "Unable to send your message. Please try again.",
+        "Draft copied. Paste it into an email to " + contactEmail + ".",
       );
-    } finally {
-      submitting.current = false;
+    } catch {
+      setMessage(
+        "Please use the email link or select and copy the draft below.",
+      );
     }
   }
   function field(name: keyof ContactInput) {
@@ -88,6 +64,8 @@ export default function ContactForm() {
       error: !!errors[name],
       helperText: errors[name],
       onChange: () => {
+        setDraft(null);
+        setMessage("");
         if (errors[name]) setErrors((old) => ({ ...old, [name]: "" }));
       },
     };
@@ -95,7 +73,6 @@ export default function ContactForm() {
   return (
     <motion.form
       id="message-form"
-      key={formVersion}
       initial={false}
       onViewportEnter={(entry) => {
         if (!entry || reduced || revealed.current) return;
@@ -125,7 +102,8 @@ export default function ContactForm() {
           );
       }}
       onInputCapture={(event) => {
-        if (!submitting.current) submissionKey.current = null;
+        setDraft(null);
+        setMessage("");
         const target = event.target;
         if (!(
           target instanceof HTMLInputElement ||
@@ -147,8 +125,7 @@ export default function ContactForm() {
       noValidate
       className="contact-form"
       aria-label="Project inquiry"
-      aria-busy={status === "loading"}
-      data-status={status}
+      data-status={draft ? "draft" : "idle"}
     >
       <div className="form-grid">
         <TextField
@@ -221,8 +198,8 @@ export default function ContactForm() {
         </label>
       </div>
       <p className="small muted">
-        Your details are used to respond to this inquiry. Please avoid including
-        passwords or confidential data.
+        Prepare a draft in your email app. Nothing is sent or stored by this
+        website. Please avoid passwords or confidential data.
       </p>
       <p className="small">
         Prefer email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
@@ -230,51 +207,35 @@ export default function ContactForm() {
       <Button
         variant="contained"
         type="submit"
-        disabled={!ready || status === "loading"}
+        disabled={!ready}
         className="submit-button"
       >
-        {status === "loading"
-          ? "Sending your inquiry..."
-          : "Send Project Inquiry"}
+        Prepare Email Draft
       </Button>
       <div className="contact-feedback" aria-live="polite" aria-atomic="true">
-        {status === "success" && (
-          <motion.div
-            className="completion-animation"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduced ? 0 : 0.35 }}
-          >
-            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-              <motion.circle
-                cx="24"
-                cy="24"
-                r="20"
-                stroke="currentColor"
-                strokeWidth="1"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: reduced ? 0 : 0.35 }}
-              />
-              <motion.path
-                d="m15 24 6 6 13-14"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{
-                  duration: reduced ? 0 : 0.4,
-                  delay: reduced ? 0 : 0.06,
-                }}
-              />
-            </svg>
-            <span>A good conversation starts here.</span>
-          </motion.div>
-        )}
-        {(status === "success" || status === "error") && (
-          <Alert severity={status === "success" ? "success" : "error"}>
-            <BrandText>{message}</BrandText>
-          </Alert>
+        {draft && (
+          <>
+            <Alert severity="info">
+              <BrandText>{message}</BrandText>
+            </Alert>
+            <div className="contact-draft-actions">
+              <a className="button primary" href={draft.url}>
+                Open email app ↗
+              </a>
+              <button
+                className="button secondary"
+                type="button"
+                onClick={copyDraft}
+              >
+                Copy draft
+              </button>
+            </div>
+            <details className="contact-draft-preview">
+              <summary>Preview your draft</summary>
+              <p>{draft.subject}</p>
+              <pre>{draft.body}</pre>
+            </details>
+          </>
         )}
       </div>
     </motion.form>

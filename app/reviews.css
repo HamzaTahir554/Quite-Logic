@@ -1,0 +1,333 @@
+.glass-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(89, 101, 114, 0.68),
+    rgba(48, 57, 68, 0.76)
+  );
+  border: 1px solid rgba(240, 241, 248, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 16px 50px #1b263315;
+}
+.ql-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 11px 18px;
+  border: 1px solid #c4cad24d;
+  border-radius: 12px;
+  background: #46515d;
+  color: #f0f1f8;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.ql-button.primary {
+  background: linear-gradient(130deg, #2165cc, #1d59bb);
+  border-color: #75acff;
+}
+.ql-button span {
+  transition: transform 180ms ease;
+}
+.ql-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.ql-button:focus-visible {
+  outline: 2px solid #96bfff;
+  outline-offset: 4px;
+}
+.reviews-section {
+  padding-block: 100px;
+}
+.reviews-page {
+  padding-top: 90px;
+}
+.reviews-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 36px;
+  align-items: flex-end;
+  margin-bottom: 36px;
+}
+.reviews-heading :is(h1, h2) {
+  font-size: clamp(30px, 4.4vw, 60px);
+  line-height: 1.15;
+  letter-spacing: -0.055em;
+  margin: 18px 0;
+}
+.reviews-heading :is(h1, h2) span {
+  color: #a9caff;
+}
+.reviews-heading p {
+  color: #dde1e8;
+  line-height: 1.8;
+}
+.reviews-heading .ql-button {
+  flex-shrink: 0;
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-bottom: 24px;
+}
+.reviews-grid > div {
+  min-width: 0;
+}
+.review-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 100%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition:
+    transform 300ms ease,
+    border-color 250ms ease;
+}
+.review-card::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    #e7f1ff12 50%,
+    transparent 60%
+  );
+  transform: translate3d(-60%, 0, 0);
+  transition: transform 450ms ease;
+  pointer-events: none;
+  z-index: -1;
+}
+.review-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.review-service {
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #dce9ff;
+}
+.review-rating {
+  color: #b4d2ff;
+  letter-spacing: 2px;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.review-card blockquote {
+  padding: 0;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.85;
+  flex: 1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.review-person {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.review-person img,
+.review-initial {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.review-initial {
+  display: grid;
+  place-items: center;
+  background: #303944;
+  border: 1px solid #96bfff;
+  color: #c7deff;
+  font-size: 20px;
+}
+.review-person h3 {
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+.review-person p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #dde1e8;
+  margin: 0;
+}
+.review-card time {
+  font-size: 11px;
+  color: #dde1e8;
+}
+.review-empty {
+  grid-column: 1/-1;
+  padding: 40px;
+  min-height: 175px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+.review-empty p {
+  margin: 0;
+  font-size: 22px;
+}
+.review-empty span {
+  color: #dde1e8;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.studio-cursor .cursor-dot {
+  transition: opacity 120ms ease;
+}
+.studio-cursor[data-state="interactive"] .cursor-ring {
+  scale: 1.45;
+}
+.studio-cursor:is([data-state="VIEW"], [data-state="OPEN"]) .cursor-ring {
+  scale: 1.7;
+}
+.studio-cursor:is([data-state="VIEW"], [data-state="OPEN"]) .cursor-dot {
+  opacity: 0;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .ql-button:not(:disabled):hover {
+    transform: scale(1.04);
+    border-color: #96bfff;
+    box-shadow: 0 0 20px #2f80fe22;
+  }
+  .ql-button:hover span {
+    transform: translateX(3px);
+  }
+  .review-card:hover {
+    transform: translate3d(0, -3px, 0) scale(1.01);
+    border-color: #96bfff80;
+  }
+  .review-card:hover::before {
+    transform: translate3d(60%, 0, 0);
+  }
+  .public-site
+    :is(
+      h1,
+      h2,
+      h3,
+      h4,
+      p,
+      blockquote,
+      figcaption,
+      label,
+      .eyebrow,
+      .footer-bottom span
+    ) {
+    transition: scale 220ms ease;
+    transform-origin: left center;
+  }
+  .public-site :is(h1, h2, h3, h4):hover {
+    scale: 1.015;
+  }
+  .public-site
+    :is(p, blockquote, figcaption, label, .eyebrow, .footer-bottom span):hover {
+    scale: 1.008;
+  }
+}
+@media (max-width: 1100px) {
+  .reviews-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .reviews-section {
+    padding-block: 60px;
+  }
+  .reviews-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .reviews-grid {
+    grid-template-columns: 1fr;
+  }
+  .review-card {
+    padding: 24px;
+  }
+  .review-empty {
+    padding: 26px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ql-button,
+  .ql-button span,
+  .review-card,
+  .review-card::before,
+  .public-site :is(h1, h2, h3, h4, p, blockquote, figcaption, label) {
+    transition: none !important;
+    scale: 1 !important;
+  }
+  .review-card::before {
+    display: none;
+  }
+}
+.review-submission {
+  margin-top: 48px;
+  border-radius: 24px;
+  padding: clamp(20px, 4vw, 40px);
+  scroll-margin-top: 100px;
+}
+.review-form {
+  display: grid;
+  gap: 20px;
+  margin-top: 24px;
+}
+.review-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+.review-form input,
+.review-form textarea,
+.review-form select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #a9caff55;
+  border-radius: 9px;
+  background: #252d36;
+  color: #f3f6fb;
+  font: inherit;
+}
+.review-form textarea {
+  resize: vertical;
+}
+.review-form :focus-visible {
+  outline: 2px solid #a9caff;
+  outline-offset: 3px;
+}
+.review-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.review-form button {
+  justify-self: start;
+  cursor: pointer;
+}
+.review-form button:disabled {
+  opacity: 0.5;
+}
+@media (max-width: 650px) {
+  .review-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

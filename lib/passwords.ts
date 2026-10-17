@@ -1,20 +1,30 @@
-import { z } from "zod";
-export const passwordHelp =
-  "Use 16–200 characters, including a letter and a number or symbol. Avoid repeated characters.";
-export const newPasswordSchema = z
-  .string()
-  .min(16, passwordHelp)
-  .max(200, passwordHelp)
-  .refine(
-    (value) =>
-      /[A-Za-z]/.test(value) &&
-      /[^A-Za-z\s]/.test(value) &&
-      new Set(value).size >= 6,
-    passwordHelp,
-  );
-export const passwordPair = z
-  .object({ password: newPasswordSchema, confirmPassword: z.string().max(200) })
-  .refine((value) => value.password === value.confirmPassword, {
-    message: "The new passwords do not match.",
-    path: ["confirmPassword"],
+import { randomBytes, scrypt, timingSafeEqual, createHash } from "node:crypto";
+
+export const tokenHash = (value: string) =>
+  createHash("sha256").update(value).digest("hex");
+export const randomToken = () => randomBytes(32).toString("hex");
+function derive(password: string, salt: string) {
+  return new Promise<Buffer>((resolve, reject) => {
+    scrypt(
+      password,
+      salt,
+      64,
+      { N: 32768, r: 8, p: 3, maxmem: 64 * 1024 * 1024 },
+      (error, key) => {
+        if (error) reject(error);
+        else resolve(key);
+      },
+    );
   });
+}
+export async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  return `scrypt$${salt}$${(await derive(password, salt)).toString("hex")}`;
+}
+export async function verifyPassword(password: string, hash: string) {
+  const [method, salt, encoded] = hash.split("$");
+  if (method !== "scrypt" || !salt || !encoded) return false;
+  const expected = Buffer.from(encoded, "hex"),
+    actual = await derive(password, salt);
+  return expected.length === actual.length && timingSafeEqual(expected, actual);
+}

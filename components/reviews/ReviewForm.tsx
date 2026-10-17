@@ -1,57 +1,24 @@
 "use client";
-import { useRef, useState } from "react";
-import { reviewServices } from "@/lib/reviews";
+import { useState } from "react";
 export default function ReviewForm() {
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
     [success, setSuccess] = useState(false);
-  const lock = useRef(false);
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (lock.current) return;
-    lock.current = true;
+    const form = event.currentTarget;
     setBusy(true);
     setMessage("");
     setSuccess(false);
-    const form = event.currentTarget;
-    const data = new FormData(form);
     try {
-      const file = data.get("profile") as File;
-      let image: string | undefined;
-      if (file?.size) {
-        if (
-          file.size > 2_000_000 ||
-          !["image/png", "image/jpeg", "image/webp"].includes(file.type)
-        )
-          throw new Error(
-            "Choose a PNG, JPEG, or WebP image smaller than 2 MB.",
-          );
-        image = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(String(reader.result));
-          reader.onerror = () => reject(new Error("Image could not be read."));
-          reader.readAsDataURL(file);
-        });
-      }
-      const payload = {
-        name: data.get("name"),
-        email: data.get("email"),
-        company: data.get("company"),
-        role: data.get("role"),
-        service: data.get("service"),
-        rating: Number(data.get("rating")),
-        body: data.get("body"),
-        website: data.get("website"),
-        consent: data.get("consent") === "on",
-        image,
-      };
+      const data = Object.fromEntries(new FormData(form));
       const response = await fetch("/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...data, rating: Number(data.rating) }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.message);
+      if (!response.ok) throw new Error(result.error || "Please try again.");
       setMessage(result.message);
       setSuccess(true);
       form.reset();
@@ -59,43 +26,36 @@ export default function ReviewForm() {
       setMessage(
         error instanceof Error
           ? error.message
-          : "Could not submit your review. Please try again.",
+          : "Unable to submit. Please try again.",
       );
     } finally {
-      lock.current = false;
       setBusy(false);
     }
   }
   return (
-    <section className="review-submit container" id="submit-review">
-      <div>
-        <span className="eyebrow">YOUR EXPERIENCE MATTERS</span>
-        <h2>Tell us how it felt.</h2>
-        <p>
-          Share an honest review of your project. Your email stays private, and
-          every submission is reviewed before publication.
-        </p>
-      </div>
-      <form className="ql-form glass-panel" onSubmit={submit} aria-busy={busy}>
-        <div className="ql-form-grid">
+    <section id="share-review" className="glass-panel review-submission">
+      <h2>Share your experience.</h2>
+      <p>Your email stays private. Reviews appear after approval.</p>
+      <form className="review-form" onSubmit={submit}>
+        <div className="review-form-grid">
           <label>
             Your name
             <input
-              name="name"
+              name="clientName"
               autoComplete="name"
-              required
               minLength={2}
               maxLength={100}
+              required
             />
           </label>
           <label>
-            Email (private)
+            Email address
             <input
               name="email"
               type="email"
               autoComplete="email"
-              required
               maxLength={254}
+              required
             />
           </label>
           <label>
@@ -103,7 +63,7 @@ export default function ReviewForm() {
             <input name="company" autoComplete="organization" maxLength={150} />
           </label>
           <label>
-            Role / title
+            Role
             <input
               name="role"
               autoComplete="organization-title"
@@ -112,16 +72,11 @@ export default function ReviewForm() {
           </label>
           <label>
             Service
-            <select name="service" aria-label="Service" required>
-              <option value="">Select a service</option>
-              {reviewServices.map((service) => (
-                <option key={service}>{service}</option>
-              ))}
-            </select>
+            <input name="service" maxLength={100} />
           </label>
           <label>
             Rating
-            <select name="rating" defaultValue="5" required>
+            <select name="rating" defaultValue="5">
               {[5, 4, 3, 2, 1].map((rating) => (
                 <option key={rating} value={rating}>
                   {rating} out of 5
@@ -131,44 +86,25 @@ export default function ReviewForm() {
           </label>
         </div>
         <label>
-          Profile image or logo (optional)
-          <input
-            name="profile"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-          />
-          <small>PNG, JPEG or WebP. Up to 2 MB and 16 megapixels.</small>
-        </label>
-        <label>
           Your review
           <textarea
-            name="body"
-            aria-label="Your review"
+            name="review"
+            minLength={20}
+            maxLength={5000}
             rows={5}
             required
-            minLength={20}
-            maxLength={3000}
           />
-          <small>20–3,000 characters.</small>
         </label>
-        <label className="ql-honeypot" aria-hidden="true">
-          Website
-          <input name="website" tabIndex={-1} autoComplete="off" />
-        </label>
-        <label className="ql-check">
-          <input name="consent" type="checkbox" required />I agree to
-          publication of this review, name, company and image after approval.
-        </label>
-        <button type="submit" className="ql-button primary" disabled={busy}>
+        <div className="honeypot" aria-hidden="true">
+          <label>
+            Leave this empty
+            <input name="website" tabIndex={-1} autoComplete="off" />
+          </label>
+        </div>
+        {message && <p role={success ? "status" : "alert"}>{message}</p>}
+        <button className="ql-button" disabled={busy}>
           {busy ? "Submitting…" : "Submit for approval"}
-          <span aria-hidden="true">↗</span>
         </button>
-        <p
-          role={success ? "status" : "alert"}
-          className={success ? "ql-success" : "ql-error"}
-        >
-          {message}
-        </p>
       </form>
     </section>
   );
