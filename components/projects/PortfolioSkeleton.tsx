@@ -17,9 +17,10 @@ export default function PortfolioSkeleton({
             className="managed-project-card glass-panel project-skeleton"
             aria-hidden="true"
           >
-            <span />
-            <span />
-            <span />
+            <span className="project-skeleton-logo" />
+            <span className="project-skeleton-meta" />
+            <span className="project-skeleton-title" />
+            <span className="project-skeleton-title" />
           </div>
         ))}
       </div>

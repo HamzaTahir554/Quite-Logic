@@ -7,8 +7,8 @@ import { Suspense } from "react";
 import PortfolioSkeleton from "@/components/projects/PortfolioSkeleton";
 export const dynamic = "force-dynamic";
 export const metadata = pageMetadata(
-  "Portfolio & Product Concepts",
-  "Explore Quite Logic’s illustrative web, mobile, AI automation, and computer vision product concepts.",
+  "Portfolio — Selected Work",
+  "Explore digital products, AI systems, and software experiences developed by Quite Logic, alongside illustrative product concepts.",
   "/portfolio",
 );
 async function ProjectList() {
@@ -29,10 +29,9 @@ export default function PortfolioPage() {
       <StructuredData path="/portfolio" name="Portfolio" />
       <PageHero
         variant="portfolio"
-        label="Ideas made tangible"
-        title="Thoughtful by design."
-        accent="Useful by nature."
-        description="A collection of product explorations that brings our approach to life. Clear interfaces, connected systems, and intelligence with a purpose."
+        label="Selected work"
+        title="Projects built with clarity, precision and purpose."
+        description="A selection of digital products, AI systems and software experiences developed by Quite Logic."
       />
       <Suspense fallback={<PortfolioSkeleton contained />}>
         <ProjectList />

@@ -427,7 +427,9 @@ try {
     slug: "integration-project",
     logo,
     description:
-      "A database managed project used to validate the complete publishing workflow.",
+      "A database managed project used to validate the complete publishing workflow.\n\nChallenge: A fragmented workflow.\n\nSolution: A clear shared workspace.\n\nOutcome: Less manual work.",
+    shortDescription: "A concise project introduction.",
+    featured: true,
     category: "Web",
     technologies: ["Next.js"],
     status: "draft",
@@ -490,6 +492,15 @@ try {
     "Published project appears automatically",
   );
   check(
+    published.projects.some(
+      (project: { id: string; featured: boolean; short_description: string }) =>
+        project.id === id &&
+        project.featured &&
+        project.short_description === input.shortDescription,
+    ),
+    "Existing featured and short-description fields reach the public presentation",
+  );
+  check(
     (await call(logo, "GET", undefined, false)).status === 200,
     "Published logo public",
   );
@@ -508,10 +519,24 @@ try {
       (thumbnail.height || 0) <= 320,
     "Published cards receive a bounded logo thumbnail",
   );
+  const detailResponse = await call(
+    `/portfolio/${input.slug}`,
+    "GET",
+    undefined,
+    false,
+  );
+  const detailHtml = await detailResponse.text();
   check(
-    (await call(`/portfolio/${input.slug}`, "GET", undefined, false)).status ===
-      200,
+    detailResponse.status === 200,
     "New project details work without code changes",
+  );
+  check(
+    detailHtml.includes('id="project-story-1">Challenge</h2>') &&
+      detailHtml.includes('id="project-story-2">Solution</h2>') &&
+      detailHtml.includes('id="project-story-3">Outcome</h2>') &&
+      detailHtml.includes('aria-label="Project technology"') &&
+      detailHtml.includes("A concise project introduction."),
+    "Managed case studies render supplied narrative sections and existing technologies",
   );
   check(
     (
@@ -854,6 +879,7 @@ try {
         "/admin/account",
       ]) {
         await page.goto(path);
+        await expect(page.locator("h1")).toHaveCount(1);
         await expect(page.locator("h1")).toBeVisible();
         if (path === "/admin")
           await page.screenshot({

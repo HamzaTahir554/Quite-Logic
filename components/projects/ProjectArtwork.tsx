@@ -37,7 +37,7 @@ export default function ProjectArtwork({
           alt={alt}
           width={detail ? 1200 : 720}
           height={detail ? 760 : 520}
-          priority={detail}
+          loading="lazy"
         />
       </div>
     </motion.div>

@@ -24,6 +24,8 @@ export type ProjectPreviewData = Pick<
   | "technologies"
   | "projectUrl"
   | "status"
+  | "featured"
+  | "shortDescription"
 >;
 export function adminDate(value: string) {
   return new Date(value).toLocaleDateString("en-US", {

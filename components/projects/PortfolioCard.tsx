@@ -9,16 +9,18 @@ import GlassReflection from "@/components/ui/GlassReflection";
 export default function PortfolioCard({
   project,
   onOpen,
+  featured = false,
 }: {
   project: PortfolioProject;
   onOpen?: () => void;
+  featured?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false),
     [hovered, setHovered] = useState(false),
     [focused, setFocused] = useState(false);
   const pointer = useRef("mouse"),
     router = useRouter();
-  const open = expanded || hovered || focused;
+  const open = featured || expanded || hovered || focused;
   const destination = /^(https?:\/\/|\/(?![\/\\]))/.test(project.project_url)
     ? project.project_url
     : "";
@@ -31,7 +33,7 @@ export default function PortfolioCard({
   }
   return (
     <article
-      className="managed-project-card glass-card glass-hover"
+      className={`managed-project-card glass-card glass-hover${featured ? " managed-project-card--featured" : ""}`}
       data-glass-light
       data-open={open}
       onClick={(event) => {
@@ -73,6 +75,7 @@ export default function PortfolioCard({
       <button
         className="project-identity-button"
         aria-label={`View details for ${project.title}`}
+        title={project.title}
         aria-expanded={open}
         aria-controls={`project-description-${project.id}`}
         data-cursor="VIEW"
@@ -80,9 +83,10 @@ export default function PortfolioCard({
           if (
             event.detail > 0 &&
             (pointer.current === "touch" || matchMedia("(hover: none)").matches)
-          )
-            setExpanded(true);
-          else if (canOpen) navigate();
+          ) {
+            if (expanded && canOpen) navigate();
+            else setExpanded(true);
+          } else if (canOpen) navigate();
           else setExpanded((value) => !value);
         }}
         onKeyDown={(event) => {
@@ -95,11 +99,25 @@ export default function PortfolioCard({
         <span className="managed-project-logo">
           <ProjectLogo src={project.image_url} title={project.title} />
         </span>
+        <span className="project-card-meta">
+          <span
+            className="project-category"
+            title={project.category || undefined}
+          >
+            {project.category || "Software"}
+          </span>
+          {project.source_slug && (
+            <span className="project-concept-label">Concept</span>
+          )}
+          {project.featured && (
+            <span className="project-featured-label">Featured</span>
+          )}
+        </span>
         <span role="heading" aria-level={2} className="managed-project-title">
           {project.title}
         </span>
         <span className="project-touch-hint">
-          View details <span aria-hidden="true">↑</span>
+          View details <span aria-hidden="true">↗</span>
         </span>
       </button>
       <div
@@ -114,10 +132,7 @@ export default function PortfolioCard({
           aria-label={`Description of ${project.title}`}
           tabIndex={open ? 0 : -1}
         >
-          {project.source_slug && (
-            <span className="project-concept-label">Illustrative concept</span>
-          )}
-          <p>{project.description}</p>
+          <p>{project.short_description || project.description}</p>
         </div>
         {canOpen &&
           (onOpen ? (

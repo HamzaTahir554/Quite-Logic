@@ -311,10 +311,16 @@ export async function testPortfolioLayout(page: Page, check: Check) {
     await page.evaluate(() => document.fonts.ready);
     const layout = await page.evaluate(() => {
       const [hero, filters, count, empty, title, header, button] = [
-        ".portfolio-page .page-hero", ".portfolio-filters", ".portfolio-count",
-        ".portfolio-empty", ".portfolio-empty h2", ".site-header",
+        ".portfolio-page .page-hero",
+        ".portfolio-filters",
+        ".portfolio-count",
+        ".portfolio-empty",
+        ".portfolio-empty h2",
+        ".site-header",
         ".site-header .nav-project",
-      ].map((selector) => document.querySelector(selector)!.getBoundingClientRect());
+      ].map((selector) =>
+        document.querySelector(selector)!.getBoundingClientRect(),
+      );
       return {
         overflow: document.documentElement.scrollWidth > innerWidth,
         heroX: hero.x,
@@ -344,12 +350,22 @@ export async function testPortfolioLayout(page: Page, check: Check) {
         layout.gap >= 16,
       "Portfolio hero, filters and empty state align at responsive widths",
     );
-    check(
-      layout.buttonHeight <= 40 &&
-        layout.buttonWidth <= 160 &&
-        layout.buttonCentered,
-      `Meeting CTA stays compact and aligned at ${width}px: ${JSON.stringify(layout)}`,
-    );
+    if (width <= 600) {
+      check(
+        layout.buttonHeight === 0,
+        "Compact mobile header keeps booking in the navigation drawer",
+      );
+      await page.getByRole("button", { name: "Open navigation" }).click();
+      await expect(page.locator(".drawer-booking")).toBeVisible();
+      await page.getByRole("button", { name: "Close navigation" }).click();
+    } else {
+      check(
+        layout.buttonHeight <= 40 &&
+          layout.buttonWidth <= 160 &&
+          layout.buttonCentered,
+        `Meeting CTA stays compact and aligned at ${width}px: ${JSON.stringify(layout)}`,
+      );
+    }
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({
       path: `qa/socials-portfolio/portfolio-empty-${width}.png`,

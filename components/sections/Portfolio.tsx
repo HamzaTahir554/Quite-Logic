@@ -34,6 +34,8 @@ export default function Portfolio({
     new Map<string, Page>([["All", { projects, total, page: 1 }]]),
   );
   const reduced = useReducedMotion();
+  const featured = data.projects.find((project) => project.featured);
+  const gridProjects = data.projects.filter((project) => project !== featured);
   useEffect(() => () => controller.current?.abort(), []);
   async function load(category: string, page = 1) {
     setInteracted(true);
@@ -104,23 +106,29 @@ export default function Portfolio({
       <p className="small muted portfolio-count" aria-live="polite">
         {loading && data.projects.length === 0
           ? "Finding projects…"
-          : `${data.total} published ${data.total === 1 ? "project" : "projects"}${filter === "All" ? "" : ` in ${filter}`}.`}{" "}
-        Projects marked “Concept” are illustrative explorations.
+          : `${data.total} ${data.total === 1 ? "Project" : "Projects"}${filter === "All" ? "" : ` · ${filter}`}`}
       </p>
       {loading && data.projects.length === 0 ? (
         <PortfolioSkeleton />
       ) : (
-        <div className="managed-project-grid" aria-busy={loading}>
-          {data.projects.map((project) => (
-            <motion.div
-              key={`${filter}-${project.id}`}
-              initial={reduced || !interacted ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.28 }}
-            >
-              <PortfolioCard project={project} />
-            </motion.div>
-          ))}
+        <div className="portfolio-results" aria-busy={loading}>
+          {featured && (
+            <div className="portfolio-featured">
+              <PortfolioCard project={featured} featured />
+            </div>
+          )}
+          <div className="managed-project-grid">
+            {gridProjects.map((project) => (
+              <motion.div
+                key={`${filter}-${project.id}`}
+                initial={reduced || !interacted ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.28 }}
+              >
+                <PortfolioCard project={project} />
+              </motion.div>
+            ))}
+          </div>
         </div>
       )}
       {error && (

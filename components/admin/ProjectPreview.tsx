@@ -98,6 +98,8 @@ export default function ProjectPreview({
                   project.description ||
                   "Your project description will appear here.",
                 category: project.category,
+                featured: project.featured,
+                short_description: project.shortDescription,
                 source_slug: null,
                 project_url: "",
               }}

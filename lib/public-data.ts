@@ -22,6 +22,8 @@ export function publicProject(
     image_url: p.logo,
     project_url: `/portfolio/${p.slug}`,
     source_slug: p.sourceSlug || null,
+    short_description: p.shortDescription || "",
+    featured: p.featured || false,
   };
 }
 export function publicReview(r: ReviewRecord & { _id: unknown }): PublicReview {

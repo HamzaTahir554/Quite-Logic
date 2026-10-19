@@ -10,6 +10,7 @@ import ProjectArtwork from "@/components/projects/ProjectArtwork";
 import LegacyProjectRedirect from "@/components/projects/LegacyProjectRedirect";
 import { getProjectDetail } from "@/lib/project-detail";
 import ProjectLogo from "@/components/projects/ProjectLogo";
+import ProjectNarrative from "@/components/projects/ProjectNarrative";
 export const dynamic = "force-dynamic";
 export function generateStaticParams() {
   return [...projects.map((p) => ({ slug: p.slug })), { slug: "lens-insight" }];
@@ -60,7 +61,7 @@ export default async function ProjectPage({
     const managed = await getProjectDetail(slug);
     if (!managed) notFound();
     return (
-      <div className="project-detail">
+      <div className="project-detail project-detail--managed">
         <StructuredData
           path={`/portfolio/${managed.slug}`}
           name={managed.title}
@@ -88,12 +89,29 @@ export default async function ProjectPage({
               />
             </div>
             <div>
-              <span className="eyebrow">PROJECT OVERVIEW</span>
-              <h2>{managed.title}</h2>
-              <p style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
-                {managed.description}
+              <span className="eyebrow">
+                {managed.featured ? "FEATURED PROJECT" : "AT A GLANCE"}
+              </span>
+              <h2>{managed.category || "Software & digital products"}</h2>
+              <p>
+                {managed.shortDescription ||
+                  "Explore the project, its approach and the technology behind it."}
               </p>
-              {managed.technologies.length > 0 && (
+              {managed.projectUrl && (
+                <a className="text-link" href={managed.projectUrl}>
+                  Visit project ↗
+                </a>
+              )}
+            </div>
+          </div>
+          <div className="project-reading-layout">
+            <ProjectNarrative description={managed.description} />
+            {managed.technologies.length > 0 && (
+              <aside
+                className="project-detail-sidebar glass-panel"
+                aria-label="Project technology"
+              >
+                <h2>Technology</h2>
                 <ul
                   className="project-technology-list"
                   aria-label="Technologies"
@@ -102,15 +120,10 @@ export default async function ProjectPage({
                     <li key={technology}>{technology}</li>
                   ))}
                 </ul>
-              )}
-              {managed.projectUrl && (
-                <a className="text-link" href={managed.projectUrl}>
-                  Visit project ↗
-                </a>
-              )}
-            </div>
+              </aside>
+            )}
           </div>
-          <p>
+          <p className="project-return-link">
             <Link className="text-link" href="/portfolio">
               ← Back to portfolio
             </Link>
@@ -134,6 +147,11 @@ export default async function ProjectPage({
         <span aria-hidden="true">/</span>
         <span aria-current="page">{p.title}</span>
       </nav>
+      <p className="container project-back-link">
+        <Link className="text-link" href="/portfolio">
+          ← Back to Portfolio
+        </Link>
+      </p>
       {p.slug === "atlas-cloud" ? (
         <AtlasShowcase project={p} primary />
       ) : (
@@ -161,11 +179,22 @@ export default async function ProjectPage({
             <p>{p.challenge}</p>
           </div>
           <div>
-            <span className="overline">The direction</span>
+            <span className="overline">The solution</span>
             <h2>Designed around the next action.</h2>
             <p>{p.approach}</p>
           </div>
         </div>
+        <section
+          className="concept-technology"
+          aria-labelledby="concept-technology-title"
+        >
+          <h2 id="concept-technology-title">Technology direction</h2>
+          <ul className="project-technology-list" aria-label="Technologies">
+            {p.technologies.map((technology) => (
+              <li key={technology}>{technology}</li>
+            ))}
+          </ul>
+        </section>
         <p className="concept-note">
           This is an illustrative product concept. Technology labels describe
           the proposed direction; they do not represent a shipped client
