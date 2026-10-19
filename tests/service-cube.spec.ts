@@ -196,7 +196,7 @@ test("WebGL cube scrolls, snaps, selects and drags without browser errors", asyn
   expect(errors).toEqual([]);
 });
 
-test("automatic rotation pauses on request and when the tab is hidden", async ({
+test("automatic rotation continues without the removed pause control and stops when the tab is hidden", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -207,13 +207,12 @@ test("automatic rotation pauses on request and when the tab is hidden", async ({
   await expect
     .poll(() => cube(page).getAttribute("data-active-face"), { timeout: 12000 })
     .not.toBe(before);
-  await page
-    .getByRole("button", { name: "Pause automatic service rotation" })
-    .click();
-  const paused = await cube(page).getAttribute("data-active-face");
+  await expect(
+    page.getByRole("button", {
+      name: /(?:Pause|Play) automatic service rotation/,
+    }),
+  ).toHaveCount(0);
   await page.clock.install();
-  await page.clock.fastForward(17000);
-  await expect(cube(page)).toHaveAttribute("data-active-face", paused!);
   // Page visibility is simulated explicitly: a browser's hidden-tab policy varies in headless mode.
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
@@ -227,6 +226,9 @@ test("automatic rotation pauses on request and when the tab is hidden", async ({
     "data-motion-paused",
     "true",
   );
+  const paused = await cube(page).getAttribute("data-active-face");
+  await page.clock.fastForward(17000);
+  await expect(cube(page)).toHaveAttribute("data-active-face", paused!);
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -234,9 +236,6 @@ test("automatic rotation pauses on request and when the tab is hidden", async ({
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await page
-    .getByRole("button", { name: "Play automatic service rotation" })
-    .click();
   await expect(cube(page)).toHaveAttribute("data-motion-active", "true");
   await page.clock.fastForward(9000);
   await expect(cube(page)).not.toHaveAttribute("data-active-face", paused!);
@@ -344,7 +343,7 @@ test("mobile cube ignores physical motion and preserves touch, scrolling and red
       );
       expect(
         await page
-          .locator("html, body, main, header, footer, .ambient-studio")
+          .locator("html, body, main, header, footer, .graph-background")
           .evaluateAll((elements) =>
             elements.every((element) => {
               const style = (element as HTMLElement).style;

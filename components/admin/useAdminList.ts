@@ -24,9 +24,11 @@ export async function apiCall(url: string, method = "GET", data?: unknown) {
           }),
       signal: AbortSignal.timeout(30000),
     });
-  } catch {
+  } catch (error) {
     throw new AdminRequestError(
-      "We couldn’t connect. Check your connection and try again.",
+      error instanceof Error && error.name === "TimeoutError"
+        ? "The server took too long to respond. Please try again."
+        : "We couldn’t connect. Check your connection and try again.",
     );
   }
   let result;
@@ -39,7 +41,7 @@ export async function apiCall(url: string, method = "GET", data?: unknown) {
   }
   if (!response.ok)
     throw new AdminRequestError(
-      response.status === 401
+      response.status === 401 && url !== "/api/admin/login"
         ? "Your session expired. Sign in again."
         : result.error || "Something went wrong. Please try again.",
       result.fields || {},

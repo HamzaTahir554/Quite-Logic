@@ -21,6 +21,8 @@ import {
 } from "../lib/models";
 import { hashPassword, randomToken, tokenHash } from "../lib/passwords";
 import { windowsTestMongoBinary } from "./test-mongo-binary.mjs";
+import { testContactApi } from "./test-contact";
+import { testAdminGraph } from "./test-graph";
 import {
   testSocialApi,
   testSocialBrowser,
@@ -36,6 +38,7 @@ let cookie = "",
   server: ChildProcess | undefined,
   database: MongoMemoryReplSet | undefined;
 const inbox: string[] = [];
+let smtpFailure: "recipient" | "data" | null = null;
 let assertions = 0;
 function check(value: unknown, label: string) {
   assert.ok(value, label);
@@ -55,12 +58,18 @@ const smtp = createServer((socket) => {
       buffer = buffer.slice(boundary + 2);
       if (inData) {
         if (line === ".") {
-          inbox.push(message);
+          if (smtpFailure !== "data") inbox.push(message);
           message = "";
           inData = false;
-          socket.write("250 accepted\r\n");
+          socket.write(
+            smtpFailure === "data"
+              ? "451 temporarily unavailable\r\n"
+              : "250 accepted\r\n",
+          );
         } else message += line + "\n";
       } else if (/^EHLO|^HELO/i.test(line)) socket.write("250 localhost\r\n");
+      else if (/^RCPT TO/i.test(line) && smtpFailure === "recipient")
+        socket.write("550 recipient rejected\r\n");
       else if (/^DATA/i.test(line)) {
         inData = true;
         socket.write("354 end with dot\r\n");
@@ -69,7 +78,7 @@ const smtp = createServer((socket) => {
     }
   });
 });
-async function startServer() {
+async function startServer(overrides: Record<string, string> = {}) {
   server = spawn(
     process.execPath,
     ["node_modules/next/dist/bin/next", "start", "--port", String(port)],
@@ -85,6 +94,9 @@ async function startServer() {
         SMTP_USER: "",
         SMTP_PASSWORD: "",
         SMTP_REQUIRE_TLS: "false",
+        CONTACT_TO: "inbox@example.test",
+        TRUST_PROXY: "false",
+        ...overrides,
       },
     },
   );
@@ -749,6 +761,57 @@ try {
   );
   await RateLimit.deleteMany({});
 
+  console.log(
+    "Testing contact SMTP delivery, rejection, validation and limits…",
+  );
+  await testContactApi({
+    origin,
+    inbox,
+    check,
+    setSmtpFailure: (failure) => {
+      smtpFailure = failure;
+    },
+  });
+  await stopServer();
+  await startServer({ SMTP_FROM: "" });
+  check(
+    (
+      await call(
+        "/api/contact",
+        "POST",
+        {
+          name: "Config Test",
+          email: "config@example.test",
+          description:
+            "A valid inquiry while the mail configuration is missing.",
+        },
+        false,
+      )
+    ).status === 503,
+    "Missing SMTP configuration fails without false success",
+  );
+  await stopServer();
+  await startServer({ CONTACT_TO: "invalid-recipient" });
+  check(
+    (
+      await call(
+        "/api/contact",
+        "POST",
+        {
+          name: "Config Test",
+          email: "config@example.test",
+          description:
+            "A valid inquiry while the recipient configuration is invalid.",
+        },
+        false,
+      )
+    ).status === 503,
+    "Invalid recipient configuration is a server error",
+  );
+  await stopServer();
+  await startServer();
+  await RateLimit.deleteMany({});
+
   console.log("Testing authenticated browser screens and responsive editor…");
   const browser = await chromium.launch({ headless: true });
   try {
@@ -766,6 +829,7 @@ try {
     await page.getByLabel("Password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page).toHaveURL(origin + "/admin");
+    await testAdminGraph(page, check);
     for (const width of [375, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 950 });
       if (width < 900) {
@@ -1025,6 +1089,11 @@ try {
     await expect(
       page.locator(".review-card").filter({ hasText: "Browser Client" }),
     ).toBeVisible();
+    await mkdir("qa/glass", { recursive: true });
+    await page
+      .locator(".review-card")
+      .filter({ hasText: "Browser Client" })
+      .screenshot({ path: "qa/glass/review-approved.png" });
     await page.goto("/admin/reviews");
     await browserReview
       .getByRole("button", { name: "Reject", exact: true })

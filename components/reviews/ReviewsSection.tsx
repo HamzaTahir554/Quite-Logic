@@ -5,6 +5,7 @@ import Reveal from "@/components/ui/Reveal";
 import ReviewForm from "./ReviewForm";
 import { useState } from "react";
 import Image from "next/image";
+import GlassReflection from "@/components/ui/GlassReflection";
 
 export default function ReviewsSection({
   full = false,
@@ -62,7 +63,11 @@ export default function ReviewsSection({
         <div className="reviews-grid" aria-live="polite">
           {(full ? allReviews : reviews.slice(0, 3)).map((review) => (
             <Reveal key={review.id}>
-              <article className="review-card glass-panel">
+              <article
+                className="review-card glass-card glass-hover"
+                data-glass-light
+              >
+                <GlassReflection />
                 <div className="review-top">
                   <span className="review-service">{review.service}</span>
                   <span

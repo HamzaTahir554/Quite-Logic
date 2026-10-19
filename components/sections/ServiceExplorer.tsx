@@ -85,13 +85,10 @@ export default function ServiceExplorer({
 }) {
   const [selected, setSelected] = useState(0);
   const [presented, setPresented] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
   const desktop = useMediaQuery("(min-width: 901px) and (pointer: fine)");
   const { ref, enabled, active } = useSceneActivity(desktop);
   const reduced = useMotionPreference();
@@ -142,13 +139,13 @@ export default function ServiceExplorer({
   });
 
   useEffect(() => {
-    if (!active || paused || hover || focus || dragging || reduced) return;
+    if (!active || hover || focus || dragging || reduced) return;
     const timer = setInterval(() => {
       if (Date.now() >= manualUntil.current)
         setSelected((index) => (index + 1) % 6);
     }, 8200);
     return () => clearInterval(timer);
-  }, [active, paused, hover, focus, dragging, reduced]);
+  }, [active, hover, focus, dragging, reduced]);
 
   function start(event: PointerEvent<HTMLDivElement>) {
     if (event.button !== 0) return;
@@ -325,24 +322,6 @@ export default function ServiceExplorer({
             →
           </button>
         </div>
-        {hydrated && !reduced && (
-          <button
-            className="cube-autoplay"
-            onClick={() => {
-              setPaused(!paused);
-              setFocus(false);
-              if (paused) manualUntil.current = 0;
-            }}
-            aria-pressed={paused}
-            aria-label={
-              paused
-                ? "Play automatic service rotation"
-                : "Pause automatic service rotation"
-            }
-          >
-            {paused ? "▶ Play rotation" : "Ⅱ Pause rotation"}
-          </button>
-        )}
       </div>
       <div className="explorer-information">
         <span className="overline">Different sides. Shared precision.</span>

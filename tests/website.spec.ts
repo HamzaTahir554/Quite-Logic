@@ -46,7 +46,7 @@ test("motion-enabled navigation preserves client routing and scene lifecycle", a
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await visit(page, "/");
-  await page.locator(".hero-scene canvas").waitFor();
+  await page.locator(".graph-background canvas").waitFor();
   await page.evaluate(
     () => (document.documentElement.dataset.clientRouteProbe = "preserved"),
   );
@@ -56,7 +56,8 @@ test("motion-enabled navigation preserves client routing and scene lifecycle", a
     .click();
   await expect(page).toHaveURL("/services");
   await expect(page.locator(".service-editorial")).toHaveCount(5);
-  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(page.locator("main canvas")).toHaveCount(0);
+  await expect(page.locator(".graph-background canvas")).toHaveCount(1);
   expect(
     await page.evaluate(
       () => document.documentElement.dataset.clientRouteProbe,
@@ -68,7 +69,8 @@ test("motion-enabled navigation preserves client routing and scene lifecycle", a
     .getByRole("link", { name: "About", exact: true })
     .click();
   await expect(page).toHaveURL("/about");
-  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(page.locator("main canvas")).toHaveCount(0);
+  await expect(page.locator(".graph-background canvas")).toHaveCount(1);
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
     .getByRole("link", { name: "Work", exact: true })
@@ -144,44 +146,73 @@ test("mobile navigation and portfolio interactions", async ({ page }) => {
     .click();
   await expect(page).toHaveURL("/portfolio/atlas-cloud");
 });
-test("contact prepares an email draft without submission requests or false success", async ({
+test("contact submits on site and confirms only after the SMTP endpoint responds", async ({
   page,
 }) => {
-  const apiCalls: string[] = [];
-  page.on("request", (request) => {
-    const path = new URL(request.url()).pathname;
-    // The shared footer reads enabled social profiles independently of this form.
-    if (path === "/api/socials" && request.method() === "GET") return;
-    if (path.startsWith("/api/"))
-      apiCalls.push(request.url());
+  let submissions = 0;
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/api/contact", async (route) => {
+    submissions++;
+    const payload = route.request().postDataJSON();
+    expect(payload.email).toBe("client@example.test");
+    expect(payload.to).toBeUndefined();
+    await gate;
+    await route.continue();
   });
   await visit(page, "/contact");
-  await page.getByRole("button", { name: "Prepare Email Draft" }).click();
+  await page.getByRole("button", { name: "Send Message", exact: true }).click();
   await expect(
     page.getByText("Please enter at least 2 characters."),
   ).toBeVisible();
-  await page.getByRole("textbox", { name: "Your name" }).fill("Draft Client");
+  await page.getByRole("textbox", { name: "Your name" }).fill("Contact Client");
   await page
     .getByRole("textbox", { name: "Email address" })
     .fill("client@example.test");
   await page
     .getByRole("textbox", { name: "Tell us about your project" })
-    .fill("A detailed project inquiry prepared entirely in the browser.");
-  await page.getByRole("button", { name: "Prepare Email Draft" }).click();
-  const link = page.getByRole("link", { name: "Open email app" });
-  await expect(link).toHaveAttribute(
-    "href",
-    /^mailto:company\.quitelogic@gmail\.com\?/,
-  );
+    .fill("A detailed project inquiry submitted directly through the website.");
+  await page.getByRole("button", { name: "Send Message", exact: true }).click();
+  const form = page.getByRole("form", { name: "Project inquiry" });
+  await expect(form).toHaveAttribute("aria-busy", "true");
   await expect(
-    page.getByRole("form", { name: "Project inquiry" }).getByRole("alert"),
-  ).toContainText("Nothing has been sent automatically");
+    page.getByRole("button", { name: "Sending…", exact: true }),
+  ).toBeDisabled();
+  await expect(page.getByRole("textbox", { name: "Your name" })).toBeDisabled();
+  await expect(form.getByRole("alert")).toContainText("Sending your message");
+  await form.evaluate((element: HTMLFormElement) => {
+    element.requestSubmit();
+    element.requestSubmit();
+  });
+  await mkdir("qa/contact-email", { recursive: true });
+  await form.screenshot({ path: "qa/contact-email/sending.png" });
+  const delivered = page.waitForResponse((response) =>
+    response.url().endsWith("/api/contact"),
+  );
+  release();
+  expect((await delivered).status()).toBe(200);
+  await expect(form.getByRole("alert")).toContainText(
+    "Your message has been submitted",
+  );
+  await expect(form).toHaveAttribute("aria-busy", "false");
+  await expect(
+    page.getByRole("button", { name: "Message submitted", exact: true }),
+  ).toBeDisabled();
+  expect(submissions).toBe(1);
+  await form.screenshot({ path: "qa/contact-email/submitted.png" });
+  await expect(page.getByRole("link", { name: "Open email app" })).toHaveCount(
+    0,
+  );
   await expect(page.getByRole("textbox", { name: "Your name" })).toHaveValue(
-    "Draft Client",
+    "Contact Client",
   );
   await page.getByRole("textbox", { name: "Your name" }).fill("Updated Client");
-  await expect(link).toHaveCount(0);
-  expect(apiCalls).toEqual([]);
+  await expect(form.getByRole("alert")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Send Message", exact: true }),
+  ).toBeEnabled();
 });
 
 test("SEO endpoints and branded 404", async ({ page, request }) => {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { PortfolioProject } from "@/lib/portfolio";
 import ProjectLogo from "./ProjectLogo";
+import GlassReflection from "@/components/ui/GlassReflection";
 
 export default function PortfolioCard({
   project,
@@ -30,7 +31,8 @@ export default function PortfolioCard({
   }
   return (
     <article
-      className="managed-project-card glass-panel"
+      className="managed-project-card glass-card glass-hover"
+      data-glass-light
       data-open={open}
       onClick={(event) => {
         // The full mouse target complements the real keyboard/touch controls.
@@ -67,6 +69,7 @@ export default function PortfolioCard({
         }
       }}
     >
+      <GlassReflection />
       <button
         className="project-identity-button"
         aria-label={`View details for ${project.title}`}

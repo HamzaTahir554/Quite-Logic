@@ -1,6 +1,6 @@
 # Quite Logic
 
-Existing Next.js 16.4.1 App Router website, React 19, strict TypeScript, MUI, Framer Motion, GSAP and Three.js. MongoDB now powers admin accounts, review moderation, and the public portfolio. Existing public pages, glass styling, animations, Calendly and the browser email-draft contact flow are retained.
+Existing Next.js 16.4.1 App Router website, React 19, strict TypeScript, MUI, Framer Motion, GSAP and Three.js. MongoDB powers admin accounts, review moderation, and the public portfolio. The contact form sends inquiries directly through server-side SMTP. Existing public pages, glass styling, animations and Calendly are retained.
 
 ## Local setup
 
@@ -38,6 +38,28 @@ The workspace uses a desktop sidebar and a mobile drawer. Projects include priva
 - Social Links: manage LinkedIn, Instagram, GitHub, Facebook, X / Twitter and YouTube at `/admin/settings`. Each platform has one profile URL, an enabled switch and display order. New links are disabled by default. Save, edit, reorder with arrows or confirm deletion; only enabled links appear in the public footer. No social URLs are hardcoded or automatically seeded. The footer fetches fresh data on navigation and when returning to the tab, without rebuilding public pages. Existing MongoDB configuration and replica-set support are reused; no new environment variables or packages are needed.
 - Forgot password: enter email at `/admin/forgot-password`. The response does not disclose account existence. SMTP sends a link valid for 30 minutes. Only its SHA-256 hash is stored. Atomic consumption prevents reuse, including concurrent requests. Resetting also revokes all sessions.
 
+## Contact messages
+
+Visitors submit at `/contact` without opening an email application. `POST /api/contact` validates the same schema as the form, checks the configured origin, limits request size, rejects the honeypot and unexpected fields, and applies MongoDB-backed limits (20 attempts per address per 15 minutes, five per sender email per hour). MongoDB must be available for rate limiting; inquiry content is not stored there.
+
+The existing six `SMTP_*` variables also send contact messages. `SMTP_FROM` must be an authorized sender. The recipient defaults to `company.quitelogic@gmail.com`; set the optional server-only `CONTACT_TO` to a single email address to override it. The visitor's address is Reply-To, so Reply in your inbox reaches them. Visitors cannot select recipients or send automatic confirmation emails.
+
+The form shows progress, prevents repeat submissions while sending, and confirms only after SMTP acceptance. Errors preserve all fields for retry. After success, editing a field allows another submission. SMTP acceptance does not guarantee inbox placement; submit a real inquiry after deployment and check spam as well as your inbox. Missing mail configuration or a database/SMTP failure returns a generic error without exposing credentials or claiming delivery.
+
+For Gmail, use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USER=company.quitelogic@gmail.com`, a Google App Password in `SMTP_PASSWORD`, `SMTP_FROM=company.quitelogic@gmail.com`, and `SMTP_REQUIRE_TLS=true`. Keep these in server environment variables, never `NEXT_PUBLIC_*`. Redeploy/restart the Node application after changes. Keep `APP_URL` and `NEXT_PUBLIC_SITE_URL` aligned with the actual HTTPS origin used by visitors.
+
+See [contact email implementation and validation](qa/CONTACT-EMAIL-REPORT.md) for behavior, deployment settings and test coverage.
+
+## Shared graph background
+
+`components/background/GraphBackground.tsx` mounts once inside the root providers and keeps the same Canvas 2D renderer during client navigation. It selects public, admin (50% intensity), or authentication (85%) styling from the current route. No new packages, environment variables or backend setup are needed. The previous global ambient layer and hero-only WebGL network are replaced by this shared system; the interactive service dice and other page/card animations remain.
+
+The graph is fully autonomous: nodes drift on 8–20 second cycles and nearby connections draw in, hold, fade, then reconnect to other neighbors. A sparse candidate pool is built on resize; active connections are limited to three per node. Connection timings are staggered (0.8–1.5 second fades, 2–6 second holds), with at most three automatic data signals, or one on mobile/touch. No graph cursor, hover, mouse or scroll handlers are registered. The separate website cursor and card lighting remain unchanged.
+
+Responsive density is 22/34/56/76 nodes, with DPR capped at 1.5 on desktop and 1 on mobile/touch. The loop targets 60 FPS on desktop and 30 FPS on mobile/touch, yields background paints when page frames arrive slowly, stops in hidden tabs and becomes a static graph for reduced motion. Animation state stays outside React. The footer retains its single opaque `#303944` background. Dense admin lists/forms retain their semisolid surfaces.
+
+See [graph background implementation and validation](qa/GRAPH-BACKGROUND-REPORT.md) for architecture, lifecycle checks and device coverage. The existing app has no Clients or Inbox routes; any future screens under the same layouts inherit the graph automatically.
+
 ## Storage and security
 
 Small logos are stored persistently in MongoDB as WebP, behind a storage utility in `lib/project-storage.ts`. Upload accepts PNG/JPEG/WebP, up to 2 MB and 16 megapixels. Sharp decodes and re-encodes the image, checks MIME against its actual format, removes metadata, rejects SVG and animated images, and bounds output dimensions. No writable server disk or third-party storage account is required. The adapter can later be replaced with S3 or Cloudinary.
@@ -54,7 +76,7 @@ This application now requires a **Node.js server**. Static `out/` deployment can
 
 1. Create a MongoDB Atlas database/user with access limited to this application database. Allow the application host's network address. A replica set is required for transactional reordering; Atlas provides one.
 2. Set `MONGODB_URI` with the database name, `APP_URL` to the exact public HTTPS origin, and `NEXT_PUBLIC_SITE_URL` to the same origin. Rebuild when changing the public URL.
-3. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM` using a sender authorized by your mail provider. Port 465 uses TLS; 587 uses STARTTLS. Leave `SMTP_REQUIRE_TLS=true` for production. Verify real reset email delivery before relying on recovery.
+3. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM` using a sender authorized by your mail provider. Port 465 uses TLS; 587 uses STARTTLS. Leave `SMTP_REQUIRE_TLS=true` for production. Optionally set `CONTACT_TO` to override the company inquiry inbox. Verify real contact and reset email delivery.
 4. Run `npm run admin:create` and `npm run db:seed` against that database from a trusted machine. These initialize model indexes as well as content/accounts. Never use production credentials for tests.
 5. Run `npm run lint`, `npm run typecheck`, `npm run build`, then `npm start`. Set the host's `PORT` as needed. Deploy source/build and production dependencies to a Node-capable host, not an old static web root. Use HTTPS and a reverse proxy with body/time limits.
 6. Set `TRUST_PROXY=true` only when a trusted proxy overwrites `X-Forwarded-For`. Without it, IP-based limits safely share a bucket; per-email/admin limits remain active. Configure edge rate limiting for public reads and large/slow requests.
@@ -73,4 +95,4 @@ npm run build
 npm run test:admin
 ```
 
-`test:admin` launches a disposable local MongoDB replica set, local SMTP sink and the production Next.js server on ports 3217/3218. It checks auth, CSRF, moderation/privacy, upload validation, project CRUD/reordering, reset email delivery and one-use/expired tokens, password changes, server restart/session persistence, responsive admin screens, then the existing Playwright browser suite. It never uses the production database or SMTP credentials. The first run downloads a MongoDB test binary; Chromium must be installed (`npx playwright install chromium`). Set `ADMIN_TEST_PORT` to use another port pair. All child services stop afterward. `npm run test:e2e` can also target an already configured local test server using `E2E_BASE_URL`.
+`test:admin` launches a disposable local MongoDB replica set, local SMTP sink and the production Next.js server on ports 3217/3218. It checks auth, CSRF, moderation/privacy, upload validation, project CRUD/reordering, reset email delivery and one-use/expired tokens, password changes, server restart/session persistence, contact delivery/rejection/retry/rate limits, responsive admin screens, then the existing Playwright browser suite. It never uses the production database or SMTP credentials. The first run downloads a MongoDB test binary; Chromium must be installed (`npx playwright install chromium`). Set `ADMIN_TEST_PORT` to use another port pair. All child services stop afterward. `npm run test:e2e` can also target an already configured local test server using `E2E_BASE_URL`. Contact browser tests submit mail: use only the local SMTP test server.

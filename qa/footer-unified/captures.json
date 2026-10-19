@@ -1,0 +1,32 @@
+[
+  {
+    "width": 1440,
+    "height": 453,
+    "topAndBottomBackground": "#303944",
+    "pixelSamples": 6
+  },
+  {
+    "width": 1024,
+    "height": 453,
+    "topAndBottomBackground": "#303944",
+    "pixelSamples": 6
+  },
+  {
+    "width": 768,
+    "height": 893,
+    "topAndBottomBackground": "#303944",
+    "pixelSamples": 6
+  },
+  {
+    "width": 375,
+    "height": 895,
+    "topAndBottomBackground": "#303944",
+    "pixelSamples": 6
+  },
+  {
+    "width": 320,
+    "height": 896,
+    "topAndBottomBackground": "#303944",
+    "pixelSamples": 6
+  }
+]

@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { navigation } from "@/data/content";
 import { BookingButton } from "@/components/booking/BookingProvider";
 import BrandName from "@/components/ui/BrandName";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -56,6 +57,7 @@ export default function Header() {
       <nav className="desktop-nav" aria-label="Main navigation">
         {links}
       </nav>
+      <ThemeToggle />
       <BookingButton className="nav-project" />
       <IconButton
         className="mobile-toggle"
@@ -78,6 +80,7 @@ export default function Header() {
         <nav className="mobile-nav" aria-label="Mobile navigation">
           {links}
         </nav>
+        <BookingButton className="drawer-booking" />
         <p>Calm, precise software.</p>
       </Drawer>
     </header>

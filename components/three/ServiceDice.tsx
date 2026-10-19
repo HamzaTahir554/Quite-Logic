@@ -18,6 +18,8 @@ import {
 } from "three";
 import type { MotionValue } from "framer-motion";
 import { faceRotations, serviceFaces } from "@/data/serviceFaces";
+import { useVisualTheme } from "@/theme/VisualThemeProvider";
+import { palettes, type VisualTheme } from "@/theme/tokens";
 
 type Props = {
   active: boolean;
@@ -45,9 +47,11 @@ const placements: {
 function Face({
   index,
   onSelect,
+  visualTheme,
 }: {
   index: number;
   onSelect: Props["onSelect"];
+  visualTheme: VisualTheme;
 }) {
   const down = useRef<[number, number] | null>(null);
   const texture = useMemo(() => {
@@ -55,9 +59,10 @@ function Face({
     canvas.width = canvas.height = 768;
     const ctx = canvas.getContext("2d")!;
     const face = serviceFaces[index];
-    ctx.fillStyle = "#596572";
+    const colors = palettes[visualTheme];
+    ctx.fillStyle = colors.surface;
     ctx.fillRect(0, 0, 768, 768);
-    ctx.strokeStyle = "#F0F1F833";
+    ctx.strokeStyle = visualTheme === "day" ? "#33465c33" : "#F0F1F833";
     ctx.lineWidth = 2;
     ctx.strokeRect(1, 1, 766, 766);
     ctx.strokeStyle = "#2F80FE";
@@ -65,22 +70,22 @@ function Face({
     ctx.moveTo(64, 2);
     ctx.lineTo(704, 2);
     ctx.stroke();
-    ctx.strokeStyle = "#F0F1F82A";
+    ctx.strokeStyle = visualTheme === "day" ? "#33465c2A" : "#F0F1F82A";
     ctx.beginPath();
     ctx.roundRect(64, 64, 120, 120, 26);
     ctx.stroke();
     ctx.textAlign = "center";
-    ctx.fillStyle = "#91BDFF";
+    ctx.fillStyle = colors.accent;
     ctx.font = "48px Arial, sans-serif";
     ctx.fillText(face.icon, 124, 140);
     ctx.textAlign = "right";
-    ctx.fillStyle = "#D1D6DE";
+    ctx.fillStyle = colors.secondary;
     ctx.font = "24px monospace";
     ctx.fillText(`0${index + 1}`, 700, 129);
     ctx.textAlign = "left";
     ctx.font = "16px monospace";
     ctx.fillText("SOFTWARE STUDIO / CAPABILITIES", 64, 257);
-    ctx.fillStyle = "#F0F1F8";
+    ctx.fillStyle = colors.primary;
     ctx.font = "600 54px Arial, sans-serif";
     const title = index === 5 ? "Quite Logic" : face.short;
     if (index === 5) {
@@ -89,7 +94,7 @@ function Face({
       ctx.fillStyle = "#2F80FE";
       ctx.fillText("Logic", 64 + width, 345);
     } else ctx.fillText(title, 64, 345, 642);
-    ctx.fillStyle = "#D1D6DE";
+    ctx.fillStyle = colors.secondary;
     ctx.font = "28px Arial, sans-serif";
     const words = face.description.split(" ");
     let line = "",
@@ -103,21 +108,21 @@ function Face({
       } else line = next;
     }
     ctx.fillText(line.trim(), 64, y);
-    ctx.fillStyle = "#D1D6DE";
+    ctx.fillStyle = colors.secondary;
     ctx.font = "20px Arial, sans-serif";
     ctx.fillText(
       index === 5 ? "Explore all services" : "Thoughtfully engineered",
       64,
       686,
     );
-    ctx.fillStyle = "#91BDFF";
+    ctx.fillStyle = colors.accent;
     ctx.font = "32px Arial, sans-serif";
     ctx.fillText("↗", 672, 690);
     const map = new CanvasTexture(canvas);
     map.colorSpace = SRGBColorSpace;
     map.anisotropy = 2;
     return map;
-  }, [index]);
+  }, [index, visualTheme]);
   useEffect(() => () => texture.dispose(), [texture]);
   function click(event: ThreeEvent<MouseEvent>) {
     event.stopPropagation();
@@ -144,7 +149,15 @@ function Face({
   );
 }
 
-function Cube({ selected, onSelect, onSettled, drag, dragging, hover }: Props) {
+function Cube({
+  selected,
+  onSelect,
+  onSettled,
+  drag,
+  dragging,
+  hover,
+  visualTheme,
+}: Props & { visualTheme: VisualTheme }) {
   const turn = useRef<Group>(null);
   const atmosphere = useRef<Group>(null);
   const delivered = useRef(-1);
@@ -195,7 +208,12 @@ function Cube({ selected, onSelect, onSettled, drag, dragging, hover }: Props) {
           smoothness={2}
           bevelSegments={2}
         >
-          <meshBasicMaterial color="#303944" toneMapped={false} />
+          <meshBasicMaterial
+            color={
+              visualTheme === "day" ? palettes.day.secondarySurface : "#303944"
+            }
+            toneMapped={false}
+          />
         </RoundedBox>
         <lineSegments geometry={edges}>
           <lineBasicMaterial
@@ -206,7 +224,12 @@ function Cube({ selected, onSelect, onSettled, drag, dragging, hover }: Props) {
           />
         </lineSegments>
         {serviceFaces.map((face, index) => (
-          <Face key={face.slug} index={index} onSelect={onSelect} />
+          <Face
+            key={face.slug}
+            index={index}
+            onSelect={onSelect}
+            visualTheme={visualTheme}
+          />
         ))}
       </group>
     </group>
@@ -228,6 +251,7 @@ function ContextGuard({ onUnavailable }: { onUnavailable: () => void }) {
 }
 
 export default function ServiceDice(props: Props) {
+  const { theme } = useVisualTheme();
   return (
     <Canvas
       camera={{ position: [0, 0, 7.2], fov: 38 }}
@@ -235,7 +259,7 @@ export default function ServiceDice(props: Props) {
       frameloop={props.active ? "always" : "never"}
       gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
     >
-      <Cube {...props} />
+      <Cube {...props} visualTheme={theme} />
       <ContextGuard onUnavailable={props.onUnavailable} />
     </Canvas>
   );

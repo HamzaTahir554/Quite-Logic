@@ -12,36 +12,6 @@ main,
   position: relative;
   z-index: 1;
 }
-.ambient-studio {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-}
-.ambient-studio > span {
-  position: absolute;
-  width: 70vw;
-  height: 70vw;
-  border: 1px solid rgba(240, 241, 248, 0.025);
-  border-radius: 50%;
-  top: -30vw;
-  left: -20vw;
-  animation: ambient-drift 28s ease-in-out infinite alternate;
-}
-.ambient-studio > span:nth-child(2) {
-  top: 30vh;
-  left: 55vw;
-  width: 50vw;
-  height: 50vw;
-  animation-delay: -12s;
-}
-.ambient-studio > div {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23ffffff' opacity='.025' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
-  opacity: 0.35;
-}
 .scroll-progress {
   position: fixed;
   inset: 0 0 auto;
@@ -1101,7 +1071,6 @@ main,
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-scene,
-  .ambient-studio > span,
   .site-header .brand img {
     animation: none !important;
   }

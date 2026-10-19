@@ -64,6 +64,22 @@
 .service-art-link:focus-visible {
   outline-offset: -5px;
 }
+.service-art-crop {
+  position: absolute;
+  inset: 0;
+}
+.service-art-crop--vision,
+.service-art-crop--software {
+  /* Fit the portrait artwork before trimming its baked-in white edge. */
+  width: calc(100% * 756 / 1024);
+  margin-inline: auto;
+}
+.service-art-crop--vision {
+  clip-path: inset(0 3px 0 0);
+}
+.service-art-crop--software {
+  clip-path: inset(0 0 0 3px);
+}
 .service-art-image {
   object-fit: contain;
   transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);

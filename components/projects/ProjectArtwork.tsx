@@ -1,13 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  useInView,
-} from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { useMotionPreference } from "@/hooks/useMotionPreference";
 export default function ProjectArtwork({
   src,
   alt,
@@ -18,7 +13,7 @@ export default function ProjectArtwork({
   detail?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useMotionPreference();
   const visible = useInView(ref, { margin: "80px" });
   const { scrollYProgress } = useScroll({
     target: ref,

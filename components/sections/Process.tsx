@@ -4,16 +4,16 @@ import {
   motion,
   useScroll,
   useSpring,
-  useReducedMotion,
   useMotionValueEvent,
   useTransform,
   AnimatePresence,
 } from "framer-motion";
+import { useMotionPreference } from "@/hooks/useMotionPreference";
 import { process } from "@/data/content";
 import { SectionHeading } from "@/components/ui/Elements";
 export default function Process({ detailed = false }: { detailed?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useMotionPreference();
   const [stage, setStage] = useState(0);
   const { scrollYProgress } = useScroll({
     target: root,

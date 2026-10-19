@@ -18,7 +18,6 @@ export const services = [
     details:
       "From the first interaction to the last API call, we build web products with equal attention to usability, accessibility, and architecture.",
     capabilities: [
-      "Next.js & React",
       "SaaS platforms",
       "E-commerce",
       "Dashboards",

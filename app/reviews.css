@@ -1,13 +1,3 @@
-.glass-panel {
-  background: linear-gradient(
-    135deg,
-    rgba(89, 101, 114, 0.68),
-    rgba(48, 57, 68, 0.76)
-  );
-  border: 1px solid rgba(240, 241, 248, 0.18);
-  border-radius: 24px;
-  box-shadow: 0 16px 50px #1b263315;
-}
 .ql-button {
   display: inline-flex;
   align-items: center;
@@ -205,7 +195,7 @@
 }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .ql-button:not(:disabled):hover {
-    transform: scale(1.04);
+    scale: 1.03;
     border-color: #96bfff;
     box-shadow: 0 0 20px #2f80fe22;
   }
@@ -213,7 +203,7 @@
     transform: translateX(3px);
   }
   .review-card:hover {
-    transform: translate3d(0, -3px, 0) scale(1.01);
+    transform: translate3d(0, -3px, 0);
     border-color: #96bfff80;
   }
   .review-card:hover::before {

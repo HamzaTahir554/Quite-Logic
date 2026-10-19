@@ -1,0 +1,46 @@
+{
+  "widths": [
+    {
+      "width": 1440,
+      "height": 452.390625,
+      "background": "#303944",
+      "innerSurfaces": 9,
+      "overflow": false,
+      "pixelSamples": 5
+    },
+    {
+      "width": 1024,
+      "height": 452.390625,
+      "background": "#303944",
+      "innerSurfaces": 9,
+      "overflow": false,
+      "pixelSamples": 5
+    },
+    {
+      "width": 768,
+      "height": 892.28125,
+      "background": "#303944",
+      "innerSurfaces": 9,
+      "overflow": false,
+      "pixelSamples": 5
+    },
+    {
+      "width": 375,
+      "height": 894.296875,
+      "background": "#303944",
+      "innerSurfaces": 9,
+      "overflow": false,
+      "pixelSamples": 5
+    },
+    {
+      "width": 320,
+      "height": 894.296875,
+      "background": "#303944",
+      "innerSurfaces": 9,
+      "overflow": false,
+      "pixelSamples": 5
+    }
+  ],
+  "animation": "preserved; reduced motion respected",
+  "browserErrors": []
+}

@@ -100,7 +100,7 @@ test("initial hero layout remains stable", async ({ page }) => {
   });
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await page.locator(".hero-scene canvas").waitFor();
+  await page.locator(".graph-background canvas").waitFor();
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(1800);
   const cls = await page.evaluate(() =>

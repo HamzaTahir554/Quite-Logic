@@ -9,6 +9,7 @@ import { useAdminAction, useAdminFeedback } from "./AdminFeedback";
 import { apiCall } from "./useAdminList";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
 import { motion } from "framer-motion";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const sections = [
   ["Dashboard", "/admin"],
@@ -152,6 +153,7 @@ export default function AdminNav({
             </span>
           </div>
           <div className="admin-topbar-account">
+            <ThemeToggle />
             <span className="admin-account-avatar" aria-hidden="true">
               {email.slice(0, 1).toUpperCase()}
             </span>

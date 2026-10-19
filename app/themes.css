@@ -1,0 +1,1260 @@
+/* One document-wide palette, including portals and the admin route stylesheet. */
+@property --bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #4b5560;
+}
+@property --card {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #596572;
+}
+@property --slate {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #303944;
+}
+@property --paper {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f0f1f8;
+}
+@property --muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d1d6dd;
+}
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #91bdff;
+}
+:root {
+  color-scheme: dark;
+  --text-primary: var(--paper);
+  --text-secondary: var(--muted);
+  --border: var(--line);
+  --shadow: var(--glass-shadow);
+  --input-surface: rgba(48, 57, 68, 0.48);
+  --input-focus: rgba(89, 101, 114, 0.5);
+  --modal-surface: #303944;
+  --toggle-surface: #303944;
+  --toggle-active: #596b80;
+}
+:root[data-theme="day"] {
+  color-scheme: light;
+  --day-bg: #e8ecf1;
+  --day-surface: #e5e9ee;
+  --day-surface-raised: #edf0f4;
+  --day-surface-secondary: #dfe4ea;
+  --day-text-primary: #18222d;
+  --day-text-secondary: #465463;
+  --day-text-muted: #687583;
+  --day-accent: #2f80fe;
+  --day-accent-hover: #1f6fe5;
+  --day-accent-soft: #dce9ff;
+  --day-success: #2f7d5a;
+  --day-error: #c2414b;
+  --day-border: rgba(37, 52, 68, 0.08);
+  --day-focus-border: rgba(47, 128, 254, 0.35);
+  --day-shadow-dark: rgba(166, 177, 190, 0.38);
+  --day-shadow-light: rgba(255, 255, 255, 0.92);
+  --day-shadow:
+    10px 10px 24px var(--day-shadow-dark),
+    -10px -10px 24px var(--day-shadow-light),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.65);
+  --day-shadow-control:
+    4px 4px 10px rgba(166, 177, 190, 0.3),
+    -4px -4px 10px rgba(255, 255, 255, 0.85),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.65);
+  --day-shadow-inset:
+    inset 4px 4px 10px rgba(166, 177, 190, 0.28),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.75);
+  --day-focus-shadow:
+    var(--day-shadow-inset), 0 0 0 3px rgba(47, 128, 254, 0.12);
+  --bg: var(--day-bg);
+  --background: var(--bg);
+  --slate: var(--day-surface-secondary);
+  --card: var(--day-surface);
+  --surface: var(--card);
+  --paper: var(--day-text-primary);
+  --muted: var(--day-text-secondary);
+  --text-muted: var(--day-text-muted);
+  --secondary: var(--muted);
+  --accent: var(--day-accent);
+  --line: var(--day-border);
+  --success: var(--day-success);
+  --glass: var(--day-surface);
+  --glass-soft: var(--day-surface);
+  --glass-card: var(--day-surface-raised);
+  --glass-panel: var(--day-surface);
+  --glass-dark: var(--day-surface-secondary);
+  --glass-border: var(--day-border);
+  --glass-accent-border: var(--day-focus-border);
+  --glass-fallback: var(--day-surface);
+  --glass-blur: 0px;
+  --glass-shadow: var(--day-shadow);
+  --glass-reflection: linear-gradient(
+    115deg,
+    transparent 30%,
+    #ffffff35 50%,
+    transparent 70%
+  );
+  --input-surface: var(--day-surface-secondary);
+  --input-focus: var(--day-surface);
+  --input-shadow: var(--day-shadow-inset);
+  --modal-surface: var(--day-surface);
+  --toggle-surface: var(--day-surface-raised);
+  --toggle-active: var(--day-accent-soft);
+}
+html.theme-changing {
+  transition:
+    --bg 380ms ease,
+    --card 380ms ease,
+    --slate 380ms ease,
+    --paper 380ms ease,
+    --muted 380ms ease,
+    --accent 380ms ease;
+}
+html.theme-changing
+  :is(
+    .glass-soft,
+    .glass-card,
+    .glass-panel,
+    .site-header,
+    .footer,
+    .MuiPaper-root,
+    .admin-panel,
+    .admin-sidebar,
+    .admin-auth
+  ) {
+  transition:
+    background-color 380ms ease,
+    border-color 380ms ease,
+    color 380ms ease,
+    box-shadow 380ms ease;
+}
+
+/* Fixed-size switch: hydration changes the state, never the layout. */
+.theme-toggle {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0;
+  width: 140px;
+  height: 42px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: var(--toggle-surface);
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: inset 0 1px #ffffff12;
+}
+.theme-toggle-thumb {
+  position: absolute;
+  inset: 4px auto 4px 4px;
+  width: calc(50% - 4px);
+  border-radius: inherit;
+  background: var(--toggle-active);
+  box-shadow: 0 2px 5px #182b4220;
+  transform: translateX(100%);
+  transition:
+    transform 250ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    background-color 380ms;
+  pointer-events: none;
+}
+[data-theme="day"] .theme-toggle-thumb {
+  transform: translateX(0);
+}
+.theme-option {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+.theme-option svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-theme="night"] .theme-option-night,
+[data-theme="day"] .theme-option-day {
+  color: var(--text-primary);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.admin-brand-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+}
+.site-header .theme-toggle {
+  margin-left: 2px;
+}
+
+/* MUI uses the same CSS tokens before hydration and after its palette updates. */
+html[data-theme]
+  :is(
+    .MuiInputBase-root,
+    .MuiInputLabel-root,
+    .MuiFormLabel-root,
+    .MuiMenuItem-root,
+    .MuiIconButton-root,
+    .MuiDialogTitle-root
+  ) {
+  color: var(--text-primary);
+}
+html[data-theme] .MuiInputLabel-root:not(.Mui-focused) {
+  color: var(--text-secondary);
+}
+html[data-theme] .MuiInputLabel-root.Mui-focused {
+  color: var(--accent);
+}
+html[data-theme] .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border);
+}
+html[data-theme] .MuiFormHelperText-root {
+  color: var(--text-secondary);
+}
+html[data-theme] .MuiFormHelperText-root.Mui-error {
+  color: #d86070;
+}
+html[data-theme="day"] .MuiFormHelperText-root.Mui-error {
+  color: var(--day-error);
+}
+html[data-theme]
+  :is(.MuiMenu-paper, .MuiPopover-paper, .MuiDrawer-paper, .MuiDialog-paper) {
+  color: var(--text-primary);
+  background-color: var(--modal-surface);
+}
+
+/* Day surfaces: tactile and opaque, with no stacked backdrop filters. */
+html[data-theme="day"] body,
+html[data-theme="day"] body:has(.graph-background[data-variant="admin"]) {
+  color: var(--text-primary);
+  background:
+    radial-gradient(ellipse at 22% 0%, #ffffff3d, transparent 48%), var(--bg);
+}
+html[data-theme="day"]
+  :is(
+    .glass-soft,
+    .glass-card,
+    .glass-panel,
+    .glass-dark,
+    .site-header,
+    .site-header.scrolled,
+    .page-hero,
+    .cta-panel,
+    .contact-form,
+    .contact-booking-panel,
+    .contact-option,
+    .about-panel,
+    .project-card,
+    .review-card,
+    .portfolio-empty,
+    .service-editorial-copy,
+    .managed-project-card,
+    .MuiCard-root,
+    .MuiDialog-paper,
+    .MuiDrawer-paper
+  ) {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--glass-border);
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html[data-theme="day"] .reference-hero.hero {
+  background: radial-gradient(ellipse at 45% 30%, #f4f6f84d, transparent 70%);
+}
+html[data-theme="day"] .reference-hero .hero-copy {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+html[data-theme="day"] .portfolio-page .page-hero {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+html[data-theme="day"]
+  :is(
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .brand-quite,
+    .brand-light,
+    .managed-project-title,
+    .service-selector strong,
+    .section-heading h2,
+    .hero-title-line,
+    .reference-hero h1,
+    .page-hero h1 em,
+    .project-breadcrumbs [aria-current]
+  ) {
+  color: var(--text-primary);
+}
+html[data-theme="day"]
+  :is(
+    p,
+    blockquote,
+    .muted,
+    .small,
+    .hero-description,
+    .hero-disciplines,
+    .hero-scroll,
+    .section-label,
+    .section-end,
+    .project-breadcrumbs,
+    .concept-note,
+    .review-person p,
+    .review-card time,
+    .review-empty span,
+    .reviews-heading p,
+    .social-placeholder,
+    .project-copy p,
+    .service-editorial-copy p,
+    .contact-layout aside p,
+    .portfolio-count
+  ) {
+  color: var(--text-secondary);
+}
+html[data-theme="day"]
+  :is(
+    .brand-logic,
+    em,
+    .overline,
+    .eyebrow,
+    .service-icon,
+    .review-rating,
+    .review-service,
+    .service-editorial-copy .overline,
+    .service-art-index,
+    .contact-email,
+    .text-link,
+    .number
+  ) {
+  color: var(--accent);
+}
+html[data-theme="day"] .nav-link {
+  color: var(--text-primary);
+}
+html[data-theme="day"]
+  .site-header
+  .nav-link:is(:hover, [aria-current="page"]) {
+  color: var(--day-accent);
+}
+html[data-theme="day"] .nav-active {
+  background: var(--day-accent-soft);
+}
+html[data-theme="day"]
+  :is(
+    .glass-reflection,
+    .glass-spotlight,
+    .crystal-light,
+    .hero-scene,
+    .atmosphere-glow
+  ) {
+  opacity: 0.12;
+}
+html[data-theme="day"] .atmosphere-orbits > span {
+  border-color: #30486312;
+}
+html[data-theme="day"] .graph-background::after {
+  background: radial-gradient(ellipse at 50% 35%, transparent, var(--day-bg));
+}
+html[data-theme="day"]
+  :is(
+    .project-visual,
+    .about-visual,
+    .explorer-visual,
+    .workflow-visual,
+    .service-explorer,
+    .case-artwork,
+    .atlas-showcase,
+    .atlas-primary,
+    .atlas-screen,
+    .atlas-shell,
+    .atlas-terminal,
+    .terminal-window,
+    .deployment-terminal
+  ) {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+html[data-theme="day"]
+  :is(
+    .atlas-copy,
+    .atlas-copy p,
+    .atlas-metric,
+    .atlas-metrics,
+    .atlas-status,
+    .atlas-terminal,
+    .terminal-line,
+    .terminal-header,
+    .terminal-footer,
+    .atlas-screen-header,
+    .atlas-screen-sidebar,
+    .atlas-screen-main,
+    .atlas-screen-toolbar,
+    .atlas-deploy-row,
+    .atlas-log-line
+  ) {
+  color: var(--text-primary);
+}
+html[data-theme="day"]
+  :is(
+    .css-service-cube,
+    .cube-face,
+    .cube-face-top,
+    .review-initial,
+    .chips .MuiChip-root
+  ) {
+  color: var(--text-primary);
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--input-shadow);
+}
+html[data-theme="day"]
+  :is(
+    .service-selector button[aria-pressed="true"],
+    .portfolio-filters button.selected
+  ) {
+  background: var(--day-accent-soft);
+  border-color: var(--day-focus-border);
+  box-shadow: var(--day-shadow-inset);
+}
+html[data-theme="day"] .managed-project-description {
+  background: var(--day-surface);
+  border-color: var(--border);
+}
+html[data-theme="day"]
+  :is(.managed-project-description p, .project-disclosure-hint) {
+  color: var(--text-secondary);
+}
+html[data-theme="day"]
+  :is(
+    .button.secondary,
+    .reference-hero .hero-actions .secondary,
+    .ql-button,
+    .admin-button,
+    .admin-icon-button,
+    .booking-text-button
+  ) {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--glass-border);
+  box-shadow: var(--day-shadow-control);
+}
+html[data-theme="day"]
+  :is(
+    .button.primary,
+    .ql-button.primary,
+    .nav-project,
+    .admin-button.is-primary,
+    .contact-form .submit-button.MuiButton-root,
+    .MuiButton-containedPrimary
+  ) {
+  background: var(--day-accent);
+  color: #fff;
+  border-color: var(--day-accent);
+  box-shadow:
+    0 4px 10px rgba(47, 128, 254, 0.18),
+    inset 0 1px rgba(255, 255, 255, 0.2);
+}
+html[data-theme="day"]
+  :is(
+    .button.primary,
+    .ql-button.primary,
+    .nav-project,
+    .admin-button.is-primary,
+    .contact-form .submit-button.MuiButton-root,
+    .MuiButton-containedPrimary
+  )
+  :is(span, svg) {
+  color: inherit;
+}
+html[data-theme="day"] .contact-form .submit-button.MuiButton-root:disabled {
+  color: var(--day-text-secondary);
+  background: var(--day-surface-secondary);
+  border-color: var(--day-border);
+  box-shadow: none;
+}
+html[data-theme="day"]
+  :is(.button, .ql-button, .admin-button):active:not(:disabled) {
+  box-shadow: var(--input-shadow);
+  scale: 0.98;
+}
+html[data-theme="day"] .reference-hero .hero-actions .button.primary {
+  background: var(--day-accent);
+  color: #fff;
+}
+html[data-theme="day"] .deployment-build > span:last-child,
+html[data-theme="day"] .cube-face-icon,
+html[data-theme="day"] .explorer-service-icon {
+  color: var(--accent);
+}
+.drawer-booking {
+  margin: 0 16px 24px;
+}
+html[data-theme="day"]
+  :is(
+    .contact-form .MuiOutlinedInput-root,
+    .review-form input,
+    .review-form textarea,
+    .review-form select,
+    .admin-shell .admin-form input,
+    .admin-shell .admin-form textarea,
+    .admin-shell .admin-form select,
+    .admin-dialog input,
+    .admin-dialog textarea,
+    .admin-dialog select
+  ) {
+  color: var(--text-primary);
+  background: var(--input-surface);
+  border-color: var(--border);
+  box-shadow: var(--input-shadow);
+  color-scheme: light;
+}
+html[data-theme="day"] :is(input, textarea)::placeholder {
+  color: var(--day-text-muted);
+  opacity: 1;
+}
+html[data-theme="day"]
+  :is(
+    .review-form label,
+    .admin-form label,
+    .admin-form small,
+    .drawer-head,
+    .mobile-nav,
+    .MuiMenuItem-root,
+    .MuiChip-root
+  ) {
+  color: var(--text-primary);
+}
+html[data-theme="day"]
+  :is(.review-form select option, .admin-form select option) {
+  color: var(--text-primary);
+  background: var(--surface);
+}
+html[data-theme="day"] .MuiAlert-standardError {
+  color: var(--day-error);
+  background: color-mix(
+    in srgb,
+    var(--day-error) 9%,
+    var(--day-surface-raised)
+  );
+}
+html[data-theme="day"] .MuiAlert-standardSuccess {
+  color: var(--day-success);
+  background: color-mix(
+    in srgb,
+    var(--day-success) 9%,
+    var(--day-surface-raised)
+  );
+}
+html[data-theme="day"] .MuiAlert-standardInfo {
+  color: var(--day-text-primary);
+  background: var(--day-accent-soft);
+}
+html[data-theme="day"] :is(.ql-error, .form-error) {
+  color: var(--day-error);
+}
+html[data-theme="day"] :is(.ql-success, .form-success) {
+  color: var(--day-success);
+}
+
+/* One footer plane, including gutters, top content and bottom navigation. */
+html[data-theme="day"] .footer.container {
+  --paper: var(--day-text-primary);
+  --muted: var(--day-text-secondary);
+  --secondary: var(--day-text-secondary);
+  --accent: var(--day-accent);
+  color: var(--paper);
+  background: var(--day-surface-secondary);
+  border-color: var(--line);
+  box-shadow: inset 0 1px #ffffffa6;
+}
+html[data-theme="day"] .footer .footer-motion {
+  background: transparent;
+  box-shadow: none;
+}
+html[data-theme="day"] .footer :is(.footer-top, .footer-bottom) {
+  background: transparent;
+  border-color: var(--line);
+}
+html[data-theme="day"] .footer :is(p, .small, .footer-top a, .footer-bottom) {
+  color: var(--muted);
+}
+
+/* Calendly's iframe is themed through its supported URL options, never CSS. */
+html[data-theme="day"] .booking-dialog.MuiPaper-root {
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow);
+  border-color: var(--glass-border);
+}
+html[data-theme="day"]
+  :is(
+    .booking-intro,
+    .booking-workspace,
+    .booking-content,
+    .booking-step-feedback,
+    .booking-embed-panel,
+    .booking-frame,
+    .booking-footer
+  ) {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+html[data-theme="day"]
+  :is(
+    .booking-title small,
+    .booking-eyebrow,
+    .booking-meeting-facts,
+    .booking-meeting-facts > span:last-child,
+    .booking-progress li,
+    .booking-step-copy p,
+    .booking-fallback,
+    .booking-calendar-notice
+  ) {
+  color: var(--text-secondary);
+}
+html[data-theme="day"]
+  :is(
+    .booking-step-copy h3,
+    .booking-progress [aria-current="step"],
+    .booking-fallback a
+  ) {
+  color: var(--text-primary);
+}
+html[data-theme="day"] .booking-step-marker {
+  background: var(--slate);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+html[data-theme="day"]
+  .booking-progress
+  [aria-current="step"]
+  .booking-step-marker {
+  background: var(--day-accent);
+  color: #fff;
+}
+html[data-theme="day"]
+  .booking-progress
+  [data-complete="true"]
+  .booking-step-marker {
+  background: var(--day-accent-soft);
+  color: var(--day-text-primary);
+}
+html[data-theme="day"] .booking-success-icon {
+  color: var(--accent);
+}
+html[data-theme="day"] .booking-progress::before {
+  background: var(--border);
+}
+html[data-theme="day"]
+  :is(
+    .deployment-output,
+    .deployment-command-text,
+    .deployment-titlebar,
+    .deployment-status,
+    .atlas-visual-link
+  ) {
+  color: var(--text-primary);
+}
+html[data-theme="day"]
+  :is(.deployment-dollar, .deployment-check, .deployment-arrow) {
+  color: var(--accent);
+}
+html[data-theme="day"] .deployment-terminal {
+  box-shadow: var(--day-shadow);
+}
+html[data-theme="day"] .deployment-titlebar {
+  border-color: var(--border);
+}
+
+/* Admin data surfaces stay opaque and practical in daylight. */
+html[data-theme="day"] :is(.admin-shell, .admin-dialog) {
+  color: var(--text-primary);
+  --admin-muted: var(--day-text-secondary);
+  --admin-border: var(--day-border);
+  --admin-blue: var(--day-accent);
+}
+html[data-theme="day"]
+  .admin-shell
+  :is(.admin-workspace, .admin-workspace-footer) {
+  background: transparent;
+}
+html[data-theme="day"]
+  :is(
+    .admin-shell .admin-sidebar,
+    .MuiPaper-root.admin-sidebar,
+    .admin-shell .admin-topbar,
+    .admin-shell .admin-panel,
+    .admin-shell .admin-auth,
+    .admin-shell .admin-editor,
+    .admin-shell .admin-social-editor,
+    .admin-dialog.MuiPaper-root,
+    .admin-shell .admin-stats a,
+    .admin-shell .admin-empty
+  ) {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html[data-theme="day"]
+  .admin-shell
+  :is(
+    .admin-record,
+    .admin-social-row,
+    .admin-list-panel,
+    .admin-account-card,
+    .admin-preview-dialog,
+    .admin-skeleton,
+    .admin-preview-empty
+  ) {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+html[data-theme="day"]
+  :is(.admin-shell, .admin-dialog)
+  :is(
+    h1,
+    h2,
+    h3,
+    strong,
+    label,
+    th,
+    td,
+    .admin-nav a,
+    .admin-breadcrumb,
+    .admin-topbar-account,
+    .admin-text-link,
+    .admin-social-url,
+    .admin-social-identity,
+    .admin-preview-title
+  ) {
+  color: var(--text-primary);
+}
+html[data-theme="day"]
+  :is(.admin-shell, .admin-dialog)
+  :is(
+    p,
+    small,
+    .muted,
+    .admin-nav-label,
+    .admin-eyebrow,
+    .admin-label,
+    .admin-heading-note,
+    .admin-help,
+    .admin-list-columns,
+    .admin-workspace-footer,
+    .admin-sidebar-brand small,
+    .admin-sidebar-bottom p,
+    .admin-topbar-account small
+  ) {
+  color: var(--text-secondary);
+}
+html[data-theme="day"]
+  :is(.admin-account-avatar, .admin-client-avatar, .admin-social-icon) {
+  background: var(--day-accent-soft);
+  color: var(--accent);
+  border-color: var(--border);
+}
+html[data-theme="day"]
+  :is(.admin-active-background, .admin-nav a[aria-current="page"]) {
+  background: var(--day-accent-soft);
+  border-color: var(--day-focus-border);
+  box-shadow:
+    var(--day-shadow-inset),
+    inset 3px 0 var(--day-accent);
+  color: var(--accent);
+}
+html[data-theme="day"] .admin-button.is-danger {
+  background: var(--day-error);
+  color: #fff;
+  border-color: var(--day-error);
+}
+html[data-theme="day"] :is(.admin-error, .admin-button.is-danger-subtle) {
+  background: color-mix(
+    in srgb,
+    var(--day-error) 9%,
+    var(--day-surface-raised)
+  );
+  color: var(--day-error);
+  border-color: color-mix(in srgb, var(--day-error) 30%, transparent);
+}
+html[data-theme="day"] :is(.admin-success, .admin-social-toggle.is-enabled) {
+  background: color-mix(
+    in srgb,
+    var(--day-success) 9%,
+    var(--day-surface-raised)
+  );
+  color: var(--day-success);
+  border-color: color-mix(in srgb, var(--day-success) 30%, transparent);
+}
+html[data-theme="day"] .admin-badge {
+  background: var(--day-accent-soft);
+  color: var(--day-text-primary);
+  border-color: var(--day-focus-border);
+}
+html[data-theme="day"] .admin-badge.approved {
+  background: color-mix(
+    in srgb,
+    var(--day-success) 9%,
+    var(--day-surface-raised)
+  );
+  color: var(--day-success);
+}
+html[data-theme="day"] .admin-badge.rejected {
+  background: color-mix(
+    in srgb,
+    var(--day-error) 9%,
+    var(--day-surface-raised)
+  );
+  color: var(--day-error);
+}
+html[data-theme="day"] .admin-skeleton > div {
+  background: var(--day-surface-secondary);
+}
+html[data-theme="day"] :is(.MuiTableCell-root, .MuiTableRow-root) {
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+/* Day-only hierarchy: raised content, inset controls, restrained depth. */
+html[data-theme="day"] .service-selector button > span {
+  color: var(--day-text-secondary);
+}
+html[data-theme="day"]
+  :is(
+    .glass-card,
+    .review-card,
+    .managed-project-card,
+    .service-editorial-copy,
+    .contact-booking-panel,
+    .admin-shell .admin-stats a
+  ) {
+  background: var(--day-surface-raised);
+  border-color: var(--day-border);
+  box-shadow: var(--day-shadow);
+  border-radius: 20px;
+}
+html[data-theme="day"] :is(.contact-form, .cta-panel, .about-panel) {
+  border-radius: 22px;
+}
+html[data-theme="day"] .page-hero {
+  border-radius: 24px;
+}
+html[data-theme="day"] .site-header {
+  background: var(--day-surface);
+  border-color: var(--day-border);
+  box-shadow: var(--day-shadow-control);
+}
+html[data-theme="day"] .theme-toggle {
+  box-shadow: var(--day-shadow-control);
+  border-color: var(--day-border);
+}
+html[data-theme="day"] .theme-toggle-thumb {
+  box-shadow: var(--day-shadow-inset);
+}
+html[data-theme="day"] .theme-option-day {
+  color: var(--day-text-primary);
+}
+html[data-theme="day"] :is(.portfolio-filters, .admin-controls) {
+  background: var(--day-surface-secondary);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: var(--day-shadow-inset);
+}
+html[data-theme="day"] .admin-controls {
+  margin-block: 18px;
+  padding: 14px;
+}
+html[data-theme="day"]
+  :is(.admin-shell, .admin-dialog)
+  :is(
+    input:where(:not([type="checkbox"]):not([type="radio"])),
+    textarea,
+    select
+  ) {
+  background: var(--input-surface);
+  box-shadow: var(--day-shadow-inset);
+  color: var(--day-text-primary);
+  border-color: var(--day-border);
+}
+html[data-theme="day"] :is(.admin-shell, .admin-dialog) [aria-invalid="true"] {
+  border-color: var(--day-error);
+}
+html[data-theme="day"]
+  :is(.portfolio-filters button, .service-selector button) {
+  background: var(--day-surface-raised);
+  box-shadow: var(--day-shadow-control);
+  color: var(--day-text-primary);
+}
+html[data-theme="day"]
+  :is(
+    .portfolio-filters button.selected,
+    .service-selector button[aria-pressed="true"]
+  ) {
+  background: var(--day-accent-soft);
+  box-shadow: var(--day-shadow-inset);
+  border-color: var(--day-focus-border);
+}
+html[data-theme="day"]
+  :is(
+    .review-card blockquote,
+    .review-person p,
+    .managed-project-description p,
+    .service-editorial-copy p,
+    .review-form label,
+    .admin-shell .admin-form label
+  ) {
+  color: var(--day-text-secondary);
+  opacity: 1;
+}
+html[data-theme="day"]
+  :is(
+    .reviews-heading h1 span,
+    .reviews-heading h2 span,
+    .brand-logic,
+    .footer .brand-logic,
+    .admin-shell .brand-logic,
+    .project-logo-fallback,
+    .managed-project-logo > span,
+    .review-rating
+  ) {
+  color: var(--day-accent);
+}
+html[data-theme="day"] :is(.project-identity-button, .review-person h3) {
+  color: var(--day-text-primary);
+}
+html[data-theme="day"]
+  :is(
+    .review-card time,
+    .project-breadcrumbs,
+    .cube-face-kicker,
+    .section-end,
+    .admin-eyebrow
+  ) {
+  color: var(--day-text-muted);
+  opacity: 1;
+}
+html[data-theme="day"] .service-art-frame {
+  border-color: var(--day-border);
+  box-shadow: var(--day-shadow);
+}
+html[data-theme="day"] .managed-project-card[data-open="true"] {
+  border-color: var(--day-focus-border);
+}
+html[data-theme="day"] .footer :is(.footer-top a, .footer-bottom a):hover {
+  color: var(--day-accent);
+}
+html[data-theme="day"] :is(.admin-shell, .admin-dialog) :is(th, td) {
+  box-shadow: none;
+  color: var(--day-text-primary);
+}
+html[data-theme="day"] .admin-shell th {
+  background: var(--day-surface-secondary);
+}
+html[data-theme="day"]
+  :is(.admin-shell, .admin-dialog)
+  :is(
+    .admin-logout,
+    .admin-view-site,
+    .admin-stat-label,
+    .admin-list-summary,
+    .admin-editor-state,
+    .admin-optional-fields summary,
+    .admin-detail-list dd,
+    .admin-social-toggle
+  ) {
+  color: var(--day-text-primary);
+}
+html[data-theme="day"]
+  :is(.admin-shell, .admin-dialog)
+  :is(
+    .admin-breadcrumb > span,
+    .admin-stat-link,
+    .admin-pagination,
+    .admin-character-count,
+    .admin-review-meta,
+    .admin-detail-list dt,
+    .admin-social-columns,
+    .admin-record blockquote,
+    .admin-controls label
+  ) {
+  color: var(--day-text-secondary);
+}
+html[data-theme="day"]
+  :is(
+    .admin-stat-label svg,
+    .admin-quick-icon,
+    .admin-empty-mark,
+    .admin-required,
+    .admin-review-stars,
+    .admin-review-stars > span,
+    .admin-social-row h3 svg
+  ) {
+  color: var(--day-accent);
+}
+html[data-theme="day"] .admin-quick-icon,
+html[data-theme="day"]
+  .admin-shell
+  .admin-logo-upload
+  input::file-selector-button {
+  background: var(--day-accent-soft);
+  color: var(--day-text-primary);
+  border-color: var(--day-focus-border);
+}
+html[data-theme="day"]
+  .admin-badge:is([data-status="published"], [data-status="approved"]) {
+  color: var(--day-success);
+  background: color-mix(
+    in srgb,
+    var(--day-success) 9%,
+    var(--day-surface-raised)
+  );
+}
+html[data-theme="day"] .admin-badge[data-status="pending"] {
+  color: var(--day-text-primary);
+  background: var(--day-accent-soft);
+}
+html[data-theme="day"]
+  :is(
+    .admin-badge[data-status="rejected"],
+    .admin-field-error,
+    .admin-error-panel
+  ) {
+  color: var(--day-error);
+  background: color-mix(
+    in srgb,
+    var(--day-error) 9%,
+    var(--day-surface-raised)
+  );
+}
+html[data-theme="day"] .admin-toast.MuiAlert-root {
+  color: var(--day-success);
+  background: var(--day-surface-raised);
+  box-shadow: var(--day-shadow-control);
+}
+html[data-theme="day"] .admin-toast .MuiAlert-icon {
+  color: var(--day-success);
+}
+html[data-theme="day"] .admin-toast.is-error.MuiAlert-root,
+html[data-theme="day"] .admin-toast.is-error .MuiAlert-icon {
+  color: var(--day-error);
+}
+html[data-theme="day"] .admin-shell tr + tr td {
+  border-top-color: var(--day-border);
+}
+html[data-theme="day"]
+  :is(
+    .MuiOutlinedInput-root.Mui-focused:not(.Mui-error),
+    .admin-shell input:focus,
+    .admin-shell textarea:focus,
+    .admin-shell select:focus,
+    .admin-dialog input:focus,
+    .admin-dialog textarea:focus,
+    .admin-dialog select:focus,
+    .review-form input:focus,
+    .review-form textarea:focus,
+    .review-form select:focus
+  ) {
+  background: var(--input-focus);
+  border-color: var(--day-accent);
+  box-shadow: var(--day-focus-shadow);
+}
+html[data-theme="day"]
+  .MuiOutlinedInput-root.Mui-focused:not(.Mui-error)
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--day-accent);
+}
+html[data-theme="day"]
+  :is(.MuiInputLabel-root.Mui-error, .MuiFormHelperText-root.Mui-error) {
+  color: var(--day-error);
+}
+html[data-theme="day"]
+  .MuiOutlinedInput-root.Mui-error
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--day-error);
+}
+html[data-theme="day"]
+  :is(.MuiAlert-standardError, .admin-error, .admin-badge.rejected) {
+  color: var(--day-error);
+  background: color-mix(
+    in srgb,
+    var(--day-error) 9%,
+    var(--day-surface-raised)
+  );
+}
+html[data-theme="day"]
+  :is(.MuiAlert-standardSuccess, .admin-success, .admin-badge.approved) {
+  color: var(--day-success);
+  background: color-mix(
+    in srgb,
+    var(--day-success) 9%,
+    var(--day-surface-raised)
+  );
+}
+html[data-theme="day"]
+  :is(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--day-accent);
+  outline-offset: 3px;
+}
+html[data-theme="day"]
+  :is(.project-identity-button, .service-art-link):focus-visible {
+  outline-offset: -4px;
+}
+/* MUI draws the accessible ring around the complete input, not its text box. */
+html[data-theme="day"] .MuiInputBase-input:focus-visible {
+  outline: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  html[data-theme="day"]
+    :is(
+      .button.primary,
+      .ql-button.primary,
+      .admin-button.is-primary,
+      .contact-form .submit-button,
+      .reference-hero .hero-actions .button.primary
+    ):hover:not(:disabled) {
+    background: var(--day-accent-hover);
+    border-color: var(--day-accent-hover);
+    color: #fff;
+    box-shadow: 0 5px 14px rgba(47, 128, 254, 0.2);
+  }
+  html[data-theme="day"]
+    :is(
+      .button.secondary,
+      .ql-button:not(.primary),
+      .admin-button:not(.is-primary):not(.is-danger)
+    ):hover:not(:disabled) {
+    border-color: var(--day-focus-border);
+    color: var(--day-text-primary);
+    background: var(--day-surface-raised);
+    box-shadow: var(--day-shadow-control);
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html[data-theme="day"]
+    :is(.button, .ql-button, .admin-button, .MuiButton-root):hover:not(
+      :disabled
+    ) {
+    scale: 1.025;
+  }
+  html[data-theme="day"]
+    :is(.managed-project-card, .review-card, .service-editorial-copy):hover {
+    translate: 0 -2px;
+  }
+  html[data-theme="day"]
+    :is(.managed-project-card, .review-card, .service-editorial-copy) {
+    transition:
+      translate 300ms ease,
+      border-color 250ms ease;
+  }
+}
+html[data-theme="day"]
+  :is(
+    .button.secondary,
+    .ql-button,
+    .admin-button,
+    .portfolio-filters button,
+    .theme-toggle
+  ):active:not(:disabled) {
+  box-shadow: var(--day-shadow-inset);
+}
+
+@media (max-width: 1100px) {
+  .site-header {
+    gap: 10px;
+  }
+  .site-header .nav-link {
+    padding-inline: 9px;
+  }
+  .site-header .theme-toggle {
+    width: 126px;
+  }
+}
+@media (max-width: 900px) {
+  .site-header .theme-toggle {
+    margin-left: auto;
+  }
+  .admin-topbar-account .theme-toggle {
+    width: 110px;
+  }
+}
+@media (max-width: 600px) {
+  :root[data-theme="day"] {
+    --day-shadow:
+      5px 5px 14px rgba(166, 177, 190, 0.3),
+      -5px -5px 14px rgba(255, 255, 255, 0.8),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.65);
+    --day-shadow-control:
+      3px 3px 7px rgba(166, 177, 190, 0.26),
+      -3px -3px 7px rgba(255, 255, 255, 0.8);
+    --day-shadow-inset:
+      inset 3px 3px 7px rgba(166, 177, 190, 0.25),
+      inset -3px -3px 7px rgba(255, 255, 255, 0.75);
+  }
+  .site-header > .nav-project {
+    display: none;
+  }
+  .site-header {
+    gap: 8px;
+  }
+  .site-header .theme-toggle {
+    width: 82px;
+    height: 38px;
+  }
+  .site-header .theme-option span {
+    display: none;
+  }
+  .admin-brand-actions {
+    gap: 10px;
+  }
+  .admin-brand-actions > span {
+    display: none;
+  }
+  .admin-topbar-account .theme-toggle {
+    width: 82px;
+  }
+  .admin-topbar-account .theme-option span {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-changing,
+  html.theme-changing *,
+  .theme-toggle-thumb {
+    transition: none !important;
+  }
+}

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { services } from "@/data/content";
 import ServiceEditorialMotion from "@/components/motion/ServiceEditorialMotion";
 import { Action } from "@/components/ui/Elements";
+import GlassReflection from "@/components/ui/GlassReflection";
 
 // Names match the supplied Services Images artwork; keep original filenames.
 const artwork = {
@@ -29,13 +30,17 @@ export default function ServicesShowcase() {
                     data-cursor="OPEN"
                     aria-label={`Explore ${service.name}`}
                   >
-                    <Image
-                      src={`/services/${artwork[service.slug]}`}
-                      alt={`${service.name} illustration`}
-                      fill
-                      sizes="(max-width: 760px) 92vw, (max-width: 1100px) 48vw, 640px"
-                      className="service-art-image"
-                    />
+                    <span
+                      className={`service-art-crop${service.slug === "ai-vision" ? " service-art-crop--vision" : service.slug === "custom-software" ? " service-art-crop--software" : ""}`}
+                    >
+                      <Image
+                        src={`/services/${artwork[service.slug]}`}
+                        alt={`${service.name} illustration`}
+                        fill
+                        sizes="(max-width: 760px) 92vw, (max-width: 1100px) 48vw, 640px"
+                        className="service-art-image"
+                      />
+                    </span>
                   </Link>
                 </div>
               </div>
@@ -43,7 +48,11 @@ export default function ServicesShowcase() {
                 QL / 0{index + 1}
               </span>
             </div>
-            <div className="service-editorial-copy">
+            <div
+              className="service-editorial-copy glass-soft glass-hover"
+              data-glass-light
+            >
+              <GlassReflection />
               <span className="overline service-reveal-text">
                 0{index + 1} / {service.short}
               </span>

@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Alert, Button, MenuItem, TextField } from "@mui/material";
 import BrandText from "@/components/ui/BrandText";
-import { contactDraft } from "@/lib/contact-draft";
 import { contactEmail } from "@/lib/company";
 import {
   budgets,
@@ -17,12 +16,16 @@ export default function ContactForm() {
   const reduced = useReducedMotion();
   const revealed = useRef(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [draft, setDraft] = useState<ReturnType<typeof contactDraft> | null>(
-    null,
-  );
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const inFlight = useRef(false);
+  const pending = useRef<AbortController | null>(null);
+  useEffect(() => () => pending.current?.abort(), []);
   const [message, setMessage] = useState("");
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (inFlight.current || status === "success") return;
     const form = event.currentTarget;
     const parsed = contactSchema.safeParse(
       Object.fromEntries(new FormData(form)),
@@ -40,31 +43,49 @@ export default function ContactForm() {
       return;
     }
     setErrors({});
-    setDraft(contactDraft(parsed.data));
-    setMessage(
-      "Your draft is ready. Open your email app, review the message, and send it there. Nothing has been sent automatically.",
-    );
-  }
-  async function copyDraft() {
-    if (!draft) return;
+    inFlight.current = true;
+    const controller = new AbortController();
+    pending.current = controller;
+    setStatus("loading");
+    setMessage("Sending your message…");
     try {
-      await navigator.clipboard.writeText(draft.subject + "\n\n" + draft.body);
-      setMessage(
-        "Draft copied. Paste it into an email to " + contactEmail + ".",
-      );
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.data),
+        signal: controller.signal,
+      });
+      const result = await response.json();
+      if (controller.signal.aborted) return;
+      if (!response.ok) {
+        if (result.fields) setErrors(result.fields);
+        setStatus("error");
+        setMessage(
+          result.error || "We couldn’t send your message. Please try again.",
+        );
+        return;
+      }
+      setStatus("success");
+      setMessage("Your message has been submitted. We’ll reply to your email.");
     } catch {
+      if (controller.signal.aborted) return;
+      setStatus("error");
       setMessage(
-        "Please use the email link or select and copy the draft below.",
+        "We couldn’t confirm your submission. Please try again, or email us directly.",
       );
+    } finally {
+      inFlight.current = false;
+      if (pending.current === controller) pending.current = null;
     }
   }
   function field(name: keyof ContactInput) {
     return {
       name,
+      disabled: status === "loading",
       error: !!errors[name],
       helperText: errors[name],
       onChange: () => {
-        setDraft(null);
+        setStatus("idle");
         setMessage("");
         if (errors[name]) setErrors((old) => ({ ...old, [name]: "" }));
       },
@@ -102,7 +123,8 @@ export default function ContactForm() {
           );
       }}
       onInputCapture={(event) => {
-        setDraft(null);
+        if (inFlight.current) return;
+        setStatus("idle");
         setMessage("");
         const target = event.target;
         if (!(
@@ -125,7 +147,8 @@ export default function ContactForm() {
       noValidate
       className="contact-form"
       aria-label="Project inquiry"
-      data-status={draft ? "draft" : "idle"}
+      data-status={status}
+      aria-busy={status === "loading"}
     >
       <div className="form-grid">
         <TextField
@@ -198,8 +221,8 @@ export default function ContactForm() {
         </label>
       </div>
       <p className="small muted">
-        Prepare a draft in your email app. Nothing is sent or stored by this
-        website. Please avoid passwords or confidential data.
+        Send your inquiry directly to our inbox. Please avoid passwords or
+        confidential data.
       </p>
       <p className="small">
         Prefer email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
@@ -207,35 +230,28 @@ export default function ContactForm() {
       <Button
         variant="contained"
         type="submit"
-        disabled={!ready}
+        disabled={!ready || status === "loading" || status === "success"}
         className="submit-button"
       >
-        Prepare Email Draft
+        {status === "loading"
+          ? "Sending…"
+          : status === "success"
+            ? "Message submitted"
+            : "Send Message"}
       </Button>
       <div className="contact-feedback" aria-live="polite" aria-atomic="true">
-        {draft && (
-          <>
-            <Alert severity="info">
-              <BrandText>{message}</BrandText>
-            </Alert>
-            <div className="contact-draft-actions">
-              <a className="button primary" href={draft.url}>
-                Open email app ↗
-              </a>
-              <button
-                className="button secondary"
-                type="button"
-                onClick={copyDraft}
-              >
-                Copy draft
-              </button>
-            </div>
-            <details className="contact-draft-preview">
-              <summary>Preview your draft</summary>
-              <p>{draft.subject}</p>
-              <pre>{draft.body}</pre>
-            </details>
-          </>
+        {message && (
+          <Alert
+            severity={
+              status === "error"
+                ? "error"
+                : status === "success"
+                  ? "success"
+                  : "info"
+            }
+          >
+            <BrandText>{message}</BrandText>
+          </Alert>
         )}
       </div>
     </motion.form>

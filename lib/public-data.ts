@@ -9,6 +9,7 @@ import {
 } from "./models";
 import type { PortfolioProject } from "./portfolio";
 import type { PublicReview } from "./reviews";
+import { withPublicReadTimeout } from "./public-read";
 
 export function publicProject(
   p: ProjectRecord & { _id: unknown },
@@ -76,16 +77,19 @@ export const getApprovedReviews = cache(async (full: boolean) => {
   if (!process.env.MONGODB_URI)
     return { reviews: [], total: 0, unavailable: true };
   try {
-    await connectDB();
-    const filter = { status: "approved" };
-    const [records, total] = await Promise.all([
-      Review.find(filter)
-        .sort({ createdAt: -1, _id: -1 })
-        .limit(full ? 24 : 4)
-        .lean(),
-      Review.countDocuments(filter),
-    ]);
-    return { reviews: records.map(publicReview), total, unavailable: false };
+    return await withPublicReadTimeout(async () => {
+      await connectDB();
+      const filter = { status: "approved" };
+      const [records, total] = await Promise.all([
+        Review.find(filter)
+          .sort({ createdAt: -1, _id: -1 })
+          .limit(full ? 24 : 4)
+          .maxTimeMS(4000)
+          .lean(),
+        Review.countDocuments(filter).maxTimeMS(4000),
+      ]);
+      return { reviews: records.map(publicReview), total, unavailable: false };
+    });
   } catch {
     return { reviews: [], total: 0, unavailable: true };
   }

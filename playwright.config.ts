@@ -9,6 +9,7 @@ export default defineConfig({
     browserName: "chromium",
     headless: true,
     reducedMotion: "reduce",
+    colorScheme: "dark",
     trace: "retain-on-failure",
     actionTimeout: 10000,
   },

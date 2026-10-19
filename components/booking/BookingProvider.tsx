@@ -6,6 +6,7 @@ import { meetingUrl } from "@/lib/company";
 import { calendlyEmbedUrl, type BookingStep } from "@/lib/calendly";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
 import CalendlyEmbed from "./CalendlyEmbed";
+import { useVisualTheme } from "@/theme/VisualThemeProvider";
 
 const BookingContext = createContext<(() => void) | null>(null);
 function BookingCheck({ header = false }: { header?: boolean }) {
@@ -48,12 +49,13 @@ export function BookingButton({
 }
 
 export default function BookingProvider({ children }: { children: ReactNode }) {
+  const { theme } = useVisualTheme();
   const [url, setUrl] = useState("");
   const [step, setStep] = useState<BookingStep>("time");
   const reduced = useMotionPreference();
   function open() {
     setStep("time");
-    setUrl(calendlyEmbedUrl(location.hostname));
+    setUrl(calendlyEmbedUrl(location.hostname, theme));
   }
   return (
     <BookingContext.Provider value={open}>

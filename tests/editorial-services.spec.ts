@@ -16,8 +16,9 @@ test("home removes only the requested sections and services use matching artwork
   await page.goto("/services");
   await expect(page.locator(".service-editorial")).toHaveCount(5);
   await expect(
-    page.locator("canvas, .signature-explorer, .service-detail"),
+    page.locator("main canvas, .signature-explorer, .service-detail"),
   ).toHaveCount(0);
+  await expect(page.locator(".graph-background canvas")).toHaveCount(1);
   for (const [slug, name, file] of [
     ["web-development", "Web Development", "Web.png"],
     ["app-development", "App Development", "App.png"],
@@ -107,7 +108,7 @@ test("desktop cursor and image/button motion remain sharp, bounded and accessibl
   }));
   await cta.hover();
   await expect(cursor).toHaveAttribute("data-state", "interactive");
-  await expect(cta).toHaveCSS("scale", "1.04");
+  await expect(cta).toHaveCSS("scale", "1.03");
   expect(
     await cta.evaluate((el) => ({
       w: (el as HTMLElement).offsetWidth,
@@ -159,7 +160,7 @@ test("mobile services stack without overflow, custom cursor or pointer drift", a
       "data-studio-ready",
       "true",
     );
-    for (const row of await page.locator(".service-editorial").all()) {
+    for (const row of await page.locator(".service-editorial:visible").all()) {
       await row.scrollIntoViewIfNeeded();
       await row.locator("img").evaluate((el: HTMLImageElement) => el.decode());
       const image = (await row.locator(".service-art-frame").boundingBox())!;
@@ -172,7 +173,8 @@ test("mobile services stack without overflow, custom cursor or pointer drift", a
         "none",
       );
     }
-    await expect(page.locator(".studio-cursor, canvas")).toHaveCount(0);
+    await expect(page.locator(".studio-cursor, main canvas")).toHaveCount(0);
+    await expect(page.locator(".graph-background canvas")).toHaveCount(1);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

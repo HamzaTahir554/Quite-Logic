@@ -109,11 +109,6 @@ export default function StudioMotion() {
   const progress = useSpring(scrollYProgress, { stiffness: 150, damping: 30 });
   return (
     <>
-      <div className="ambient-studio" aria-hidden="true">
-        <span />
-        <span />
-        <div />
-      </div>
       <motion.div
         aria-hidden="true"
         className="scroll-progress"

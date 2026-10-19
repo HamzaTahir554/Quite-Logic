@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import Providers from "@/components/Providers";
 import SiteChrome from "@/components/layout/SiteChrome";
 import { siteUrl } from "@/lib/seo";
+import { themeInitScript } from "@/theme/tokens";
 import "./globals.css";
 import "./studio.css";
 import "./hero.css";
@@ -14,6 +15,9 @@ import "./crystal.css";
 import "./reviews.css";
 import "./portfolio.css";
 import "./booking.css";
+import "./glass.css";
+import "./graph-background.css";
+import "./themes.css";
 const manrope = localFont({
   src: "../public/fonts/manrope-latin.woff2",
   weight: "200 800",
@@ -38,7 +42,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="night" suppressHydrationWarning>
+      <head>
+        <script
+          id="quietlogic-theme-init"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
+      </head>
       <body className={manrope.variable}>
         <Providers>
           <SiteChrome>{children}</SiteChrome>

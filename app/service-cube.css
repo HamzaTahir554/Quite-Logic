@@ -97,24 +97,6 @@
   color: var(--muted);
   font-size: 10px;
 }
-.cube-autoplay {
-  position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  color: var(--muted);
-  font:
-    9px ui-monospace,
-    monospace;
-  letter-spacing: 0.03em;
-  background: transparent;
-  border: 0;
-  padding: 7px 12px;
-}
-.cube-autoplay:hover {
-  color: var(--paper);
-}
 .signature-explorer .explorer-information {
   padding: 40px 42px;
 }
@@ -428,9 +410,6 @@ html[data-motion-paused="true"] *::after {
   }
   .cube-controls {
     bottom: 52px;
-  }
-  .cube-autoplay {
-    bottom: 17px;
   }
   .signature-explorer .explorer-information {
     padding: 32px;

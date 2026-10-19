@@ -149,8 +149,8 @@ test("booking shell stays usable across sizes, keyboard, touch and reduced motio
   for (const width of [320, 375, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 950 });
     await page
-      .locator(".site-header")
       .getByRole("button", { name: "Book a Meeting" })
+      .first()
       .click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.locator(".booking-calendar")).toHaveAttribute(
@@ -211,8 +211,8 @@ test("booking shell stays usable across sizes, keyboard, touch and reduced motio
     await mockCalendly(mobile);
     await mobile.goto("/contact");
     await mobile
-      .locator(".site-header")
       .getByRole("button", { name: "Book a Meeting" })
+      .first()
       .tap();
     const dialog = mobile.getByRole("dialog");
     const frame = dialog.frameLocator("iframe");

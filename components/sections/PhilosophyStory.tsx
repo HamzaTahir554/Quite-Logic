@@ -1,15 +1,11 @@
 "use client";
 import { useRef } from "react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useMotionPreference } from "@/hooks/useMotionPreference";
 const words = ["CALM", "PRECISE", "USEFUL", "RELIABLE"];
 export default function PhilosophyStory() {
   const ref = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useMotionPreference();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],

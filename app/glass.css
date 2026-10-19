@@ -1,0 +1,524 @@
+/* Shared smoky glass system. The page itself stays opaque; only selected
+   presentation surfaces blur their backdrop. No filters are animated. */
+:root {
+  --glass: rgba(89, 101, 114, 0.42);
+  --glass-soft: rgba(89, 101, 114, 0.28);
+  --glass-card: rgba(89, 101, 114, 0.42);
+  --glass-panel: rgba(89, 101, 114, 0.56);
+  --glass-dark: rgba(48, 57, 68, 0.48);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-accent-border: rgba(47, 128, 254, 0.28);
+  --glass-blur: 16px;
+  --glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 40px rgba(0, 0, 0, 0.12);
+  --glass-reflection: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(145, 189, 255, 0.035) 44%,
+    rgba(240, 241, 248, 0.07) 50%,
+    transparent 67%
+  );
+  --muted: #d1d6dd;
+  --secondary: #d1d6dd;
+}
+
+/* Solid fallbacks retain readable surfaces without backdrop-filter support. */
+:is(
+  .glass-soft,
+  .glass-card,
+  .glass-panel,
+  .glass-dark,
+  .site-header,
+  .page-hero,
+  .cta-panel,
+  .contact-form,
+  .contact-booking-panel,
+  .contact-option,
+  .about-panel,
+  .project-card,
+  .admin-shell .admin-panel,
+  .admin-shell .admin-auth,
+  .admin-dialog.MuiPaper-root
+) {
+  background-color: var(--glass-fallback, #505c68);
+  background-image: linear-gradient(
+    135deg,
+    rgba(145, 189, 255, 0.05),
+    transparent 65%
+  );
+  border: 1px solid var(--glass-border);
+  border-top-color: rgba(255, 255, 255, 0.16);
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+  box-shadow: var(--glass-shadow);
+}
+
+:where(.glass-soft, .glass-card, .glass-panel, .glass-dark) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.glass-soft {
+  --glass-fill: var(--glass-soft);
+  --glass-local-blur: 8px;
+}
+.glass-card {
+  --glass-fill: var(--glass-card);
+  --glass-local-blur: 12px;
+}
+.glass-panel {
+  --glass-fill: var(--glass-panel);
+}
+.glass-dark {
+  --glass-fill: var(--glass-dark);
+  --glass-fallback: #303944;
+}
+
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  :is(
+    .glass-soft,
+    .glass-card,
+    .glass-panel,
+    .glass-dark,
+    .site-header,
+    .page-hero,
+    .cta-panel,
+    .contact-form,
+    .contact-booking-panel,
+    .contact-option,
+    .about-panel,
+    .project-card,
+    .admin-shell .admin-panel,
+    .admin-shell .admin-auth,
+    .admin-dialog.MuiPaper-root
+  ) {
+    background-color: var(--glass-fill, var(--glass-card));
+    -webkit-backdrop-filter: blur(var(--glass-local-blur, var(--glass-blur)))
+      saturate(120%);
+    backdrop-filter: blur(var(--glass-local-blur, var(--glass-blur)))
+      saturate(120%);
+  }
+}
+
+.site-header {
+  --glass-fill: rgba(48, 57, 68, 0.74);
+  --glass-local-blur: 12px;
+  --glass-fallback: #303944;
+  box-shadow:
+    inset 0 1px 0 #ffffff0d,
+    0 12px 32px #1a253530;
+}
+.site-header.scrolled {
+  --glass-fill: rgba(48, 57, 68, 0.92);
+}
+.site-header .nav-link {
+  color: var(--paper);
+}
+.site-header .nav-link[aria-current="page"] {
+  color: #f0f1f8;
+}
+
+.reference-hero .hero-copy {
+  --glass-fill: rgba(48, 57, 68, 0.25);
+  --glass-local-blur: 10px;
+  padding: clamp(28px, 3vw, 44px) clamp(18px, 2.5vw, 36px);
+  border-radius: 34px;
+  background-image:
+    radial-gradient(ellipse at 12% 0%, #91bdff0c, transparent 55%),
+    linear-gradient(145deg, #ffffff04, transparent 60%);
+}
+.hero-copy > :not(.glass-reflection, .glass-spotlight),
+.review-card > :not(.glass-reflection, .glass-spotlight),
+.service-editorial-copy > :not(.glass-reflection, .glass-spotlight),
+.admin-auth > :not(.glass-reflection, .glass-spotlight) {
+  position: relative;
+  z-index: 1;
+}
+.page-hero {
+  --glass-fill: rgba(89, 101, 114, 0.34);
+  --glass-local-blur: 10px;
+  background-image:
+    radial-gradient(ellipse at 85% 15%, #2f80fe0e, transparent 65%),
+    linear-gradient(125deg, #ffffff05, transparent);
+}
+/* Keep the portfolio heading and filters aligned with the existing grid. */
+.portfolio-page .page-hero {
+  background: radial-gradient(ellipse at 75% 30%, #91bdff08, transparent 65%);
+  border: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.banner-content,
+.hero-copy {
+  color: var(--paper);
+}
+.hero-description,
+.banner-content > p {
+  color: var(--muted);
+}
+
+.glass-reflection,
+.glass-spotlight {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+}
+.glass-reflection {
+  inset: 0;
+  border-radius: inherit;
+  background: var(--glass-reflection);
+  transform: translate3d(-105%, 0, 0);
+  transition:
+    transform 360ms ease-out,
+    opacity 360ms ease-out;
+}
+.glass-spotlight {
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #2f80fe14,
+    #aab4c008 35%,
+    transparent 70%
+  );
+  transform: translate3d(
+    calc(var(--glass-pointer-x, 0px) - 150px),
+    calc(var(--glass-pointer-y, 0px) - 150px),
+    0
+  );
+  transition: opacity 280ms ease-out;
+}
+.glass-hover {
+  transition:
+    transform 320ms ease,
+    scale 320ms ease,
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+.glass-hover:focus-within {
+  border-color: #91bdff66;
+  box-shadow:
+    var(--glass-shadow),
+    0 0 0 1px var(--glass-accent-border);
+}
+.managed-project-card > .project-identity-button {
+  position: relative;
+  z-index: 1;
+}
+.managed-project-card > .managed-project-description {
+  z-index: 2;
+  /* The disclosure sits over content: keep it semisolid, without nested blur. */
+  background: linear-gradient(135deg, #46515df5, #303944fa);
+  border-top-color: var(--glass-accent-border);
+}
+.managed-project-card[data-open="true"] {
+  border-color: #91bdff66;
+  box-shadow:
+    var(--glass-shadow),
+    0 0 0 1px #2f80fe16;
+}
+.service-editorial-copy {
+  padding: clamp(22px, 2.4vw, 34px);
+}
+.review-card::before {
+  display: none;
+}
+.review-person p,
+.review-card time,
+.review-empty span,
+.reviews-heading p {
+  color: var(--muted);
+}
+.contact-form,
+.contact-booking-panel {
+  --glass-local-blur: 10px;
+}
+.contact-option {
+  --glass-local-blur: 6px;
+}
+
+/* One opaque surface spans the full footer, including its outer gutters. */
+.footer.container {
+  --paper: #f0f1f8;
+  --muted: #c9d0d8;
+  --secondary: #c9d0d8;
+  --accent: #2f80fe;
+  background: #303944;
+  color: var(--paper);
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+.footer .footer-motion {
+  position: relative;
+  background: transparent;
+  border-radius: inherit;
+  box-shadow: none;
+}
+.footer .footer-bottom {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+.footer .small,
+.footer p,
+.footer-top a,
+.footer-bottom {
+  color: var(--muted);
+}
+.footer a:hover {
+  color: var(--accent);
+}
+
+.button,
+.ql-button,
+.contact-form .submit-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 #ffffff12;
+}
+.button.secondary,
+.ql-button:not(.primary) {
+  background:
+    linear-gradient(135deg, #ffffff06, transparent), var(--glass-dark);
+  border-color: var(--glass-border);
+  color: var(--paper);
+}
+.button::after,
+.ql-button::after,
+.contact-form .submit-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--glass-reflection);
+  transform: translateX(-105%);
+  transition: transform 320ms ease;
+}
+.contact-form .MuiOutlinedInput-root,
+.admin-shell .admin-form :is(input, textarea, select),
+.review-form :is(input, textarea, select) {
+  background: rgba(48, 57, 68, 0.48);
+  color: var(--paper);
+  box-shadow: inset 0 1px 0 #ffffff06;
+  transition:
+    background-color 280ms ease,
+    box-shadow 280ms ease,
+    border-color 280ms ease,
+    scale 280ms ease;
+}
+.admin-shell .admin-form :is(input, textarea, select):focus,
+.review-form :is(input, textarea, select):focus {
+  background: rgba(89, 101, 114, 0.5);
+  border-color: var(--blue);
+  outline: 2px solid #91bdff;
+  outline-offset: 2px;
+  box-shadow:
+    inset 0 1px #ffffff0d,
+    0 0 0 3px #2f80fe14;
+}
+.contact-form .MuiOutlinedInput-root.Mui-focused {
+  scale: 1.003;
+}
+.review-form select option,
+.admin-form select option {
+  background: #303944;
+}
+
+/* Admin glass is restricted to summaries/chrome. Long forms and data lists
+   deliberately use semisolid fills and do not stack backdrop filters. */
+.admin-shell .admin-sidebar,
+.MuiPaper-root.admin-sidebar {
+  background: linear-gradient(155deg, #59657218, #303944f5), #303944;
+  border-color: var(--glass-border);
+  box-shadow: inset -1px 0 #ffffff04;
+}
+.admin-shell .admin-topbar {
+  background: rgba(48, 57, 68, 0.92);
+  border-color: var(--glass-border);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  backdrop-filter: blur(8px) saturate(120%);
+}
+.admin-shell .admin-panel {
+  --glass-local-blur: 8px;
+}
+.admin-shell
+  :is(
+    .admin-list-panel,
+    .admin-editor,
+    .admin-social-editor,
+    .admin-panel:has(.admin-form)
+  ) {
+  background:
+    linear-gradient(135deg, #91bdff05, transparent), rgba(69, 82, 95, 0.96);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.admin-shell .admin-auth {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  --glass-fill: rgba(48, 57, 68, 0.72);
+  --glass-fallback: #303944;
+  --glass-local-blur: 12px;
+  background-image:
+    radial-gradient(ellipse at 15% 0%, #2f80fe12, transparent 65%),
+    linear-gradient(145deg, #ffffff04, transparent);
+  border-radius: 24px;
+}
+.admin-auth-logo {
+  display: block;
+  margin-bottom: 24px;
+  border-radius: 12px;
+}
+.admin-dialog.MuiPaper-root,
+.booking-dialog.MuiPaper-root {
+  --glass-fill: rgba(48, 57, 68, 0.94);
+  --glass-fallback: #303944;
+  --glass-local-blur: 12px;
+}
+.booking-dialog.MuiPaper-root {
+  background-color: rgba(48, 57, 68, 0.96);
+  background-image: linear-gradient(125deg, #59657260, transparent);
+  border-color: var(--glass-border);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .glass-hover:hover {
+    scale: 1.01;
+    border-color: #91bdff66;
+  }
+  .glass-hover:hover > .glass-reflection,
+  .hero-copy:hover > .glass-reflection {
+    opacity: 0.6;
+    transform: translate3d(105%, 0, 0);
+  }
+  [data-glass-lit="true"] > .glass-spotlight {
+    opacity: 1;
+  }
+  .button:hover,
+  .ql-button:not(:disabled):hover,
+  .contact-form .submit-button:hover {
+    scale: 1.03;
+  }
+  .button:hover::after,
+  .ql-button:not(:disabled):hover::after,
+  .contact-form .submit-button:hover::after {
+    transform: translateX(105%);
+  }
+  .ql-button:hover > span {
+    transform: translate(3px, -2px);
+  }
+  .admin-auth > .glass-reflection {
+    animation: glass-arrival 360ms ease-out both;
+  }
+  /* Replace the older 1.4s sweep with the shared short reflection. */
+  :is(.project-card, .about-panel, .cta-panel, .contact-booking-panel):hover
+    > .crystal-sheen {
+    animation-duration: 360ms;
+  }
+}
+@keyframes glass-arrival {
+  0% {
+    opacity: 0;
+    transform: translateX(-105%);
+  }
+  35% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(105%);
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --glass-blur: 6px;
+    --glass-shadow: inset 0 1px #ffffff0d, 0 8px 24px #00000014;
+  }
+  :is(
+    .glass-soft,
+    .glass-card,
+    .glass-panel,
+    .glass-dark,
+    .site-header,
+    .page-hero,
+    .cta-panel,
+    .contact-form,
+    .contact-booking-panel,
+    .contact-option,
+    .about-panel,
+    .project-card,
+    .admin-shell .admin-panel,
+    .admin-shell .admin-auth,
+    .admin-dialog.MuiPaper-root
+  ) {
+    --glass-local-blur: 6px;
+  }
+  .glass-reflection,
+  .glass-spotlight {
+    display: none;
+  }
+  .reference-hero .hero-copy {
+    padding: 28px 16px;
+    border-radius: 26px;
+  }
+  .service-editorial-copy {
+    padding: 24px;
+  }
+  .admin-shell .admin-topbar {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (max-width: 600px) {
+  .reference-hero .hero-copy {
+    padding: 26px 12px;
+  }
+  .reference-hero.hero {
+    padding-inline: 12px;
+  }
+  .service-editorial-copy {
+    padding: 22px 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .glass-reflection,
+  .glass-spotlight {
+    display: none;
+    animation: none;
+    transition: none;
+  }
+  .glass-hover {
+    scale: 1;
+    transition: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .ql-button,
+  .contact-form .submit-button,
+  .contact-form .MuiOutlinedInput-root,
+  .admin-form :is(input, textarea, select),
+  .review-form :is(input, textarea, select) {
+    scale: 1 !important;
+    transition: none;
+  }
+  .button::after,
+  .ql-button::after,
+  .contact-form .submit-button::after {
+    display: none;
+  }
+  .ql-button:hover > span {
+    transform: none;
+  }
+}

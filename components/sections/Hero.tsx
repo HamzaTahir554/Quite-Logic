@@ -1,18 +1,13 @@
 "use client";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { useRef } from "react";
 import { Action } from "@/components/ui/Elements";
-import SceneBoundary from "@/components/three/SceneBoundary";
 import { useSceneActivity } from "@/hooks/useSceneActivity";
 import { useCrystalPointer } from "@/hooks/useCrystalPointer";
-const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
-  ssr: false,
-  loading: () => null,
-});
+import GlassReflection from "@/components/ui/GlassReflection";
 
 export default function Hero() {
-  const { ref, enabled, active } = useSceneActivity();
+  const { ref, active } = useSceneActivity(false);
   const banner = useRef<HTMLElement>(null);
   useCrystalPointer(
     banner,
@@ -41,17 +36,11 @@ export default function Hero() {
             priority
           />
         </div>
-        <div className="hero-scene">
-          {enabled && (
-            <SceneBoundary>
-              <HeroScene active={active} />
-            </SceneBoundary>
-          )}
-        </div>
         <div className="atmosphere-glow glow-left" />
         <div className="atmosphere-glow glow-right" />
       </div>
-      <div className="hero-copy">
+      <div className="hero-copy glass-panel">
+        <GlassReflection />
         <h1>
           <span className="hero-title-line">
             <span>Software that</span>

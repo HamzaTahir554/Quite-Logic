@@ -1,7 +1,7 @@
 ﻿import { test, expect } from "@playwright/test";
 import { contactSchema } from "../lib/contact";
-import { contactDraft } from "../lib/contact-draft";
-test("contact draft validation rejects invalid or unexpected fields", () => {
+import { contactMessage } from "../lib/contact-message";
+test("contact validation rejects invalid or unexpected fields", () => {
   const input = {
     name: "  Test Person  ",
     email: "  visitor@example.com  ",
@@ -18,6 +18,7 @@ test("contact draft validation rejects invalid or unexpected fields", () => {
     { ...input, message: "x".repeat(5001) },
     { ...input, subject: "bad\r\nBcc: attack@test.com" },
     { ...input, unexpected: {} },
+    { ...input, to: "recipient@example.test" },
     { ...input, website: "spam" },
   ])
     expect(contactSchema.safeParse(payload).success).toBe(false);
@@ -29,18 +30,20 @@ test("contact draft validation rejects invalid or unexpected fields", () => {
     }).success,
   ).toBe(true);
 });
-test("contact drafts are local mailto links with encoded content and no delivery claim", () => {
+test("contact messages include sender context as plain text", () => {
   const input = contactSchema.parse({
-    name: "Draft Client",
+    name: "Contact Client",
     email: "client@example.test",
     subject: "Website & app",
-    message: "A clear message with ? and & characters for the draft.",
+    message:
+      "A clear message with ? and & characters and <b>literal markup</b>.",
   });
-  const draft = contactDraft(input);
-  const url = new URL(draft.url);
-  expect(url.protocol).toBe("mailto:");
-  expect(url.pathname).toBe("company.quitelogic@gmail.com");
-  expect(url.searchParams.get("subject")).toBe(input.subject);
-  expect(url.searchParams.get("body")).toContain(input.message);
-  expect(url.searchParams.get("body")).toContain(input.email);
+  const mail = contactMessage(input);
+  expect(mail.subject).toBe("Quite Logic inquiry: Website & app");
+  expect(mail.text).toContain(input.message);
+  expect(mail.text).toContain(input.email);
+  expect(mail.text).toContain("Company: Not provided");
+  expect(contactMessage({ ...input, subject: "" }).subject).toBe(
+    "Quite Logic inquiry: Other",
+  );
 });

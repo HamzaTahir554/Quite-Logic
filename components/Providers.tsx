@@ -2,16 +2,31 @@
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import { MotionConfig } from "framer-motion";
-import { theme } from "@/theme/theme";
+import { themes } from "@/theme/theme";
+import VisualThemeProvider, {
+  useVisualTheme,
+} from "@/theme/VisualThemeProvider";
 import BookingProvider from "@/components/booking/BookingProvider";
+import GlassLighting from "@/components/motion/GlassLighting";
+import GraphBackground from "@/components/background/GraphBackground";
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AppRouterCacheProvider>
-      <ThemeProvider theme={theme}>
-        <MotionConfig reducedMotion="user">
-          <BookingProvider>{children}</BookingProvider>
-        </MotionConfig>
-      </ThemeProvider>
+      <VisualThemeProvider>
+        <ThemedApplication>{children}</ThemedApplication>
+      </VisualThemeProvider>
     </AppRouterCacheProvider>
+  );
+}
+function ThemedApplication({ children }: { children: React.ReactNode }) {
+  const { theme } = useVisualTheme();
+  return (
+    <ThemeProvider theme={themes[theme]}>
+      <MotionConfig reducedMotion="user">
+        <GraphBackground />
+        <GlassLighting />
+        <BookingProvider>{children}</BookingProvider>
+      </MotionConfig>
+    </ThemeProvider>
   );
 }
