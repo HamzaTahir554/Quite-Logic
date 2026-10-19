@@ -1,5 +1,7 @@
 # Mobile Day Mode correction
 
+Follow-up: the mobile page plane and canvas now receive an opaque light base. See the [Home projects and mobile rendering report](HOME-PROJECTS-REPORT.md) for the latest changes, validation and Pixel-profile capture. The diagnosis below records the earlier iteration; physical Pixel verification remains outstanding.
+
 ## Diagnosis and limits
 
 The supplied screenshot is from a Google Pixel 7a. Ordinary Chromium touch emulation at 320, 375, 390, 412 and 425px did not reproduce the exact black stripe. The paint audit found that `.graph-background::after` supplied a fixed, viewport-wide radial gradient in Day Mode, fading from transparent at its center to the Day background at its edges. It was the only page-wide gradient matching the reported vertical shape. The document root itself had a transparent background. The exact physical-device cause remains unconfirmed.

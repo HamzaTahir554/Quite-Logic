@@ -1,5 +1,5 @@
 import { graphGeometry } from "./graph-geometry";
-import { graphPalettes, type VisualTheme } from "@/theme/tokens";
+import { graphPalettes, palettes, type VisualTheme } from "@/theme/tokens";
 import {
   GraphConnections,
   connectionOpacity,
@@ -89,7 +89,14 @@ export function createGraphRenderer(
     if (host.dataset.nodes !== String(nodeCount))
       host.dataset.nodes = String(nodeCount);
     const depthY = Math.sin(elapsed * 0.06) * 2;
-    ctx.clearRect(0, 0, width, height);
+    if (mobileDay) {
+      // An opaque light paint avoids transparent canvas/backdrop compositing
+      // artifacts on mobile. The graph remains the same persistent canvas.
+      ctx.fillStyle = palettes.day.background;
+      ctx.fillRect(0, 0, width, height);
+    } else {
+      ctx.clearRect(0, 0, width, height);
+    }
     ctx.save();
     ctx.globalAlpha = strength;
     ctx.lineWidth = 0.8;

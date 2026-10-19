@@ -3,6 +3,7 @@ import { endpoint, body, json, objectId, ApiError } from "@/lib/api";
 import { requireAdmin } from "@/lib/admin-auth";
 import { Project } from "@/lib/models";
 import { connectDB } from "@/lib/mongodb";
+import { revalidateProjects } from "@/lib/revalidate-projects";
 export const POST = endpoint(async (request) => {
   await requireAdmin(request);
   const input = await body(
@@ -42,5 +43,6 @@ export const POST = endpoint(async (request) => {
   } finally {
     await session.endSession();
   }
+  revalidateProjects();
   return json({ message: "Project order updated." });
 });

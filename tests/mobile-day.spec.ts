@@ -71,6 +71,11 @@ test("mobile Day has no global gradient, readable copy and aligned controls acro
         });
         expect(styles.scheme).toMatch(/^(?:only light|light only)$/);
         expect(styles.base).toBe("rgb(232, 236, 241)");
+        expect(
+          await page
+            .locator("body")
+            .evaluate((node) => getComputedStyle(node).backgroundImage),
+        ).toBe("none");
         expect(styles.ambient).toBe("none");
         expect(styles.content).toBe("none");
         expect(styles.overflow, `${path} at ${width}`).toBe(false);
@@ -169,6 +174,12 @@ test("mobile Day backdrop stays light at its center and through Day/Night toggle
       await page.goto("/");
       const graph = page.locator(".graph-background");
       await expect(graph).toHaveAttribute("data-nodes", "20");
+      const paint = await graph
+        .locator("canvas")
+        .evaluate((node: HTMLCanvasElement) => [
+          ...node.getContext("2d")!.getImageData(1, 1, 1, 1).data,
+        ]);
+      expect(paint).toEqual([232, 236, 241, 255]);
       await graph
         .locator("canvas")
         .evaluate((node) => node.setAttribute("data-identity", "original"));

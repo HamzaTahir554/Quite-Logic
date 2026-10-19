@@ -1,11 +1,16 @@
-import { projects } from "@/data/content";
+import { getHomeProjects } from "@/lib/public-data";
 import { SectionHeading } from "@/components/ui/Elements";
 import Reveal from "@/components/ui/Reveal";
 import ProjectCard from "@/components/ui/ProjectCard";
 import Link from "next/link";
-export default function SelectedWork() {
+export default async function SelectedWork() {
+  const projects = await getHomeProjects();
+  if (!projects.length) return null;
   return (
-    <section className="section container">
+    <section
+      className="section container home-projects"
+      aria-label="Selected projects"
+    >
       <SectionHeading
         number="02"
         label="Selected concepts"

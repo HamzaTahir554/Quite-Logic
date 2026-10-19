@@ -28,6 +28,7 @@ export default function ProjectEditor({
     projectUrl: project?.projectUrl || "",
     order: project?.order || 0,
     featured: project?.featured || false,
+    showOnHome: project?.showOnHome || false,
     status: project?.status || "draft",
   };
   const [values, setValues] = useState(initial),
@@ -395,9 +396,24 @@ export default function ProjectEditor({
                 }
               />
               {message("order")}
-              <small className="muted">Lower numbers appear first.</small>
+              <small className="muted">
+                Lower numbers appear first on Portfolio and Home.
+              </small>
             </label>
           </div>
+          <label className="admin-checkbox">
+            <input
+              type="checkbox"
+              name="showOnHome"
+              checked={values.showOnHome}
+              onChange={(event) => update("showOnHome", event.target.checked)}
+            />
+            Show on Home Page
+          </label>
+          <p className="small muted">
+            Home displays the first three published, selected projects in
+            Display order. Drafts remain hidden.
+          </p>
           <details
             className="admin-optional-fields"
             open={errors.slug ? true : undefined}

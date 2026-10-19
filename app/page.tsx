@@ -17,7 +17,9 @@ export default function Home() {
       <StructuredData />
       <Hero />
       <Services />
-      <SelectedWork />
+      <Suspense fallback={null}>
+        <SelectedWork />
+      </Suspense>
       <Suspense
         fallback={
           <section

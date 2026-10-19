@@ -23,6 +23,8 @@ import { hashPassword, randomToken, tokenHash } from "../lib/passwords";
 import { windowsTestMongoBinary } from "./test-mongo-binary.mjs";
 import { testContactApi } from "./test-contact";
 import { testAdminGraph } from "./test-graph";
+import { seedPortfolio } from "../lib/seed-portfolio";
+import { testHomeProjects } from "./test-home-projects";
 import {
   testSocialApi,
   testSocialBrowser,
@@ -194,18 +196,35 @@ try {
     category: string;
     project_url: string;
   }[];
-  for (const [order, concept] of concepts.entries())
-    await Project.create({
-      title: concept.title,
-      slug: concept.source_slug,
-      sourceSlug: concept.source_slug,
-      logo: concept.image_url,
-      description: concept.description,
-      category: concept.category,
-      projectUrl: concept.project_url,
-      order,
-      status: "published",
-    });
+  await seedPortfolio(concepts);
+  // Simulate an older record and an explicit Admin OFF selection.
+  await Project.updateOne(
+    { slug: concepts[0].source_slug },
+    { $unset: { showOnHome: 1 }, $set: { slug: "renamed-concept" } },
+  );
+  await Project.updateOne(
+    { slug: concepts[1].source_slug },
+    { $set: { showOnHome: false, title: "Preserved edit" } },
+  );
+  await seedPortfolio(concepts);
+  await seedPortfolio(concepts);
+  const migrated = await Project.find().sort({ order: 1 }).lean();
+  check(
+    migrated.length === 3 &&
+      migrated[0].showOnHome &&
+      migrated[0].slug === "renamed-concept" &&
+      !migrated[1].showOnHome &&
+      migrated[1].title === "Preserved edit",
+    "Idempotent Home migration backfills legacy selections and preserves Admin edits/OFF without duplicates",
+  );
+  await Project.updateOne(
+    { slug: "renamed-concept" },
+    { $set: { slug: concepts[0].source_slug } },
+  );
+  await Project.updateOne(
+    { slug: concepts[1].source_slug },
+    { $set: { showOnHome: true, title: concepts[1].title } },
+  );
   smtp.listen(smtpPort, "127.0.0.1");
   await once(smtp, "listening");
   await startServer();
@@ -430,6 +449,7 @@ try {
       "A database managed project used to validate the complete publishing workflow.\n\nChallenge: A fragmented workflow.\n\nSolution: A clear shared workspace.\n\nOutcome: Less manual work.",
     shortDescription: "A concise project introduction.",
     featured: true,
+    showOnHome: true,
     category: "Web",
     technologies: ["Next.js"],
     status: "draft",
@@ -482,6 +502,7 @@ try {
   check(
     editedProject?.order === 10 &&
       editedProject.category === "Web" &&
+      editedProject.showOnHome === true &&
       editedProject.technologies[0] === "Next.js",
     "Partial project updates preserve omitted fields",
   );
@@ -854,6 +875,7 @@ try {
     await page.getByLabel("Password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page).toHaveURL(origin + "/admin");
+    await testHomeProjects(page, check);
     await testAdminGraph(page, check);
     for (const width of [375, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 950 });

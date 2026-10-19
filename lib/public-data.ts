@@ -7,7 +7,7 @@ import {
   type ProjectRecord,
   type ReviewRecord,
 } from "./models";
-import type { PortfolioProject } from "./portfolio";
+import type { HomeProject, PortfolioProject } from "./portfolio";
 import type { PublicReview } from "./reviews";
 import { withPublicReadTimeout } from "./public-read";
 
@@ -73,6 +73,41 @@ export const getPublishedProjects = cache(async () => {
       categories: [] as string[],
       unavailable: true,
     };
+  }
+});
+// React cache deduplicates only within this request. Home is force-dynamic,
+// so every new visit reads current selections without a deployment or TTL.
+export const getHomeProjects = cache(async (): Promise<HomeProject[]> => {
+  if (!process.env.MONGODB_URI) return [];
+  try {
+    return await withPublicReadTimeout(async () => {
+      await connectDB();
+      const records = await Project.find({
+        status: "published",
+        showOnHome: true,
+      })
+        .select(
+          "title slug logo category shortDescription description technologies",
+        )
+        .sort({ order: 1, _id: 1 })
+        .limit(3)
+        .maxTimeMS(4000)
+        .lean();
+      return records.map((project) => ({
+        id: String(project._id),
+        title: project.title,
+        slug: project.slug,
+        logo: project.logo,
+        category: project.category || "",
+        description: (project.shortDescription || project.description).slice(
+          0,
+          600,
+        ),
+        technologies: project.technologies || [],
+      }));
+    });
+  } catch {
+    return [];
   }
 });
 export const getApprovedReviews = cache(async (full: boolean) => {

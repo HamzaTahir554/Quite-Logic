@@ -57,6 +57,7 @@ const projectSchema = new Schema(
     projectUrl: { type: String, default: "" },
     sourceSlug: { type: String, default: null },
     featured: { type: Boolean, default: false },
+    showOnHome: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ["draft", "published"],
@@ -68,6 +69,7 @@ const projectSchema = new Schema(
   { timestamps: true },
 );
 projectSchema.index({ status: 1, order: 1, _id: 1 });
+projectSchema.index({ status: 1, showOnHome: 1, order: 1, _id: 1 });
 
 // Small, validated logos live durably in MongoDB, never the server filesystem.
 const imageSchema = new Schema(

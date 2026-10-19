@@ -91,6 +91,21 @@ export default function ProjectManager() {
     )
       list.refresh();
   }
+  async function toggleHome(project: ManagedProject) {
+    if (disabled) return;
+    if (
+      await action.run(
+        () =>
+          apiCall(`/api/admin/projects/${project._id}`, "PATCH", {
+            showOnHome: !project.showOnHome,
+          }),
+        project.showOnHome
+          ? "Project removed from Home."
+          : "Project selected for Home. The first three published selections are displayed.",
+      )
+    )
+      list.refresh();
+  }
   return (
     <>
       <div className="admin-page-heading">
@@ -172,9 +187,26 @@ export default function ProjectManager() {
                     Updated {adminDate(project.updatedAt)} · Order{" "}
                     {project.order}
                   </small>
+                  <p className="small muted">
+                    Home Page: {project.homeVisible ? "Visible" : "Hidden"}
+                    {project.showOnHome && !project.homeVisible
+                      ? project.status === "draft"
+                        ? " · Draft"
+                        : " · After first three selections"
+                      : ""}
+                  </p>
                 </div>
                 <StatusBadge status={project.status} />
                 <div className="admin-actions admin-project-actions">
+                  <button
+                    className="admin-button"
+                    disabled={disabled}
+                    aria-pressed={!!project.showOnHome}
+                    aria-label={`Show ${project.title} on Home Page`}
+                    onClick={() => toggleHome(project)}
+                  >
+                    Home {project.showOnHome ? "ON" : "OFF"}
+                  </button>
                   <button
                     className="admin-button"
                     disabled={disabled}

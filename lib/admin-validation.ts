@@ -82,6 +82,7 @@ export const projectSchema = z
       }, "Use an HTTP(S) URL or a local path.")
       .optional(),
     featured: z.boolean().optional(),
+    showOnHome: z.boolean().optional(),
     status: z.enum(["draft", "published"]).optional(),
     order: z.number().int().min(0).max(1000000).optional(),
   })

@@ -84,9 +84,9 @@ try {
           });
         }
         await page.locator("html[data-studio-ready=true]").waitFor();
-        const heading = page
-          .locator(".section-heading")
-          .filter({ hasText: "Focused design." });
+        // Home projects intentionally disappear without selected MongoDB data.
+        // The adjacent services heading exercises the same mobile page plane.
+        const heading = page.locator(".section-heading").first();
         await heading.evaluate((node) =>
           window.scrollTo({
             top: node.getBoundingClientRect().top + scrollY - 270,

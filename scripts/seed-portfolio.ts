@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { readFile } from "node:fs/promises";
 import { connectDB } from "../lib/mongodb";
 import { Project } from "../lib/models";
+import { seedPortfolio } from "../lib/seed-portfolio";
 nextEnv.loadEnvConfig(process.cwd());
 try {
   const projects = JSON.parse(
@@ -17,25 +18,7 @@ try {
   }[];
   await connectDB();
   await Project.init();
-  for (const [order, project] of projects.entries()) {
-    await Project.updateOne(
-      { slug: project.source_slug },
-      {
-        $setOnInsert: {
-          title: project.title,
-          slug: project.source_slug,
-          sourceSlug: project.source_slug,
-          logo: project.image_url,
-          description: project.description,
-          category: project.category,
-          projectUrl: project.project_url,
-          status: "published",
-          order,
-        },
-      },
-      { upsert: true, runValidators: true },
-    );
-  }
+  await seedPortfolio(projects);
   console.log(
     "Existing concepts imported. Existing MongoDB edits were preserved.",
   );

@@ -3,14 +3,17 @@ import Image from "next/image";
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
+import ProjectLogo from "./ProjectLogo";
 export default function ProjectArtwork({
   src,
   alt,
   detail = false,
+  logoTitle,
 }: {
   src: string;
   alt: string;
   detail?: boolean;
+  logoTitle?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useMotionPreference();
@@ -32,13 +35,23 @@ export default function ProjectArtwork({
       style={{ y: reduced ? 0 : y }}
     >
       <div className="project-artwork-float">
-        <Image
-          src={src}
-          alt={alt}
-          width={detail ? 1200 : 720}
-          height={detail ? 760 : 520}
-          loading="lazy"
-        />
+        {logoTitle ? (
+          <ProjectLogo
+            src={src}
+            title={logoTitle}
+            alt={alt}
+            width={720}
+            height={520}
+          />
+        ) : (
+          <Image
+            src={src}
+            alt={alt}
+            width={detail ? 1200 : 720}
+            height={detail ? 760 : 520}
+            loading="lazy"
+          />
+        )}
       </div>
     </motion.div>
   );

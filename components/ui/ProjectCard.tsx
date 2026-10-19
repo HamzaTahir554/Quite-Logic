@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Chip from "@mui/material/Chip";
-import type { Project } from "@/data/content";
+import type { HomeProject } from "@/lib/portfolio";
 import {
   motion,
   useMotionValue,
@@ -12,14 +12,14 @@ import type { PointerEvent } from "react";
 import AtlasShowcase from "@/components/projects/AtlasShowcase";
 import ProjectArtwork from "@/components/projects/ProjectArtwork";
 import CrystalReflection from "@/components/motion/CrystalReflection";
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({ project }: { project: HomeProject }) {
   return project.slug === "atlas-cloud" ? (
     <AtlasShowcase project={project} />
   ) : (
     <StandardProjectCard project={project} />
   );
 }
-function StandardProjectCard({ project }: { project: Project }) {
+function StandardProjectCard({ project }: { project: HomeProject }) {
   const reduced = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -52,7 +52,7 @@ function StandardProjectCard({ project }: { project: Project }) {
     >
       <CrystalReflection />
       <div className="project-copy">
-        <span className="overline">{project.type}</span>
+        <span className="overline">{project.category}</span>
         <h3>
           <Link href={`/portfolio/${project.slug}`}>{project.title}</Link>
         </h3>
@@ -68,13 +68,14 @@ function StandardProjectCard({ project }: { project: Project }) {
       </div>
       <Link
         href={`/portfolio/${project.slug}`}
-        className={`project-visual visual-${project.id}`}
+        className="project-visual home-project-visual"
         data-cursor="VIEW"
         aria-label={`Explore ${project.title}`}
       >
         <ProjectArtwork
-          src={project.image}
-          alt={`${project.title} illustrative product interface`}
+          src={project.logo}
+          logoTitle={project.title}
+          alt={`${project.title} logo`}
         />
       </Link>
     </motion.article>

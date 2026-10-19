@@ -158,7 +158,12 @@ test("touch devices retain still banner text and native scrolling", async ({
         "true",
       );
       await page.mouse.move(300, 300);
-      await expect(page.locator("h1")).toHaveCSS("translate", "none");
+      // Streaming may briefly retain hidden route markup. Assert the heading
+      // available to the visitor, rather than a hidden copy awaiting removal.
+      await expect(page.getByRole("heading", { level: 1 })).toHaveCSS(
+        "translate",
+        "none",
+      );
       await expect(page.locator(".studio-cursor")).toHaveCount(0);
       expect(
         await page.evaluate(

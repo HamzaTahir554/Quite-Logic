@@ -9,6 +9,8 @@ export type ManagedProject = {
   technologies: string[];
   projectUrl: string;
   featured: boolean;
+  showOnHome: boolean;
+  homeVisible?: boolean;
   status: string;
   order: number;
   createdAt: string;

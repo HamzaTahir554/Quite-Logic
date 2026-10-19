@@ -1234,6 +1234,15 @@ html[data-theme="day"]
   }
 }
 @media (max-width: 600px) {
+  /* Keep the phone's page plane flat and opaque. Clay depth belongs to
+     individual surfaces, not a document-sized transparent gradient. */
+  html[data-theme="day"] {
+    background: #e8ecf1;
+  }
+  html[data-theme="day"] body,
+  html[data-theme="day"] body:has(.graph-background[data-variant="admin"]) {
+    background: #e8ecf1;
+  }
   :root[data-theme="day"] {
     --section: 60px;
     --day-shadow:
@@ -1263,6 +1272,7 @@ html[data-theme="day"]
     :is(
       .section-heading > p,
       .project-copy > p,
+      .atlas-copy > p,
       .service-editorial-copy p,
       .signature-explorer .explorer-selection p
     ) {
