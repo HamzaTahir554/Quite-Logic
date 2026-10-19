@@ -1,0 +1,2167 @@
+[
+  {
+    "engine": "chromium",
+    "width": 320,
+    "errors": [],
+    "theme": "day",
+    "overflow": false,
+    "styles": {
+      "html": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(0, 0, 0)",
+        "fontSize": "16px",
+        "blend": "normal",
+        "width": 320,
+        "height": 7068.46875
+      },
+      "body": {
+        "background": "radial-gradient(at 22% 0%, rgba(255, 255, 255, 0.24), rgba(0, 0, 0, 0) 48%) repeat scroll 0% 0% / auto padding-box border-box, rgb(232, 236, 241) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 320,
+        "height": 7068.46875
+      },
+      ".public-site": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 320,
+        "height": 7068.46875
+      },
+      "main": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 319.05242919921875,
+        "height": 6155.888671875
+      },
+      ".graph-background": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 320,
+        "height": 844
+      },
+      ".graph-background canvas": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 320,
+        "height": 844
+      },
+      ".graph-background::after": {
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 320,
+        "height": 844
+      },
+      ".cube-shadow": {
+        "background": "rgba(48, 57, 68, 0.4) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "blur(16px)",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 154.6500701904297,
+        "height": 19.7413330078125
+      },
+      ".section-end": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 283.1590576171875,
+        "height": 123.41455078125
+      },
+      ".section-heading": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 283.1590576171875,
+        "height": 266.2872314453125
+      },
+      ".section-heading p": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "13px",
+        "blend": "normal",
+        "width": 283.1590576171875,
+        "height": 73.8431396484375
+      },
+      ".section-label": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "9px",
+        "blend": "normal",
+        "width": 132.46595764160156,
+        "height": 30.908203125
+      },
+      ".project-card": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 283.1590576171875,
+        "height": 630.923095703125
+      },
+      ".project-visual": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.576396",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 286.1275329589844,
+        "height": 314.537353515625
+      }
+    },
+    "largePaints": [
+      {
+        "selector": "div.graph-background::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "selector": "section.hero reference-hero",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 45% 30%, rgba(244, 246, 248, 0.3), rgba(0, 0, 0, 0) 70%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 319.05242919921875,
+        "height": 841.500732421875
+      },
+      {
+        "selector": "section.hero reference-hero::after",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(rgba(0, 0, 0, 0), rgba(48, 57, 68, 0.12)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 319.05242919921875,
+        "height": 841.500732421875
+      },
+      {
+        "selector": "div.atmosphere-grid",
+        "background": "linear-gradient(rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.35",
+        "position": "absolute",
+        "width": 319.05242919921875,
+        "height": 841.500732421875
+      },
+      {
+        "selector": "img.atmosphere-emblem",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "grayscale(0.5)",
+        "opacity": "0.035",
+        "position": "relative",
+        "width": 290.9639892578125,
+        "height": 290.9639892578125
+      },
+      {
+        "selector": "div.atmosphere-glow glow-left",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(47, 128, 254, 0.38), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.120001",
+        "position": "absolute",
+        "width": 299.11163330078125,
+        "height": 299.1116943359375
+      },
+      {
+        "selector": "div.atmosphere-glow glow-right",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(240, 241, 248, 0.2), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.160383",
+        "position": "absolute",
+        "width": 299.1116638183594,
+        "height": 299.111572265625
+      },
+      {
+        "selector": "section.service-explorer signature-explorer",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(48, 57, 68, 0.15) 0px 26px 60px 0px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "static",
+        "width": 283.1590576171875,
+        "height": 905.607421875
+      },
+      {
+        "selector": "div.cube-face cube-face-0",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 187.9595947265625,
+        "height": 202.2967529296875
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 283.1590576171875,
+        "height": 630.923095703125
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 283.1590576171875,
+        "height": 630.923095703125
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 353.5614318847656,
+        "height": 880.494384765625
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 283.1590576171875,
+        "height": 661.831298828125
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 283.1590576171875,
+        "height": 661.831298828125
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 367.62322998046875,
+        "height": 923.772216796875
+      },
+      {
+        "selector": "article.atlas-showcase project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 283.1590576171875,
+        "height": 670.53955078125
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 371.5765380859375,
+        "height": 935.939453125
+      },
+      {
+        "selector": "div.atlas-visual",
+        "background": "radial-gradient(at 55% 48%, rgba(89, 101, 114, 0.333), rgba(0, 0, 0, 0) 60%) repeat scroll 0% 0% / auto padding-box border-box, rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 281.16497802734375,
+        "height": 325.0341796875
+      },
+      {
+        "selector": "div.atlas-visual::after",
+        "background": "linear-gradient(rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 281.16497802734375,
+        "height": 325.0341796875
+      },
+      {
+        "selector": "span.deployment-atmosphere",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(rgba(47, 128, 254, 0.055), rgba(0, 0, 0, 0) 67%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.5",
+        "position": "absolute",
+        "width": 213.69346618652344,
+        "height": 236.546875
+      },
+      {
+        "selector": "div.deployment-terminal",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 244.03128051757812,
+        "height": 259.1328125
+      },
+      {
+        "selector": "div.review-empty glass-panel",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 283.1590576171875,
+        "height": 225.0966796875
+      },
+      {
+        "selector": "div.cta-panel",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 283.1590576171875,
+        "height": 506.7607421875
+      },
+      {
+        "selector": "span.cta-orbit",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(240, 241, 248, 0.008) 0px 0px 0px 70px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 598.2233276367188,
+        "height": 598.2236328125
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 297.08148193359375,
+        "height": 706.6669921875
+      },
+      {
+        "selector": "footer.footer container",
+        "background": "rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(255, 255, 255, 0.65) 0px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 320,
+        "height": 894.296875
+      }
+    ]
+  },
+  {
+    "engine": "chromium",
+    "width": 375,
+    "errors": [],
+    "theme": "day",
+    "overflow": false,
+    "styles": {
+      "html": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(0, 0, 0)",
+        "fontSize": "16px",
+        "blend": "normal",
+        "width": 375,
+        "height": 6799.015625
+      },
+      "body": {
+        "background": "radial-gradient(at 22% 0%, rgba(255, 255, 255, 0.24), rgba(0, 0, 0, 0) 48%) repeat scroll 0% 0% / auto padding-box border-box, rgb(232, 236, 241) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 375,
+        "height": 6799.015625
+      },
+      ".public-site": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 375,
+        "height": 6799.015625
+      },
+      "main": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 372.45703125,
+        "height": 5864.6767578125
+      },
+      ".graph-background": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 375,
+        "height": 844
+      },
+      ".graph-background canvas": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 375,
+        "height": 844
+      },
+      ".graph-background::after": {
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 375,
+        "height": 844
+      },
+      ".cube-shadow": {
+        "background": "rgba(48, 57, 68, 0.4) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "blur(16px)",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 184.10238647460938,
+        "height": 19.665771484375
+      },
+      ".section-end": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 336.7011413574219,
+        "height": 102.689453125
+      },
+      ".section-heading": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 336.7011413574219,
+        "height": 200.350830078125
+      },
+      ".section-heading p": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "13px",
+        "blend": "normal",
+        "width": 336.7011413574219,
+        "height": 49.0401611328125
+      },
+      ".section-label": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "9px",
+        "blend": "normal",
+        "width": 131.9584197998047,
+        "height": 30.789794921875
+      },
+      ".project-card": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 336.7011413574219,
+        "height": 627.714111328125
+      },
+      ".project-visual": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.4",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 343.08251953125,
+        "height": 315.59521484375
+      }
+    },
+    "largePaints": [
+      {
+        "selector": "div.graph-background::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 375,
+        "height": 844
+      },
+      {
+        "selector": "section.hero reference-hero",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 45% 30%, rgba(244, 246, 248, 0.3), rgba(0, 0, 0, 0) 70%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 372.45703125,
+        "height": 838.276611328125
+      },
+      {
+        "selector": "section.hero reference-hero::after",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(rgba(0, 0, 0, 0), rgba(48, 57, 68, 0.12)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 372.45703125,
+        "height": 838.276611328125
+      },
+      {
+        "selector": "div.atmosphere-grid",
+        "background": "linear-gradient(rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.35",
+        "position": "absolute",
+        "width": 372.45703125,
+        "height": 838.276611328125
+      },
+      {
+        "selector": "img.atmosphere-emblem",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "grayscale(0.5)",
+        "opacity": "0.035",
+        "position": "relative",
+        "width": 339.6807861328125,
+        "height": 339.6807861328125
+      },
+      {
+        "selector": "div.atmosphere-glow glow-left",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(47, 128, 254, 0.38), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.120001",
+        "position": "absolute",
+        "width": 297.9655456542969,
+        "height": 297.9656982421875
+      },
+      {
+        "selector": "div.atmosphere-glow glow-right",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(240, 241, 248, 0.2), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.160383",
+        "position": "absolute",
+        "width": 297.965576171875,
+        "height": 297.965576171875
+      },
+      {
+        "selector": "section.service-explorer signature-explorer",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(48, 57, 68, 0.15) 0px 26px 60px 0px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "static",
+        "width": 336.7011413574219,
+        "height": 893.1983642578125
+      },
+      {
+        "selector": "div.css-service-cube",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 202.12745666503906,
+        "height": 215.572265625
+      },
+      {
+        "selector": "div.cube-face cube-face-0",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 217.3592529296875,
+        "height": 233.77197265625
+      },
+      {
+        "selector": "div.cube-face cube-face-2",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 188.87339782714844,
+        "height": 200.001220703125
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 336.7011413574219,
+        "height": 627.714111328125
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 336.7011413574219,
+        "height": 627.714111328125
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 364.96234130859375,
+        "height": 876.018798828125
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 336.7011413574219,
+        "height": 627.71435546875
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 336.7011413574219,
+        "height": 627.71435546875
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 364.96234130859375,
+        "height": 876.01904296875
+      },
+      {
+        "selector": "article.atlas-showcase project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 336.7011413574219,
+        "height": 689.961181640625
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 393.275634765625,
+        "height": 963.158447265625
+      },
+      {
+        "selector": "div.atlas-visual",
+        "background": "radial-gradient(at 55% 48%, rgba(89, 101, 114, 0.333), rgba(0, 0, 0, 0) 60%) repeat scroll 0% 0% / auto padding-box border-box, rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 334.7147216796875,
+        "height": 343.6533203125
+      },
+      {
+        "selector": "div.atlas-visual::after",
+        "background": "linear-gradient(rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 334.7147216796875,
+        "height": 343.6533203125
+      },
+      {
+        "selector": "span.deployment-atmosphere",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(rgba(47, 128, 254, 0.055), rgba(0, 0, 0, 0) 67%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.5",
+        "position": "absolute",
+        "width": 254.38812255859375,
+        "height": 250.1513671875
+      },
+      {
+        "selector": "div.deployment-terminal",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 270.0045166015625,
+        "height": 260.06689453125
+      },
+      {
+        "selector": "div.cta-panel",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 336.7011413574219,
+        "height": 504.81884765625
+      },
+      {
+        "selector": "span.cta-orbit",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(240, 241, 248, 0.008) 0px 0px 0px 70px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 595.93115234375,
+        "height": 595.931640625
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 309.0567626953125,
+        "height": 703.958984375
+      },
+      {
+        "selector": "footer.footer container",
+        "background": "rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(255, 255, 255, 0.65) 0px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 375,
+        "height": 894.296875
+      }
+    ]
+  },
+  {
+    "engine": "chromium",
+    "width": 390,
+    "errors": [],
+    "theme": "day",
+    "overflow": false,
+    "styles": {
+      "html": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(0, 0, 0)",
+        "fontSize": "16px",
+        "blend": "normal",
+        "width": 390,
+        "height": 6776.828125
+      },
+      "body": {
+        "background": "radial-gradient(at 22% 0%, rgba(255, 255, 255, 0.24), rgba(0, 0, 0, 0) 48%) repeat scroll 0% 0% / auto padding-box border-box, rgb(232, 236, 241) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 390,
+        "height": 6776.828125
+      },
+      ".public-site": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 390,
+        "height": 6776.828125
+      },
+      "main": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 388.584228515625,
+        "height": 5861.1767578125
+      },
+      ".graph-background": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 390,
+        "height": 844
+      },
+      ".graph-background canvas": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 390,
+        "height": 844
+      },
+      ".graph-background::after": {
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 390,
+        "height": 844
+      },
+      ".cube-shadow": {
+        "background": "rgba(48, 57, 68, 0.4) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "blur(16px)",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 192.922119140625,
+        "height": 19.728271484375
+      },
+      ".section-end": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 352.71490478515625,
+        "height": 103.015380859375
+      },
+      ".section-heading": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 352.71490478515625,
+        "height": 200.986572265625
+      },
+      ".section-heading p": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "13px",
+        "blend": "normal",
+        "width": 352.71490478515625,
+        "height": 49.19580078125
+      },
+      ".section-label": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "9px",
+        "blend": "normal",
+        "width": 132.3770751953125,
+        "height": 30.887451171875
+      },
+      ".project-card": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 352.71490478515625,
+        "height": 629.705810546875
+      },
+      ".project-visual": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.576654",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 356.9087219238281,
+        "height": 314.322998046875
+      }
+    },
+    "largePaints": [
+      {
+        "selector": "div.graph-background::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "selector": "section.hero reference-hero",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 45% 30%, rgba(244, 246, 248, 0.3), rgba(0, 0, 0, 0) 70%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 388.584228515625,
+        "height": 840.9361572265625
+      },
+      {
+        "selector": "section.hero reference-hero::after",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(rgba(0, 0, 0, 0), rgba(48, 57, 68, 0.12)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 388.584228515625,
+        "height": 840.9361572265625
+      },
+      {
+        "selector": "div.atmosphere-grid",
+        "background": "linear-gradient(rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.35",
+        "position": "absolute",
+        "width": 388.584228515625,
+        "height": 840.9361572265625
+      },
+      {
+        "selector": "img.atmosphere-emblem",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "grayscale(0.5)",
+        "opacity": "0.035",
+        "position": "relative",
+        "width": 354.3807373046875,
+        "height": 354.3807373046875
+      },
+      {
+        "selector": "div.atmosphere-glow glow-left",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(47, 128, 254, 0.38), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.120001",
+        "position": "absolute",
+        "width": 298.91094970703125,
+        "height": 298.9110107421875
+      },
+      {
+        "selector": "div.atmosphere-glow glow-right",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(240, 241, 248, 0.2), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.160255",
+        "position": "absolute",
+        "width": 298.91094970703125,
+        "height": 298.9110107421875
+      },
+      {
+        "selector": "section.service-explorer signature-explorer",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(48, 57, 68, 0.15) 0px 26px 60px 0px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "static",
+        "width": 352.71490478515625,
+        "height": 896.0322265625
+      },
+      {
+        "selector": "div.css-service-cube",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 210.98760986328125,
+        "height": 224.898681640625
+      },
+      {
+        "selector": "div.cube-face cube-face-0",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 227.5835418701172,
+        "height": 244.7125244140625
+      },
+      {
+        "selector": "div.cube-face cube-face-2",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 196.62843322753906,
+        "height": 208.0526123046875
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 352.71490478515625,
+        "height": 629.705810546875
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 352.71490478515625,
+        "height": 629.705810546875
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 369.7009582519531,
+        "height": 878.798095703125
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 352.71490478515625,
+        "height": 629.705810546875
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 352.71490478515625,
+        "height": 629.705810546875
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 369.7009582519531,
+        "height": 878.798095703125
+      },
+      {
+        "selector": "article.atlas-showcase project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 352.71490478515625,
+        "height": 670.04296875
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 388.0479431152344,
+        "height": 935.264404296875
+      },
+      {
+        "selector": "div.atlas-visual",
+        "background": "radial-gradient(at 55% 48%, rgba(89, 101, 114, 0.333), rgba(0, 0, 0, 0) 60%) repeat scroll 0% 0% / auto padding-box border-box, rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 350.72216796875,
+        "height": 344.744140625
+      },
+      {
+        "selector": "div.atlas-visual::after",
+        "background": "linear-gradient(rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 350.72216796875,
+        "height": 344.744140625
+      },
+      {
+        "selector": "span.deployment-atmosphere",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(rgba(47, 128, 254, 0.055), rgba(0, 0, 0, 0) 67%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.5",
+        "position": "absolute",
+        "width": 266.56005859375,
+        "height": 250.94482421875
+      },
+      {
+        "selector": "div.deployment-terminal",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 282.817138671875,
+        "height": 260.99658203125
+      },
+      {
+        "selector": "div.cta-panel",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 352.71490478515625,
+        "height": 506.42041015625
+      },
+      {
+        "selector": "span.cta-orbit",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(240, 241, 248, 0.008) 0px 0px 0px 70px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 597.8218994140625,
+        "height": 597.82177734375
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 313.6180114746094,
+        "height": 706.19287109375
+      },
+      {
+        "selector": "footer.footer container",
+        "background": "rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(255, 255, 255, 0.65) 0px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 390,
+        "height": 894.296875
+      }
+    ]
+  },
+  {
+    "engine": "chromium",
+    "width": 412,
+    "errors": [],
+    "theme": "day",
+    "overflow": false,
+    "styles": {
+      "html": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(0, 0, 0)",
+        "fontSize": "16px",
+        "blend": "normal",
+        "width": 412,
+        "height": 6732.765625
+      },
+      "body": {
+        "background": "radial-gradient(at 22% 0%, rgba(255, 255, 255, 0.24), rgba(0, 0, 0, 0) 48%) repeat scroll 0% 0% / auto padding-box border-box, rgb(232, 236, 241) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 412,
+        "height": 6732.765625
+      },
+      ".public-site": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 412,
+        "height": 6732.765625
+      },
+      "main": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 410.50244140625,
+        "height": 5817.2470703125
+      },
+      ".graph-background": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 412,
+        "height": 844
+      },
+      ".graph-background canvas": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 412,
+        "height": 844
+      },
+      ".graph-background::after": {
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 412,
+        "height": 844
+      },
+      ".cube-shadow": {
+        "background": "rgba(48, 57, 68, 0.4) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "blur(16px)",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 204.97097778320312,
+        "height": 19.72802734375
+      },
+      ".section-end": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 374.63330078125,
+        "height": 103.0146484375
+      },
+      ".section-heading": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 374.63330078125,
+        "height": 200.985595703125
+      },
+      ".section-heading p": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "13px",
+        "blend": "normal",
+        "width": 374.63330078125,
+        "height": 49.195556640625
+      },
+      ".section-label": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "9px",
+        "blend": "normal",
+        "width": 132.37646484375,
+        "height": 30.8873291015625
+      },
+      ".project-card": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 374.63330078125,
+        "height": 629.702880859375
+      },
+      ".project-visual": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.576125",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 379.2219543457031,
+        "height": 314.328369140625
+      }
+    },
+    "largePaints": [
+      {
+        "selector": "div.graph-background::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 412,
+        "height": 844
+      },
+      {
+        "selector": "section.hero reference-hero",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 45% 30%, rgba(244, 246, 248, 0.3), rgba(0, 0, 0, 0) 70%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 410.50244140625,
+        "height": 840.93212890625
+      },
+      {
+        "selector": "section.hero reference-hero::after",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(rgba(0, 0, 0, 0), rgba(48, 57, 68, 0.12)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 410.50244140625,
+        "height": 840.93212890625
+      },
+      {
+        "selector": "div.atmosphere-grid",
+        "background": "linear-gradient(rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.35",
+        "position": "absolute",
+        "width": 410.50244140625,
+        "height": 840.93212890625
+      },
+      {
+        "selector": "img.atmosphere-emblem",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "grayscale(0.5)",
+        "opacity": "0.035",
+        "position": "relative",
+        "width": 374.3686218261719,
+        "height": 374.36865234375
+      },
+      {
+        "selector": "div.atmosphere-glow glow-left",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(47, 128, 254, 0.38), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.120001",
+        "position": "absolute",
+        "width": 298.9095458984375,
+        "height": 298.909423828125
+      },
+      {
+        "selector": "div.atmosphere-glow glow-right",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(240, 241, 248, 0.2), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.160255",
+        "position": "absolute",
+        "width": 298.9095458984375,
+        "height": 298.9095458984375
+      },
+      {
+        "selector": "section.service-explorer signature-explorer",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(48, 57, 68, 0.15) 0px 26px 60px 0px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "static",
+        "width": 374.63330078125,
+        "height": 896.028076171875
+      },
+      {
+        "selector": "div.css-service-cube",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 223.08074951171875,
+        "height": 237.5968017578125
+      },
+      {
+        "selector": "div.cube-face cube-face-0",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 241.7179412841797,
+        "height": 259.8211669921875
+      },
+      {
+        "selector": "div.cube-face cube-face-2",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 207.0895538330078,
+        "height": 218.8739013671875
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 374.63330078125,
+        "height": 629.702880859375
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 374.63330078125,
+        "height": 629.702880859375
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 374.9613037109375,
+        "height": 878.794189453125
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 374.63330078125,
+        "height": 629.702880859375
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 374.63330078125,
+        "height": 629.702880859375
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 374.9613037109375,
+        "height": 878.794189453125
+      },
+      {
+        "selector": "article.atlas-showcase project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 374.63330078125,
+        "height": 670.0400390625
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 393.3081359863281,
+        "height": 935.259765625
+      },
+      {
+        "selector": "div.atlas-visual",
+        "background": "radial-gradient(at 55% 48%, rgba(89, 101, 114, 0.333), rgba(0, 0, 0, 0) 60%) repeat scroll 0% 0% / auto padding-box border-box, rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 372.640625,
+        "height": 344.74267578125
+      },
+      {
+        "selector": "div.atlas-visual::after",
+        "background": "linear-gradient(rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 372.640625,
+        "height": 344.74267578125
+      },
+      {
+        "selector": "span.deployment-atmosphere",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(rgba(47, 128, 254, 0.055), rgba(0, 0, 0, 0) 67%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.5",
+        "position": "absolute",
+        "width": 283.216796875,
+        "height": 250.94384765625
+      },
+      {
+        "selector": "div.deployment-terminal",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 300.344970703125,
+        "height": 261.1484375
+      },
+      {
+        "selector": "div.cta-panel",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 374.63330078125,
+        "height": 462.51611328125
+      },
+      {
+        "selector": "span.cta-orbit",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(240, 241, 248, 0.008) 0px 0px 0px 70px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 597.819091796875,
+        "height": 597.81884765625
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 298.9079895019531,
+        "height": 644.72607421875
+      },
+      {
+        "selector": "footer.footer container",
+        "background": "rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(255, 255, 255, 0.65) 0px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 412,
+        "height": 894.296875
+      }
+    ]
+  },
+  {
+    "engine": "chromium",
+    "width": 425,
+    "errors": [],
+    "theme": "day",
+    "overflow": false,
+    "styles": {
+      "html": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(0, 0, 0)",
+        "fontSize": "16px",
+        "blend": "normal",
+        "width": 425,
+        "height": 6732.765625
+      },
+      "body": {
+        "background": "radial-gradient(at 22% 0%, rgba(255, 255, 255, 0.24), rgba(0, 0, 0, 0) 48%) repeat scroll 0% 0% / auto padding-box border-box, rgb(232, 236, 241) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 425,
+        "height": 6732.765625
+      },
+      ".public-site": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 425,
+        "height": 6732.765625
+      },
+      "main": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 422.4794921875,
+        "height": 5803.84375
+      },
+      ".graph-background": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 425,
+        "height": 844
+      },
+      ".graph-background canvas": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 425,
+        "height": 844
+      },
+      ".graph-background::after": {
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 425,
+        "height": 844
+      },
+      ".cube-shadow": {
+        "background": "rgba(48, 57, 68, 0.4) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "blur(16px)",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 211.59703063964844,
+        "height": 19.6826171875
+      },
+      ".section-end": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 386.6929931640625,
+        "height": 102.777587890625
+      },
+      ".section-heading": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 386.6929931640625,
+        "height": 200.5224609375
+      },
+      ".section-heading p": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "13px",
+        "blend": "normal",
+        "width": 386.6929931640625,
+        "height": 49.0821533203125
+      },
+      ".section-label": {
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(70, 84, 99)",
+        "fontSize": "9px",
+        "blend": "normal",
+        "width": 132.07144165039062,
+        "height": 30.816162109375
+      },
+      ".project-card": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 386.6929931640625,
+        "height": 628.251953125
+      },
+      ".project-visual": {
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.4",
+        "color": "rgb(24, 34, 45)",
+        "fontSize": "15px",
+        "blend": "normal",
+        "width": 394.322509765625,
+        "height": 315.865478515625
+      }
+    },
+    "largePaints": [
+      {
+        "selector": "div.graph-background::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 50% 35%, rgba(0, 0, 0, 0), rgb(232, 236, 241)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 425,
+        "height": 844
+      },
+      {
+        "selector": "section.hero reference-hero",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(at 45% 30%, rgba(244, 246, 248, 0.3), rgba(0, 0, 0, 0) 70%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 422.4794921875,
+        "height": 838.99462890625
+      },
+      {
+        "selector": "section.hero reference-hero::after",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(rgba(0, 0, 0, 0), rgba(48, 57, 68, 0.12)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 422.4794921875,
+        "height": 838.99462890625
+      },
+      {
+        "selector": "div.atmosphere-grid",
+        "background": "linear-gradient(rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(240, 241, 248, 0.024) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 78px 78px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.35",
+        "position": "absolute",
+        "width": 422.4794921875,
+        "height": 838.99462890625
+      },
+      {
+        "selector": "img.atmosphere-emblem",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "grayscale(0.5)",
+        "opacity": "0.035",
+        "position": "relative",
+        "width": 385.2951354980469,
+        "height": 385.2950439453125
+      },
+      {
+        "selector": "div.atmosphere-glow glow-left",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(47, 128, 254, 0.38), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.120001",
+        "position": "absolute",
+        "width": 298.2207946777344,
+        "height": 298.2208251953125
+      },
+      {
+        "selector": "div.atmosphere-glow glow-right",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(circle, rgba(240, 241, 248, 0.2), rgba(0, 0, 0, 0) 68%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.160383",
+        "position": "absolute",
+        "width": 298.2208251953125,
+        "height": 298.2208251953125
+      },
+      {
+        "selector": "section.service-explorer signature-explorer",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(48, 57, 68, 0.15) 0px 26px 60px 0px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "static",
+        "width": 386.6929931640625,
+        "height": 893.9635009765625
+      },
+      {
+        "selector": "div.css-service-cube",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 229.70289611816406,
+        "height": 244.532470703125
+      },
+      {
+        "selector": "div.cube-face cube-face-0",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 249.56231689453125,
+        "height": 268.197509765625
+      },
+      {
+        "selector": "div.cube-face cube-face-2",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.25) 3px 3px 7px 0px inset, rgba(255, 255, 255, 0.75) -3px -3px 7px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 212.7470245361328,
+        "height": 224.7041015625
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 386.6929931640625,
+        "height": 628.251953125
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 386.6929931640625,
+        "height": 628.251953125
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 377.2038269042969,
+        "height": 876.769287109375
+      },
+      {
+        "selector": "article.project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 386.6929931640625,
+        "height": 628.251953125
+      },
+      {
+        "selector": "article.project-card::after",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(380px, rgba(145, 189, 255, 0.047), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 386.6929931640625,
+        "height": 628.251953125
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 377.2038269042969,
+        "height": 876.769287109375
+      },
+      {
+        "selector": "article.atlas-showcase project-card",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 386.6929931640625,
+        "height": 668.49609375
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 395.5084228515625,
+        "height": 933.105224609375
+      },
+      {
+        "selector": "div.atlas-visual",
+        "background": "radial-gradient(at 55% 48%, rgba(89, 101, 114, 0.333), rgba(0, 0, 0, 0) 60%) repeat scroll 0% 0% / auto padding-box border-box, rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 384.7048645019531,
+        "height": 343.9482421875
+      },
+      {
+        "selector": "div.atlas-visual::after",
+        "background": "linear-gradient(rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box, rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, rgba(0, 0, 0, 0) 1px) repeat scroll 0% 0% / 70px 70px padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 384.7048645019531,
+        "height": 343.9482421875
+      },
+      {
+        "selector": "span.deployment-atmosphere",
+        "background": "rgba(0, 0, 0, 0) radial-gradient(rgba(47, 128, 254, 0.055), rgba(0, 0, 0, 0) 67%) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0.5",
+        "position": "absolute",
+        "width": 292.38067626953125,
+        "height": 250.365234375
+      },
+      {
+        "selector": "div.deployment-terminal",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 309.9970703125,
+        "height": 260.6357421875
+      },
+      {
+        "selector": "div.cta-panel",
+        "background": "rgb(229, 233, 238) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(166, 177, 190, 0.3) 5px 5px 14px 0px, rgba(255, 255, 255, 0.8) -5px -5px 14px 0px, rgba(255, 255, 255, 0.65) 1px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 386.6929931640625,
+        "height": 461.4501953125
+      },
+      {
+        "selector": "span.cta-orbit",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(240, 241, 248, 0.008) 0px 0px 0px 70px",
+        "filter": "none",
+        "opacity": "1",
+        "position": "absolute",
+        "width": 596.441650390625,
+        "height": 596.44140625
+      },
+      {
+        "selector": "span.crystal-sheen",
+        "background": "rgba(0, 0, 0, 0) linear-gradient(100deg, rgba(0, 0, 0, 0), rgba(240, 241, 248, 0.047), rgba(199, 223, 255, 0.08), rgba(0, 0, 0, 0)) repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "none",
+        "filter": "none",
+        "opacity": "0",
+        "position": "absolute",
+        "width": 301.32574462890625,
+        "height": 643.240234375
+      },
+      {
+        "selector": "footer.footer container",
+        "background": "rgb(223, 228, 234) none repeat scroll 0% 0% / auto padding-box border-box",
+        "shadow": "rgba(255, 255, 255, 0.65) 0px 1px 0px 0px inset",
+        "filter": "none",
+        "opacity": "1",
+        "position": "relative",
+        "width": 425,
+        "height": 894.296875
+      }
+    ]
+  }
+]

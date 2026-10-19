@@ -15,6 +15,9 @@
 }
 /* Static ambient light sits above the graph, below glass and readable content. */
 .graph-background::after {
+  content: none;
+}
+html[data-theme="night"] .graph-background::after {
   content: "";
   position: absolute;
   inset: 0;

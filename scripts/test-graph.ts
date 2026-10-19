@@ -69,6 +69,62 @@ export async function testAdminGraph(
       "same-admin-canvas",
     );
     check(true, "Admin navigation retains the same background canvas");
+    const originalTheme = await page.locator("html").getAttribute("data-theme");
+    try {
+      for (const width of [320, 375, 390, 412, 425]) {
+        await page.setViewportSize({ width, height: 844 });
+        if ((await page.locator("html").getAttribute("data-theme")) !== "day")
+          await page.locator(".theme-toggle:visible").first().click();
+        for (const route of [
+          "/admin",
+          "/admin/reviews",
+          "/admin/portfolio",
+          "/admin/settings",
+          "/admin/account",
+        ]) {
+          await page.goto(route);
+          await expect(page.locator(".graph-background")).toHaveAttribute(
+            "data-theme",
+            "day",
+          );
+          await expect(page.locator(".graph-background")).toHaveAttribute(
+            "data-nodes",
+            "20",
+          );
+          const view = await page.evaluate(() => {
+            const ambient = getComputedStyle(
+              document.querySelector(".graph-background")!,
+              "::after",
+            );
+            return {
+              content: ambient.content,
+              background: ambient.backgroundImage,
+              overflow: document.documentElement.scrollWidth > innerWidth,
+            };
+          });
+          check(
+            view.content === "none" &&
+              view.background === "none" &&
+              !view.overflow,
+            `Mobile Day admin has no ambient overlay or overflow: ${route} at ${width}px`,
+          );
+          if (width === 375 && ["/admin", "/admin/portfolio"].includes(route)) {
+            await mkdir("qa/mobile-day/pages", { recursive: true });
+            await page.screenshot({
+              path: `qa/mobile-day/pages/${route.slice(1).replaceAll("/", "-")}-375.png`,
+              animations: "disabled",
+            });
+          }
+        }
+      }
+    } finally {
+      if (
+        originalTheme &&
+        (await page.locator("html").getAttribute("data-theme")) !==
+          originalTheme
+      )
+        await page.locator(".theme-toggle:visible").first().click();
+    }
   } finally {
     await page.emulateMedia({ reducedMotion: "reduce" });
   }

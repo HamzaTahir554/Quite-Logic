@@ -14,7 +14,19 @@ test("selected glass cards track the mouse and clear on scroll and reduced motio
     "true",
   );
   const card = page.locator(".service-editorial-copy:visible").first();
+  await page.evaluate(() => document.fonts.ready);
   await card.scrollIntoViewIfNeeded();
+  // A pending smooth scroll clears lighting by design. Center the card first
+  // and let scroll events settle before sending the pointer move being tested.
+  await card.evaluate((node) =>
+    node.scrollIntoView({ block: "center", behavior: "instant" }),
+  );
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
   await expect(card).toBeVisible();
   await card.hover({ position: { x: 45, y: 70 } });
   await expect(card).toHaveAttribute("data-glass-lit", "true");

@@ -42,7 +42,8 @@
   --toggle-active: #596b80;
 }
 :root[data-theme="day"] {
-  color-scheme: light;
+  color-scheme: only light;
+  background-color: var(--day-bg);
   --day-bg: #e8ecf1;
   --day-surface: #e5e9ee;
   --day-surface-raised: #edf0f4;
@@ -382,7 +383,27 @@ html[data-theme="day"] .atmosphere-orbits > span {
   border-color: #30486312;
 }
 html[data-theme="day"] .graph-background::after {
-  background: radial-gradient(ellipse at 50% 35%, transparent, var(--day-bg));
+  content: none;
+  background: none;
+}
+/* Day has its own light paints; never reuse the dark hero fade or dice shadow. */
+html[data-theme="day"] .reference-hero::after {
+  background: linear-gradient(rgba(232, 236, 241, 0), var(--day-bg));
+}
+html[data-theme="day"] .cube-shadow {
+  background: rgba(163, 177, 198, 0.22);
+  filter: none;
+  opacity: 0.65;
+}
+html[data-theme="day"] .atlas-visual {
+  background:
+    radial-gradient(ellipse at 55% 48%, #ffffff4d, #ffffff00 60%),
+    var(--day-surface-secondary);
+}
+html[data-theme="day"] .project-visual::after {
+  background: var(--day-surface-raised);
+  border-color: var(--day-border);
+  color: var(--day-text-secondary);
 }
 html[data-theme="day"]
   :is(
@@ -1214,6 +1235,7 @@ html[data-theme="day"]
 }
 @media (max-width: 600px) {
   :root[data-theme="day"] {
+    --section: 60px;
     --day-shadow:
       5px 5px 14px rgba(166, 177, 190, 0.3),
       -5px -5px 14px rgba(255, 255, 255, 0.8),
@@ -1224,6 +1246,62 @@ html[data-theme="day"]
     --day-shadow-inset:
       inset 3px 3px 7px rgba(166, 177, 190, 0.25),
       inset -3px -3px 7px rgba(255, 255, 255, 0.75);
+  }
+  html[data-theme="day"] :is(.atmosphere-glow, .crystal-light) {
+    display: none;
+  }
+  html[data-theme="day"] .section-heading {
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  html[data-theme="day"] .section-heading h2 {
+    font-size: clamp(34px, 9vw, 42px);
+    line-height: 1.08;
+    overflow-wrap: anywhere;
+  }
+  html[data-theme="day"]
+    :is(
+      .section-heading > p,
+      .project-copy > p,
+      .service-editorial-copy p,
+      .signature-explorer .explorer-selection p
+    ) {
+    color: var(--day-text-secondary);
+    font-size: 16px;
+    line-height: 1.65;
+    opacity: 1;
+  }
+  html[data-theme="day"] .section-heading > p {
+    margin: 0;
+  }
+  html[data-theme="day"]
+    :is(
+      .project-copy,
+      .atlas-copy,
+      .service-editorial-copy,
+      .explorer-information
+    )
+    .overline {
+    color: var(--day-text-secondary);
+  }
+  html[data-theme="day"]
+    :is(
+      .section-label,
+      .project-category,
+      .project-concept-label,
+      .project-featured-label,
+      .portfolio-count,
+      .overline
+    ) {
+    color: var(--day-text-secondary);
+    font-size: 11px;
+    opacity: 1;
+  }
+  html[data-theme="day"] .section-end .small {
+    color: var(--day-text-secondary);
+    font-size: 14px;
+    line-height: 1.65;
+    opacity: 1;
   }
   .site-header > .nav-project {
     display: none;

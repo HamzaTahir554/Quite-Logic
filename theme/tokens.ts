@@ -23,6 +23,15 @@ export const palettes = {
   },
 } as const;
 export const graphPalettes = {
+  dayMobile: {
+    arc: "rgba(65,85,110,0.04)",
+    quietArc: "rgba(65,85,110,0.025)",
+    active: "rgba(47,128,254,0.14)",
+    fine: "rgba(65,85,110,0.035)",
+    line: "rgba(65,85,110,0.07)",
+    node: "rgba(65,85,110,0.12)",
+    accent: "rgba(47,128,254,0.50)",
+  },
   night: {
     arc: "rgba(47,128,254,0.08)",
     quietArc: "rgba(180,195,215,0.055)",

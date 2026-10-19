@@ -32,10 +32,8 @@ export function createGraphRenderer(
     return { setVariant: () => {}, setTheme: () => {}, dispose: () => {} };
   }
   const ctx = context;
-  let colors: (typeof graphPalettes)[VisualTheme] =
-    graphPalettes[
-      document.documentElement?.dataset.theme === "day" ? "day" : "night"
-    ];
+  let theme: VisualTheme =
+    document.documentElement?.dataset.theme === "day" ? "day" : "night";
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const coarse = matchMedia("(pointer: coarse)");
   let variant: GraphVariant =
@@ -80,6 +78,16 @@ export function createGraphRenderer(
     const still = reduced.matches;
     const quiet = compact();
     const strength = intensity[variant];
+    const mobileDay = theme === "day" && width <= 600;
+    const colors = mobileDay ? graphPalettes.dayMobile : graphPalettes[theme];
+    // Preserve the autonomous solver and its phase on theme changes; draw a
+    // slightly sparser subset on Day mobile, rather than restarting the graph.
+    const visible = (index: number) => !mobileDay || index % 11 !== 10;
+    const nodeCount =
+      graph.nodes.length -
+      (mobileDay ? Math.floor(graph.nodes.length / 11) : 0);
+    if (host.dataset.nodes !== String(nodeCount))
+      host.dataset.nodes = String(nodeCount);
     const depthY = Math.sin(elapsed * 0.06) * 2;
     ctx.clearRect(0, 0, width, height);
     ctx.save();
@@ -129,6 +137,7 @@ export function createGraphRenderer(
     if (!still && connections.advance(elapsed, positions, graph.threshold))
       host.dataset.edges = String(connections.active.length);
     for (const edge of connections.active) {
+      if (!visible(edge.a) || !visible(edge.b)) continue;
       const ax = positions[edge.a * 2],
         ay = positions[edge.a * 2 + 1];
       const bx = positions[edge.b * 2],
@@ -149,6 +158,7 @@ export function createGraphRenderer(
     // At most three slow, fading data signals (one on compact/touch screens).
     if (!still)
       for (const edge of connections.active) {
+        if (!visible(edge.a) || !visible(edge.b)) continue;
         const progress = connectionSignal(edge, elapsed);
         if (progress < 0) continue;
         const x =
@@ -166,6 +176,7 @@ export function createGraphRenderer(
       }
 
     for (let index = 0; index < graph.nodes.length; index++) {
+      if (!visible(index)) continue;
       const x = positions[index * 2],
         y = positions[index * 2 + 1];
       const active = index % 11 === 0;
@@ -299,7 +310,7 @@ export function createGraphRenderer(
 
   return {
     setTheme(next: VisualTheme) {
-      colors = graphPalettes[next];
+      theme = next;
       host.dataset.theme = next;
       if (!disposed && !lost && !document.hidden) draw();
     },

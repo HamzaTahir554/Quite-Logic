@@ -28,7 +28,7 @@ test("saved Day mode is applied before hydration even on a dark system", async (
       await page.evaluate(
         () => getComputedStyle(document.documentElement).colorScheme,
       ),
-    ).toBe("light");
+    ).toMatch(/^(?:only light|light only)$/);
   } finally {
     await context.close();
   }
