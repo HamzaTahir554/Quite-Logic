@@ -35,6 +35,20 @@ function createVisualTheme(mode: "light" | "dark") {
     typography: {
       fontFamily: "var(--font-manrope), sans-serif",
       button: { textTransform: "none", fontWeight: 700 },
+      body1: {
+        "@media (max-width:768px)": {
+          fontSize: "var(--mobile-size-body, 16px)",
+          fontWeight: "var(--mobile-weight-body, 500)",
+          lineHeight: 1.6,
+        },
+      },
+      body2: {
+        "@media (max-width:768px)": {
+          fontSize: "var(--mobile-size-body, 16px)",
+          fontWeight: "var(--mobile-weight-body, 500)",
+          lineHeight: 1.6,
+        },
+      },
     },
     shape: { borderRadius: 16 },
     components: {

@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { PublicSocialLink } from "@/lib/social-links";
@@ -63,7 +64,7 @@ export default function SocialLinks() {
               <span>
                 {link.platform === "X" ? "X / Twitter" : link.platform}
               </span>
-              <span aria-hidden="true">↗</span>
+              <Arrow />
             </a>
           ))}
         </nav>

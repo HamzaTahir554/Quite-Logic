@@ -264,7 +264,7 @@ main,
   border-color: var(--line-soft);
 }
 .project-visual:after {
-  content: "VIEW PROJECT ↗";
+  content: "VIEW PROJECT";
   position: absolute;
   bottom: 27px;
   right: 28px;

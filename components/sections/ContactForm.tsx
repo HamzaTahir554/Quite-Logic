@@ -1,7 +1,8 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Alert, Button, MenuItem, TextField } from "@mui/material";
+import { Alert, MenuItem, TextField } from "@mui/material";
+import FabricButton from "@/components/ui/FabricButton";
 import BrandText from "@/components/ui/BrandText";
 import { contactEmail } from "@/lib/company";
 import {
@@ -227,8 +228,7 @@ export default function ContactForm() {
       <p className="small">
         Prefer email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
       </p>
-      <Button
-        variant="contained"
+      <FabricButton
         type="submit"
         disabled={!ready || status === "loading" || status === "success"}
         className="submit-button"
@@ -238,7 +238,7 @@ export default function ContactForm() {
           : status === "success"
             ? "Message submitted"
             : "Send Message"}
-      </Button>
+      </FabricButton>
       <div className="contact-feedback" aria-live="polite" aria-atomic="true">
         {message && (
           <Alert

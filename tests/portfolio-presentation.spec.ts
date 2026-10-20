@@ -290,7 +290,7 @@ test("editorial project details preserve proportional lazy visuals and a clear r
     for (const slug of ["nexa-ops", "pulse-crm"]) {
       await page.goto(`/portfolio/${slug}`);
       await expect(
-        page.getByRole("link", { name: "← Back to Portfolio", exact: true }),
+        page.getByRole("link", { name: "Back to Portfolio", exact: true }),
       ).toBeVisible();
       await expect(
         page.getByRole("heading", { name: "Technology direction" }),

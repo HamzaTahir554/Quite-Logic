@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import { useRef, useState } from "react";
 import {
   motion,
@@ -119,9 +120,7 @@ export default function Process({ detailed = false }: { detailed?: boolean }) {
                 <h4>{subtitle}</h4>
                 {detailed && <p>{description}</p>}
               </div>
-              <span className="process-arrow" aria-hidden="true">
-                ↗
-              </span>
+              <Arrow className="process-arrow" />
             </motion.article>
           ))}
         </div>

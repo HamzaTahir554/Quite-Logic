@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import Image from "next/image";
 import { useRef } from "react";
 import { Action } from "@/components/ui/Elements";
@@ -80,7 +81,7 @@ export default function Hero() {
         aria-label="Explore our services"
       >
         <span>Explore the studio</span>
-        <span aria-hidden="true">↓</span>
+        <Arrow />
       </a>
     </section>
   );

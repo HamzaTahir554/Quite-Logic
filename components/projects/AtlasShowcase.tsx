@@ -1,11 +1,10 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import Link from "next/link";
 import Chip from "@mui/material/Chip";
 import { motion } from "framer-motion";
 import { useRef, useEffect } from "react";
 import type { Project } from "@/data/content";
-import type { HomeProject } from "@/lib/portfolio";
-import ProjectLogo from "./ProjectLogo";
 import DeploymentTerminal from "./DeploymentTerminal";
 import { useReducedMotion } from "framer-motion";
 import { useCrystalPointer } from "@/hooks/useCrystalPointer";
@@ -14,7 +13,7 @@ export default function AtlasShowcase({
   project,
   primary = false,
 }: {
-  project: Project | HomeProject;
+  project: Project;
   primary?: boolean;
 }) {
   const Heading = primary ? "h1" : "h3";
@@ -83,9 +82,7 @@ export default function AtlasShowcase({
       <span className="crystal-light" aria-hidden="true" />
       <span className="crystal-sheen" aria-hidden="true" />
       <div className="atlas-copy">
-        <span className="overline">
-          {"type" in project ? project.type : project.category}
-        </span>
+        <span className="overline">{project.type}</span>
         <Heading>
           {primary ? (
             project.title
@@ -104,20 +101,11 @@ export default function AtlasShowcase({
             className="text-link atlas-project-link"
             href={`/portfolio/${project.slug}`}
           >
-            Explore concept <span aria-hidden="true">↗</span>
+            Explore concept <Arrow />
           </Link>
         )}
       </div>
       <div className="atlas-visual">
-        {"logo" in project && (
-          <ProjectLogo
-            src={project.logo}
-            title={project.title}
-            className="home-atlas-logo"
-            width={88}
-            height={56}
-          />
-        )}
         <DeploymentTerminal
           href={primary ? undefined : `/portfolio/${project.slug}`}
         />

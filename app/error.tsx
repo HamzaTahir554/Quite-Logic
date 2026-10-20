@@ -1,4 +1,5 @@
 "use client";
+import FabricButton from "@/components/ui/FabricButton";
 export default function ErrorPage({
   reset,
 }: {
@@ -10,9 +11,7 @@ export default function ErrorPage({
       <span className="eyebrow">A moment of interruption</span>
       <h1>Something went wrong.</h1>
       <p>Please try loading this page again.</p>
-      <button className="button primary" onClick={reset}>
-        Try again ↻
-      </button>
+      <FabricButton onClick={reset}>Try again ↻</FabricButton>
     </section>
   );
 }

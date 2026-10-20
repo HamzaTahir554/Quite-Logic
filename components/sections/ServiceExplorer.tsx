@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import dynamic from "next/dynamic";
 import {
   useCallback,
@@ -16,30 +17,28 @@ import {
   useSpring,
 } from "framer-motion";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { serviceFaces, faceRotations } from "@/data/serviceFaces";
+import { serviceFaces } from "@/data/serviceFaces";
 import SceneBoundary from "@/components/three/SceneBoundary";
 import { useSceneActivity } from "@/hooks/useSceneActivity";
 import MagneticLink from "@/components/motion/MagneticLink";
 import BrandName from "@/components/ui/BrandName";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
 import type { MotionValue } from "framer-motion";
+import { useCubeRotation } from "@/hooks/useCubeRotation";
 
 const ServiceDice = dynamic(() => import("@/components/three/ServiceDice"), {
   ssr: false,
 });
 
 function CSSCube({
-  selected,
-  onSettled,
+  rotation,
   tiltX,
   tiltY,
 }: {
-  selected: number;
-  onSettled: () => void;
+  rotation: ReturnType<typeof useCubeRotation>;
   tiltX: MotionValue<number> | number;
   tiltY: MotionValue<number> | number;
 }) {
-  const [x, y] = faceRotations[selected];
   return (
     <div className="css-cube-perspective" aria-hidden="true">
       <motion.div
@@ -47,11 +46,7 @@ function CSSCube({
         style={{ rotateX: tiltX, rotateY: tiltY }}
       >
         <div className="css-cube-tilt">
-          <div
-            className="css-service-cube"
-            style={{ transform: `rotateX(${-x}rad) rotateY(${y}rad)` }}
-            onTransitionEnd={onSettled}
-          >
+          <div className="css-service-cube" ref={rotation.bind}>
             {serviceFaces.map((face, index) => (
               <div className={`cube-face cube-face-${index}`} key={face.slug}>
                 <div className="cube-face-top">
@@ -67,7 +62,7 @@ function CSSCube({
                   {index === 5
                     ? "Explore all services"
                     : "Thoughtfully engineered"}
-                  <span>↗</span>
+                  <Arrow />
                 </span>
               </div>
             ))}
@@ -83,12 +78,14 @@ export default function ServiceExplorer({
 }: {
   embedded?: boolean;
 }) {
-  const [selected, setSelected] = useState(0);
-  const [presented, setPresented] = useState(0);
+  const [selected, setSelected] = useState(5);
+  const [presented, setPresented] = useState(5);
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [canvasReady, setCanvasReady] = useState(false);
+  const markCanvasReady = useCallback(() => setCanvasReady(true), []);
   const desktop = useMediaQuery("(min-width: 901px) and (pointer: fine)");
   const { ref, enabled, active } = useSceneActivity(desktop);
   const reduced = useMotionPreference();
@@ -99,9 +96,20 @@ export default function ServiceExplorer({
   const tiltX = desktop && active && !reduced ? mx : 0;
   const tiltY = desktop && active && !reduced ? my : 0;
   const webgl = desktop && enabled && !failed;
-  const drag = useMotionValue(0);
-  const gesture = useRef<{ x: number; y: number; id: number } | null>(null);
-  const manualUntil = useRef(0);
+  useEffect(() => {
+    if (!webgl) setCanvasReady(false);
+  }, [webgl]);
+
+  const gesture = useRef<{
+    x: number;
+    y: number;
+    lastX: number;
+    lastY: number;
+    time: number;
+    id: number;
+    claimed: boolean;
+  } | null>(null);
+  const manualUntil = useRef(Infinity);
   const current = useRef(selected);
   current.current = selected;
   const { scrollYProgress } = useScroll({
@@ -115,16 +123,11 @@ export default function ServiceExplorer({
   }, []);
   const settled = useCallback(() => setPresented(current.current), []);
 
+  const rotation = useCubeRotation(selected, reduced, choose, settled);
   useEffect(() => {
-    if (reduced) {
-      setPresented(selected);
-      return;
-    }
-    if (webgl) return;
-    // Also settles if the fallback mounts already in the requested orientation.
-    const timer = setTimeout(settled, 370);
-    return () => clearTimeout(timer);
-  }, [selected, webgl, reduced, settled]);
+    if (active && manualUntil.current === Infinity)
+      manualUntil.current = Date.now() + 3500;
+  }, [active]);
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     if (
@@ -149,68 +152,76 @@ export default function ServiceExplorer({
 
   function start(event: PointerEvent<HTMLDivElement>) {
     if (event.button !== 0) return;
+    // Only the actual cube owns vertical touch gestures; its surrounding plane scrolls.
+    if (
+      event.pointerType === "touch" &&
+      !(event.target as Element).closest(".css-cube-tilt")
+    )
+      return;
     gesture.current = {
       x: event.clientX,
       y: event.clientY,
+      lastX: event.clientX,
+      lastY: event.clientY,
+      time: event.timeStamp,
       id: event.pointerId,
+      claimed: false,
     };
     manualUntil.current = Date.now() + 12000;
-    setDragging(true);
   }
   function move(event: PointerEvent<HTMLDivElement>) {
+    const current = gesture.current;
     if (
+      !current &&
       desktop &&
       !webgl &&
-      event.pointerType === "mouse" &&
       !reduced &&
-      !dragging
+      event.pointerType === "mouse"
     ) {
       const bounds = event.currentTarget.getBoundingClientRect();
       mouseX.set(
         Math.max(
-          -3,
+          -2,
           Math.min(
-            3,
-            -((event.clientY - bounds.top) / bounds.height - 0.5) * 6,
+            2,
+            -((event.clientY - bounds.top) / bounds.height - 0.5) * 4,
           ),
         ),
       );
       mouseY.set(
         Math.max(
-          -3,
-          Math.min(3, ((event.clientX - bounds.left) / bounds.width - 0.5) * 6),
+          -2,
+          Math.min(2, ((event.clientX - bounds.left) / bounds.width - 0.5) * 4),
         ),
       );
     }
-    if (!gesture.current || gesture.current.id !== event.pointerId || reduced)
-      return;
-    if (
-      Math.abs(event.clientX - gesture.current.x) > 10 &&
-      Math.abs(event.clientX - gesture.current.x) >
-        Math.abs(event.clientY - gesture.current.y) &&
-      !event.currentTarget.hasPointerCapture(event.pointerId)
-    )
+    if (!current || current.id !== event.pointerId) return;
+    if (!current.claimed) {
+      if (Math.hypot(event.clientX - current.x, event.clientY - current.y) < 8)
+        return;
+      current.claimed = true;
+      rotation.begin();
+      setDragging(true);
       event.currentTarget.setPointerCapture(event.pointerId);
-    const amount = Math.max(
-      -1,
-      Math.min(1, (event.clientX - gesture.current.x) / 180),
+    }
+    rotation.drag(
+      event.clientX - current.lastX,
+      event.clientY - current.lastY,
+      event.timeStamp - current.time,
     );
-    drag.set(amount);
-    event.currentTarget.style.setProperty("--drag-angle", `${amount * 24}deg`);
+    current.lastX = event.clientX;
+    current.lastY = event.clientY;
+    current.time = event.timeStamp;
   }
   function finish(event: PointerEvent<HTMLDivElement>, cancelled = false) {
-    const start = gesture.current;
-    if (!start || start.id !== event.pointerId) return;
+    const current = gesture.current;
+    if (!current || current.id !== event.pointerId) return;
     gesture.current = null;
-    drag.set(0);
-    event.currentTarget.style.setProperty("--drag-angle", "0deg");
     setDragging(false);
+    if (event.timeStamp - current.time > 100) rotation.drag(0, 0, 16);
+    if (current.claimed) rotation.release(cancelled);
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
-    const dx = event.clientX - start.x;
-    const dy = event.clientY - start.y;
-    if (!cancelled && Math.abs(dx) > 38 && Math.abs(dx) > Math.abs(dy))
-      choose(selected + (dx < 0 ? 1 : -1));
   }
 
   return (
@@ -220,6 +231,7 @@ export default function ServiceExplorer({
       data-active-face={selected + 1}
       data-settled-face={presented + 1}
       data-renderer={webgl ? "webgl" : "css"}
+      data-canvas-ready={webgl && canvasReady}
       data-motion-active={active}
       onFocusCapture={() => setFocus(true)}
       onBlurCapture={(event) => {
@@ -255,8 +267,7 @@ export default function ServiceExplorer({
               !event.currentTarget.hasPointerCapture(currentGesture.id)
             ) {
               gesture.current = null;
-              drag.set(0);
-              event.currentTarget.style.setProperty("--drag-angle", "0deg");
+              rotation.release(true);
               setDragging(false);
             }
           }}
@@ -265,42 +276,37 @@ export default function ServiceExplorer({
             if (event.target !== event.currentTarget) return;
             if (!gesture.current) return;
             gesture.current = null;
-            drag.set(0);
-            event.currentTarget.style.setProperty("--drag-angle", "0deg");
+            rotation.release(true);
             setDragging(false);
           }}
           aria-hidden="true"
         >
-          {webgl ? (
-            <SceneBoundary
-              onError={() => setFailed(true)}
-              fallback={
-                <CSSCube
+          {(!webgl || !canvasReady) && (
+            <CSSCube rotation={rotation} tiltX={tiltX} tiltY={tiltY} />
+          )}
+          {webgl && (
+            <div className="cube-webgl-layer" data-ready={canvasReady}>
+              <SceneBoundary
+                onError={() => {
+                  setFailed(true);
+                  choose(5);
+                }}
+              >
+                <ServiceDice
+                  active={active}
                   selected={selected}
-                  onSettled={settled}
-                  tiltX={tiltX}
-                  tiltY={tiltY}
+                  onReady={markCanvasReady}
+                  onSelect={choose}
+                  onUnavailable={() => {
+                    setFailed(true);
+                    choose(5);
+                  }}
+                  orientation={rotation.orientation}
+                  dragging={dragging}
+                  hover={hover}
                 />
-              }
-            >
-              <ServiceDice
-                active={active}
-                selected={selected}
-                onSelect={choose}
-                onSettled={settled}
-                onUnavailable={() => setFailed(true)}
-                drag={drag}
-                dragging={dragging}
-                hover={hover}
-              />
-            </SceneBoundary>
-          ) : (
-            <CSSCube
-              selected={selected}
-              onSettled={settled}
-              tiltX={tiltX}
-              tiltY={tiltY}
-            />
+              </SceneBoundary>
+            </div>
           )}
         </div>
         <div className="cube-controls">
@@ -312,8 +318,8 @@ export default function ServiceExplorer({
           </button>
           <span className="explorer-hint">
             {desktop
-              ? "Drag to turn. Scroll to discover."
-              : "Swipe to discover a different side."}
+              ? "Drag in any direction to turn."
+              : "Drag the cube. Swipe beside it to scroll."}
           </span>
           <button
             aria-label="Next service"
@@ -341,7 +347,7 @@ export default function ServiceExplorer({
             >
               <span>0{index + 1}</span>
               {face.short}
-              <span aria-hidden="true">↗</span>
+              <Arrow />
             </button>
           ))}
         </div>

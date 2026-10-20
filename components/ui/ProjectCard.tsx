@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import Link from "next/link";
 import Chip from "@mui/material/Chip";
 import type { HomeProject } from "@/lib/portfolio";
@@ -9,15 +10,10 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import type { PointerEvent } from "react";
-import AtlasShowcase from "@/components/projects/AtlasShowcase";
-import ProjectArtwork from "@/components/projects/ProjectArtwork";
+import ProjectMedia from "@/components/projects/ProjectMedia";
 import CrystalReflection from "@/components/motion/CrystalReflection";
 export default function ProjectCard({ project }: { project: HomeProject }) {
-  return project.slug === "atlas-cloud" ? (
-    <AtlasShowcase project={project} />
-  ) : (
-    <StandardProjectCard project={project} />
-  );
+  return <StandardProjectCard project={project} />;
 }
 function StandardProjectCard({ project }: { project: HomeProject }) {
   const reduced = useReducedMotion();
@@ -63,7 +59,7 @@ function StandardProjectCard({ project }: { project: HomeProject }) {
           ))}
         </div>
         <Link href={`/portfolio/${project.slug}`} className="text-link">
-          Explore concept <span>↗</span>
+          Explore concept <Arrow />
         </Link>
       </div>
       <Link
@@ -72,10 +68,10 @@ function StandardProjectCard({ project }: { project: HomeProject }) {
         data-cursor="VIEW"
         aria-label={`Explore ${project.title}`}
       >
-        <ProjectArtwork
+        <ProjectMedia
           src={project.logo}
-          logoTitle={project.title}
-          alt={`${project.title} logo`}
+          title={project.title}
+          mediaType={project.mediaType}
         />
       </Link>
     </motion.article>

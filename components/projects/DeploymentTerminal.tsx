@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import { useEffect, useRef, useState } from "react";
 import {
   useInView,
@@ -102,7 +103,7 @@ export default function DeploymentTerminal({ href }: { href?: string }) {
                 <span>checks passed</span>
               </div>
               <div className="deployment-line deployment-live">
-                <span className="deployment-arrow">→</span>
+                <Arrow className="deployment-arrow" />
                 <span>live in 2.4s</span>
                 <i className="deployment-cursor" />
               </div>

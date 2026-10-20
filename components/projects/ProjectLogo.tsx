@@ -8,6 +8,7 @@ export default function ProjectLogo({
   width = 240,
   height = 120,
   className = "",
+  sizes,
 }: {
   src: string | null;
   title: string;
@@ -15,6 +16,7 @@ export default function ProjectLogo({
   width?: number;
   height?: number;
   className?: string;
+  sizes?: string;
 }) {
   const [failed, setFailed] = useState<string | null>(null);
   const url = src?.startsWith("/api/project-images/")
@@ -30,6 +32,7 @@ export default function ProjectLogo({
           width={width}
           height={height}
           loading="lazy"
+          sizes={sizes}
           onError={() => setFailed(url)}
         />
       ) : (

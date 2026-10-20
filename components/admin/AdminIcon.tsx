@@ -1,4 +1,6 @@
+import Arrow from "@/components/ui/Arrow";
 export default function AdminIcon({ name }: { name: string }) {
+  if (name === "Arrow") return <Arrow />;
   const paths: Record<string, React.ReactNode> = {
     Dashboard: (
       <>

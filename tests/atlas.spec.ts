@@ -8,7 +8,9 @@ test("Atlas replaces the project across routes, metadata, breadcrumbs and sitema
     await page.goto(path);
     const card =
       path === "/"
-        ? page.locator(".atlas-showcase")
+        ? page
+            .locator(".home-projects .project-card")
+            .filter({ hasText: "Atlas / Cloud" })
         : page
             .locator(".managed-project-card")
             .filter({ hasText: "Atlas / Cloud" });
@@ -123,7 +125,13 @@ test("terminal sequence, gentle pointer tilt and unique banners work with motion
   const initialTilt = await page
     .locator(".deployment-tilt")
     .evaluate((el) => getComputedStyle(el).transform);
-  await page.mouse.move(1230, 350);
+  const stage = page.locator(".deployment-stage");
+  await stage.scrollIntoViewIfNeeded();
+  const bounds = (await stage.boundingBox())!;
+  await page.mouse.move(
+    bounds.x + bounds.width * 0.8,
+    bounds.y + bounds.height * 0.35,
+  );
   await expect
     .poll(() =>
       page

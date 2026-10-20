@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 import Link from "next/link";
 import { requireAdminPage } from "@/lib/admin-auth";
 import { Project, Review } from "@/lib/models";
@@ -96,7 +97,7 @@ export default async function Dashboard() {
             reviews appear on your website only after you approve them.
           </p>
           <Link className="admin-text-link" href="/admin/account">
-            Manage your account →
+            Manage your account <Arrow />
           </Link>
         </div>
       </div>

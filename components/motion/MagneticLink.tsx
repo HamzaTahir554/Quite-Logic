@@ -1,4 +1,4 @@
-import Link from "next/link";
+import FabricButton from "@/components/ui/FabricButton";
 import type { ReactNode } from "react";
 export default function MagneticLink({
   href,
@@ -12,14 +12,12 @@ export default function MagneticLink({
   className?: string;
 }) {
   return (
-    <Link
+    <FabricButton
       href={href}
-      className={`button magnetic ${secondary ? "secondary" : "primary"} ${className}`}
+      variant={secondary ? "secondary" : "primary"}
+      className={className}
     >
-      <span className="button-label">{children}</span>
-      <span className="button-arrow" aria-hidden="true">
-        ↗
-      </span>
-    </Link>
+      {children}
+    </FabricButton>
   );
 }

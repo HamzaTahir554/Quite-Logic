@@ -1,3 +1,4 @@
+export type ProjectMediaType = "logo" | "illustration" | "screenshot";
 export type PortfolioProject = {
   id: string;
   title: string;
@@ -12,6 +13,7 @@ export type PortfolioProject = {
 
 /** Only presentation fields leave the server for the Home showcase. */
 export type HomeProject = {
+  mediaType?: ProjectMediaType;
   id: string;
   title: string;
   slug: string;

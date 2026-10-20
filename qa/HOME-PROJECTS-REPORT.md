@@ -1,5 +1,7 @@
 # Admin-controlled Home projects and mobile Day rendering
 
+Visual follow-up: all selected Home projects now share one card/media frame. The Atlas terminal remains on its detail page. See the [four UI refinements report](UI-REFINEMENTS-REPORT.md) for the current presentation and typography changes.
+
 Home uses the existing MongoDB Project collection. It queries only published records with `showOnHome: true`, sorts by the existing Display order and `_id` for stable ties, and displays at most three. No static list or fallback projects remain in the Home component. When the result is empty or unavailable, the section is omitted. The main Portfolio query remains independent and includes all published projects.
 
 Admin Portfolio now includes a Show on Home Page checkbox, a quick Home ON/OFF button and an actual visibility indicator. Selected drafts and published selections beyond the first three are identified as hidden. Existing Preview, Featured, publishing, uploads and ordering remain available. Display order controls both Home and Portfolio; no redundant home-order field was added.

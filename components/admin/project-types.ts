@@ -3,6 +3,7 @@ export type ManagedProject = {
   title: string;
   slug: string;
   logo: string;
+  mediaType?: import("@/lib/portfolio").ProjectMediaType;
   description: string;
   shortDescription: string;
   category: string;

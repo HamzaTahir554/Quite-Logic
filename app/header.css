@@ -1,0 +1,410 @@
+/* Shared public chrome: a fixed footprint reserves space before any page. */
+:root {
+  --public-header-top: 20px;
+  --public-header-height: 76px;
+  --public-header-compact: 64px;
+  --public-header-scale: 0.842105;
+  --public-header-clearance: calc(
+    var(--public-header-top) + var(--public-header-height) + 20px
+  );
+}
+.public-site > #main {
+  padding-top: var(--public-header-clearance);
+}
+.public-site #main .page-hero {
+  padding-top: 72px;
+}
+.public-site #main .reference-hero.hero {
+  padding-top: 64px;
+  min-height: calc(100svh - var(--public-header-clearance));
+}
+.public-site #main .reviews-page {
+  padding-top: 0;
+}
+/* Replace the older header allowances already built into these shared
+   presentations; the layout reservation now supplies that space once. */
+.public-site #main .portfolio-page .page-hero {
+  margin-top: 0;
+  padding-top: clamp(36px, 4vw, 56px);
+}
+.public-site #main .project-breadcrumbs {
+  padding-top: 24px;
+}
+
+html[data-theme] .public-site .site-header {
+  position: fixed;
+  inset: var(--public-header-top) 0 auto;
+  margin-inline: auto;
+  width: min(var(--container), calc(100% - 64px));
+  height: var(--public-header-height);
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 32px;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  z-index: 110;
+  isolation: isolate;
+  pointer-events: none;
+  transform: translateY(0);
+  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: floating-header-arrive 420ms cubic-bezier(0.2, 0.8, 0.25, 1.08);
+}
+.header-surface {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--public-header-height);
+  border-radius: inherit;
+  border: 1px solid #ffffff1a;
+  background: rgba(48, 57, 68, 0.78);
+  box-shadow:
+    inset 0 1px 0 #ffffff12,
+    0 10px 28px #15213130;
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+  transform-origin: top;
+  transform: scaleY(1);
+  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+html[data-theme="day"] .header-surface {
+  background: #e4e7eb;
+  border-color: #ffffff70;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    8px 8px 20px #a3b1c63d,
+    -8px -8px 20px #ffffffa6,
+    inset 1px 1px 0 #ffffffa6;
+}
+.header-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--public-header-height);
+  padding: 0 12px 0 16px;
+  pointer-events: none;
+  transform: translateY(0);
+  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.header-bar > :is(a, nav, button, .header-booking) {
+  pointer-events: auto;
+}
+html[data-theme] .site-header[data-compact="true"] {
+  height: var(--public-header-compact);
+}
+.site-header[data-compact="true"] .header-surface {
+  transform: scaleY(var(--public-header-scale));
+}
+.site-header[data-compact="true"] .header-bar {
+  transform: translateY(
+    calc((var(--public-header-compact) - var(--public-header-height)) / 2)
+  );
+}
+html[data-theme] .public-site .site-header[data-scrolling-down="true"] {
+  transform: translateY(-4px);
+}
+html[data-theme]
+  .public-site
+  .site-header:is(:focus-within, [data-menu-open="true"]) {
+  transform: translateY(0);
+}
+.site-header .brand {
+  transform: scale(1);
+  transform-origin: left center;
+  transition: transform 240ms ease-out;
+}
+.site-header .brand img {
+  animation: none;
+  transition: transform 260ms ease-out;
+}
+.site-header[data-compact="true"] .brand img {
+  transform: scale(0.92);
+}
+.site-header .brand-logic {
+  transition: color 220ms ease-out;
+}
+.site-header .desktop-nav {
+  margin-left: auto;
+  gap: 0;
+}
+html body .site-header .nav-link {
+  scale: 1;
+  background: transparent;
+  color: var(--text-secondary);
+}
+.site-header .nav-link > span:last-child {
+  display: inline-block;
+  transform: translateY(0);
+  transition: transform 220ms ease-out;
+}
+html body .site-header .nav-link[aria-current="page"] {
+  color: var(--text-primary);
+}
+html body .site-header .nav-active {
+  inset: auto auto 4px calc(50% - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #2f80fe;
+}
+.site-header .nav-link[aria-current="page"]::after {
+  content: none;
+}
+.site-header .nav-link:focus-visible,
+.site-header .brand:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+.header-booking {
+  display: inline-flex;
+  flex-shrink: 0;
+  transform: scale(1);
+  transition: transform 260ms ease-out;
+}
+.site-header[data-compact="true"] .header-booking {
+  transform: scale(0.95);
+}
+.site-header .header-booking .nav-project {
+  margin-left: 0;
+}
+.site-header .mobile-toggle.MuiIconButton-root {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  margin-left: 0;
+  padding: 10px;
+}
+.site-header .theme-toggle {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-header .brand:hover {
+    transform: scale(1.02);
+  }
+  .site-header .brand:hover .brand-logic {
+    color: #5396ff;
+  }
+  .site-header .nav-link:hover > span:last-child {
+    transform: translateY(-1px);
+  }
+}
+@keyframes floating-header-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The existing MUI drawer keeps its focus trap, Escape/backdrop dismissal and
+   focus restoration. Only its anchor, surface and short entrance are refined. */
+html[data-theme] .public-mobile-menu.MuiDrawer-paper {
+  top: calc(var(--public-header-top) + var(--public-header-height) + 8px);
+  inset-inline: 0;
+  margin-inline: auto;
+  width: min(var(--container), calc(100% - 64px));
+  max-height: calc(100dvh - var(--public-header-clearance) - 16px);
+  padding: 16px;
+  border: 1px solid #ffffff1a;
+  border-radius: 24px;
+  background: rgba(48, 57, 68, 0.96);
+  color: var(--text-primary);
+  box-shadow:
+    inset 0 1px 0 #ffffff12,
+    0 16px 32px #15213130;
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+}
+html:has(.site-header[data-compact="true"])
+  .public-mobile-menu.MuiDrawer-paper {
+  top: calc(var(--public-header-top) + var(--public-header-compact) + 8px);
+}
+html[data-theme="day"] .public-mobile-menu.MuiDrawer-paper {
+  background: #e4e7eb;
+  border-color: var(--day-border);
+  box-shadow: var(--day-shadow);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.public-navigation-modal .MuiBackdrop-root {
+  background: #101b292e;
+}
+html[data-theme="day"] .public-navigation-modal .MuiBackdrop-root {
+  background: #2534440d;
+}
+.public-mobile-menu .drawer-head {
+  min-height: 44px;
+}
+.public-mobile-menu .drawer-head .MuiIconButton-root {
+  width: 44px;
+  height: 44px;
+}
+.public-mobile-menu .mobile-nav {
+  margin: 12px 0;
+  gap: 2px;
+}
+.public-mobile-menu .mobile-nav .nav-link {
+  font-size: 17px;
+  min-height: 44px;
+  padding: 9px 16px;
+  color: var(--text-secondary);
+}
+.public-mobile-menu .nav-link[aria-current="page"] {
+  background: #2f80fe10;
+  color: var(--text-primary);
+}
+.public-mobile-menu .nav-link::after {
+  content: none;
+}
+html[data-theme] .public-mobile-menu .nav-active {
+  inset: calc(50% - 2px) 14px auto auto;
+  width: 4px;
+  height: 4px;
+  background: #2f80fe;
+}
+.public-mobile-menu .drawer-booking {
+  margin: 8px 0 0;
+  align-self: stretch;
+}
+.public-mobile-menu > p {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .public-mobile-menu .mobile-nav .nav-link {
+    animation: mobile-navigation-arrive 280ms ease-out backwards;
+  }
+  .public-mobile-menu .nav-link:nth-child(2) {
+    animation-delay: 20ms;
+  }
+  .public-mobile-menu .nav-link:nth-child(3) {
+    animation-delay: 40ms;
+  }
+  .public-mobile-menu .nav-link:nth-child(4) {
+    animation-delay: 60ms;
+  }
+  .public-mobile-menu .nav-link:nth-child(5) {
+    animation-delay: 80ms;
+  }
+  .public-mobile-menu .nav-link:nth-child(6) {
+    animation-delay: 100ms;
+  }
+}
+@keyframes mobile-navigation-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 1100px) {
+  .header-bar {
+    gap: 8px;
+  }
+  .site-header .nav-link {
+    padding-inline: 8px;
+  }
+}
+@media (max-width: 980px) {
+  .site-header .desktop-nav {
+    display: none;
+  }
+  .site-header .mobile-toggle.MuiIconButton-root {
+    display: inline-flex;
+  }
+  .site-header .theme-toggle {
+    margin-left: auto;
+  }
+}
+@media (max-width: 850px) {
+  :root {
+    --public-header-top: calc(14px + env(safe-area-inset-top, 0px));
+    --public-header-height: 68px;
+    --public-header-compact: 60px;
+    --public-header-scale: 0.882353;
+  }
+  html[data-theme] .public-site .site-header {
+    width: calc(100% - 40px);
+    border-radius: 30px;
+  }
+  html[data-theme] .public-mobile-menu.MuiDrawer-paper {
+    width: calc(100% - 40px);
+  }
+  html[data-theme] .public-site .site-header[data-scrolling-down="true"] {
+    transform: translateY(-2px);
+  }
+  html[data-theme]
+    .public-site
+    .site-header:is(:focus-within, [data-menu-open="true"]) {
+    transform: translateY(0);
+  }
+  .public-site #main .page-hero {
+    padding-top: 48px;
+  }
+  .public-site #main .reference-hero.hero {
+    padding-top: 48px;
+  }
+}
+@media (max-width: 600px) {
+  html[data-theme] .public-site .site-header,
+  html[data-theme] .public-mobile-menu.MuiDrawer-paper {
+    width: calc(100% - 32px);
+  }
+  .header-bar {
+    padding-inline: 8px;
+    gap: 6px;
+  }
+  .site-header .header-booking {
+    display: none;
+  }
+  .site-header .brand {
+    gap: 7px;
+  }
+  .site-header .brand .brand-name {
+    font-size: 18px;
+  }
+  .site-header .brand img {
+    width: 34px;
+    height: 34px;
+  }
+  .site-header .theme-toggle {
+    width: 74px;
+    height: 38px;
+  }
+  .site-header .mobile-toggle.MuiIconButton-root {
+    width: 40px;
+    height: 44px;
+    padding: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] .public-site .site-header,
+  .site-header .header-surface,
+  .site-header .header-bar,
+  .site-header .brand,
+  .site-header .brand img,
+  .site-header .brand-logic,
+  .site-header .header-booking,
+  .site-header .nav-link > span:last-child {
+    transition: none;
+    animation: none;
+  }
+  .site-header .brand:hover,
+  .site-header .nav-link:hover > span:last-child {
+    transform: none;
+  }
+  html[data-theme] .public-site .site-header[data-scrolling-down="true"] {
+    transform: none;
+  }
+}

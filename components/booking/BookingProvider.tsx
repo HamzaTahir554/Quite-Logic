@@ -1,4 +1,6 @@
 "use client";
+import FabricButton from "@/components/ui/FabricButton";
+import Arrow from "@/components/ui/Arrow";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Dialog, DialogTitle, DialogContent, IconButton } from "@mui/material";
 import Image from "next/image";
@@ -33,18 +35,16 @@ export function BookingButton({
 }) {
   const open = useContext(BookingContext);
   return (
-    <button
+    <FabricButton
       type="button"
-      className={`button magnetic ${secondary ? "secondary" : "primary"} ${className}`}
+      variant={secondary ? "secondary" : "primary"}
+      className={className}
       onClick={() => open?.()}
       aria-haspopup="dialog"
       aria-label="Book a Meeting"
     >
-      <span className="button-label">Book a Meeting</span>
-      <span className="button-arrow" aria-hidden="true">
-        ↗
-      </span>
-    </button>
+      Book a Meeting
+    </FabricButton>
   );
 }
 
@@ -211,7 +211,7 @@ export default function BookingProvider({ children }: { children: ReactNode }) {
           <p className="booking-fallback">
             Prefer a separate tab?{" "}
             <a href={meetingUrl} target="_blank" rel="noopener noreferrer">
-              Open Calendly in a new tab ↗
+              Open Calendly in a new tab <Arrow />
             </a>
           </p>
           <span>Clear questions. A useful next step.</span>

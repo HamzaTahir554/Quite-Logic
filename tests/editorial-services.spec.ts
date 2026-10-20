@@ -108,7 +108,7 @@ test("desktop cursor and image/button motion remain sharp, bounded and accessibl
   }));
   await cta.hover();
   await expect(cursor).toHaveAttribute("data-state", "interactive");
-  await expect(cta).toHaveCSS("scale", "1.03");
+  await expect(cta).toHaveCSS("transform", "matrix(1.025, 0, 0, 1.01, 0, 0)");
   expect(
     await cta.evaluate((el) => ({
       w: (el as HTMLElement).offsetWidth,

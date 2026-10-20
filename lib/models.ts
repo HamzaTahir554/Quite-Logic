@@ -50,6 +50,11 @@ const projectSchema = new Schema(
     title: { type: String, required: true, maxlength: 160 },
     slug: { type: String, required: true, unique: true, maxlength: 180 },
     logo: { type: String, required: true },
+    mediaType: {
+      type: String,
+      enum: ["logo", "illustration", "screenshot"],
+      default: "logo",
+    },
     description: { type: String, required: true, maxlength: 10000 },
     shortDescription: { type: String, default: "", maxlength: 300 },
     category: { type: String, default: "", maxlength: 100 },

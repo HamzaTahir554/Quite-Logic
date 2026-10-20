@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 import { CTA, PageHero, SectionHeading } from "@/components/ui/Elements";
 import AboutPreview from "@/components/sections/AboutPreview";
 import Reveal from "@/components/ui/Reveal";
@@ -107,7 +108,7 @@ export default function AboutPage() {
           appropriate evaluation and human oversight.
         </p>
         <a className="text-link" href="/work">
-          See how we work ↗
+          See how we work <Arrow />
         </a>
       </section>
       <CTA />

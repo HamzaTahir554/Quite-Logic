@@ -42,6 +42,7 @@ export default function ProjectArtwork({
             alt={alt}
             width={720}
             height={520}
+            sizes="(max-width: 650px) calc(100vw - 80px), (max-width: 1200px) 44vw, 540px"
           />
         ) : (
           <Image

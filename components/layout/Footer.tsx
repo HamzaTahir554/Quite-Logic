@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 import Image from "next/image";
 import Link from "next/link";
 import { navigation, services } from "@/data/content";
@@ -49,7 +50,9 @@ export default function Footer() {
           <Link href="/admin/login" className="small muted">
             Admin Login
           </Link>
-          <a href="#main">Back to top ↑</a>
+          <a href="#main">
+            Back to top <Arrow />
+          </a>
         </div>
       </MotionSurface>
     </footer>

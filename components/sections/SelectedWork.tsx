@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 import { getHomeProjects } from "@/lib/public-data";
 import { SectionHeading } from "@/components/ui/Elements";
 import Reveal from "@/components/ui/Reveal";
@@ -28,7 +29,7 @@ export default async function SelectedWork() {
       <div className="section-end">
         <span className="small muted">Ideas made tangible.</span>
         <Link className="text-link" href="/portfolio">
-          View Our Work ↗
+          View Our Work <Arrow />
         </Link>
       </div>
     </section>

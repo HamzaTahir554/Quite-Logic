@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -167,7 +168,7 @@ export default function AdminNav({
               rel="noopener noreferrer"
               className="admin-view-site"
             >
-              View website ↗
+              View website <Arrow />
             </Link>
           </div>
         </header>
@@ -184,7 +185,7 @@ export default function AdminNav({
         <footer className="admin-workspace-footer">
           <span>Quite Logic · Your website, thoughtfully managed.</span>
           <Link href="/" target="_blank" rel="noopener noreferrer">
-            Open website ↗
+            Open website <Arrow />
           </Link>
         </footer>
       </div>

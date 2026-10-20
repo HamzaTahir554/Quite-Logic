@@ -25,6 +25,7 @@ import { testContactApi } from "./test-contact";
 import { testAdminGraph } from "./test-graph";
 import { seedPortfolio } from "../lib/seed-portfolio";
 import { testHomeProjects } from "./test-home-projects";
+import { testProjectMedia } from "./test-project-media";
 import {
   testSocialApi,
   testSocialBrowser,
@@ -876,6 +877,7 @@ try {
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page).toHaveURL(origin + "/admin");
     await testHomeProjects(page, check);
+    await testProjectMedia(page, check);
     await testAdminGraph(page, check);
     for (const width of [375, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 950 });

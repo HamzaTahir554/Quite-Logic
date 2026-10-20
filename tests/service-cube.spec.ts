@@ -1,5 +1,4 @@
 import { test, expect, type Page } from "@playwright/test";
-import { Euler, PerspectiveCamera, Vector3 } from "three";
 
 declare global {
   interface Window {
@@ -83,7 +82,11 @@ test("WebGL cube scrolls, snaps, selects and drags without browser errors", asyn
   });
   await ready(page);
   await expect(cube(page)).toHaveAttribute("data-renderer", "webgl");
+  await expect(cube(page)).toHaveAttribute("data-canvas-ready", "true");
+  await expect(cube(page).locator(".css-service-cube")).toHaveCount(0);
   await cube(page).locator("canvas").waitFor();
+  await expect(cube(page)).toHaveAttribute("data-active-face", "6");
+  await page.waitForTimeout(3600); // Initial brand hold precedes scroll-driven exploration.
   const visual = cube(page).locator(".explorer-visual");
   const y = await visual.evaluate(
     (el) => el.getBoundingClientRect().top + scrollY,
@@ -107,24 +110,11 @@ test("WebGL cube scrolls, snaps, selects and drags without browser errors", asyn
   await expect(cube(page)).toHaveAttribute("data-settled-face", "1");
   const canvasBounds = await cube(page).locator("canvas").boundingBox();
   if (!canvasBounds) throw new Error("Canvas has no bounds");
-  const camera = new PerspectiveCamera(
-    38,
-    canvasBounds.width / canvasBounds.height,
-    0.1,
-    100,
-  );
-  camera.position.z = 7.2;
-  camera.updateMatrixWorld();
-  // Raycast the visible right-hand face, rather than using its parallel HTML button.
-  const side = new Vector3(1.207, 0, 0.4)
-    .applyEuler(new Euler(0.2, -0.43, 0))
-    .project(camera);
+  // A level front face is directly selectable; no angled side-face hit target.
   await page.mouse.click(
-    canvasBounds.x + ((side.x + 1) * canvasBounds.width) / 2,
-    canvasBounds.y + ((1 - side.y) * canvasBounds.height) / 2,
+    canvasBounds.x + canvasBounds.width / 2,
+    canvasBounds.y + canvasBounds.height / 2,
   );
-  await expect(cube(page)).toHaveAttribute("data-settled-face", "2");
-  await selector(page).getByRole("button").first().click();
   await expect(cube(page)).toHaveAttribute("data-settled-face", "1");
   const bounds = await cube(page).locator(".cube-interaction").boundingBox();
   if (!bounds) throw new Error("Cube has no bounds");
@@ -352,15 +342,16 @@ test("mobile cube ignores physical motion and preserves touch, scrolling and red
           ),
       ).toBe(true);
     }
+    const scrollX = bounds.x + 8;
     const beforeScroll = await page.evaluate(() => scrollY);
     await session.send("Input.dispatchTouchEvent", {
       type: "touchStart",
-      touchPoints: [{ x, y }],
+      touchPoints: [{ x: scrollX, y }],
     });
     for (let step = 1; step <= 6; step++)
       await session.send("Input.dispatchTouchEvent", {
         type: "touchMove",
-        touchPoints: [{ x, y: y - step * 20 }],
+        touchPoints: [{ x: scrollX, y: y - step * 20 }],
       });
     await session.send("Input.dispatchTouchEvent", {
       type: "touchEnd",

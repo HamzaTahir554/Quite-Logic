@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import { useState } from "react";
 import {
   Dialog,
@@ -188,7 +189,7 @@ export default function ReviewManager() {
                     disabled={disabled}
                     onClick={() => setSelected(review)}
                   >
-                    View Full Review →
+                    View Full Review <Arrow />
                   </button>
                   <div className="admin-actions">{actions(review)}</div>
                 </div>

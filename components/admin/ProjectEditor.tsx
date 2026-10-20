@@ -21,6 +21,7 @@ export default function ProjectEditor({
     title: project?.title || "",
     slug: project?.slug || "",
     logo: project?.logo || "",
+    mediaType: project?.mediaType || "logo",
     description: project?.description || "",
     shortDescription: project?.shortDescription || "",
     category: project?.category || "",
@@ -310,6 +311,32 @@ export default function ProjectEditor({
               />
             </div>
           </div>
+          <label htmlFor="project-mediaType">
+            Home image presentation
+            <select
+              {...field("mediaType")}
+              value={values.mediaType}
+              onChange={(event) =>
+                update(
+                  "mediaType",
+                  event.target.value as typeof values.mediaType,
+                )
+              }
+            >
+              <option value="logo">Logo — show the whole image</option>
+              <option value="illustration">
+                Illustration — show the whole image
+              </option>
+              <option value="screenshot">
+                Screenshot — fill the image frame
+              </option>
+            </select>
+            <small className="muted">
+              Logos and illustrations stay centered without cropping.
+              Screenshots fill the frame and may crop at the edges.
+            </small>
+            {message("mediaType")}
+          </label>
           <label htmlFor="project-description">
             Project description{" "}
             <span className="admin-required" aria-hidden="true">

@@ -24,6 +24,12 @@ npm run dev
 
 MongoDB must be available to manage content. Missing/unavailable database configuration produces a friendly public empty state and generic API errors; it does not substitute fake database data. Build validation does not need production credentials.
 
+## Shared UI
+
+Shared link arrows come from `components/ui/Arrow.tsx`: a small straight SVG that moves 5px right over 220ms on hover or keyboard focus, with motion disabled for reduced-motion preferences. `app/refinements.css` centralizes the mobile typography tokens and common 16:10 Home media frames. All Home records use the same card; Atlas retains its interactive terminal on its detail page. Existing Admin media is treated as a logo with proportional containment, durable thumbnails, lazy loading and an image fallback.
+
+The service cube opens level on the Quite Logic brand face and briefly holds it before scroll exploration. CSS and WebGL share the rotation controller in `hooks/useCubeRotation.ts`; horizontal/vertical drags rotate the corresponding axes, then restrained momentum decays into a soft face alignment. On touch screens, drag on the actual cube; swipe beside it to scroll the page. Manual controls remain available with reduced motion, and explicit service selections cancel residual momentum.
+
 ## Admin
 
 Visit `/admin/login` or the subtle footer link. Navigation includes Dashboard, Reviews, Portfolio, Social Links, Account and Logout.
@@ -89,6 +95,10 @@ See [portfolio and Social Links update](qa/SOCIALS-PORTFOLIO-REPORT.md) for the 
 See [booking experience](qa/BOOKING-REPORT.md) for the official Calendly embed, progress events, motion, validation and account-side branding setup. The booking shell keeps the existing meeting URL and loads Calendly only when opened. Branding removal is controlled by the Calendly account; internal Calendly dates, times and fields retain their vendor behavior.
 
 ## Validation
+
+The shared floating header, compact scrolling behavior and attached mobile menu are documented in [the header report](qa/FLOATING-HEADER-REPORT.md).
+
+Home image alignment, the Admin image-presentation choice and shared Fabric CTA interactions are documented in [the media and button report](qa/MEDIA-FABRIC-REPORT.md).
 
 ```sh
 npm run lint

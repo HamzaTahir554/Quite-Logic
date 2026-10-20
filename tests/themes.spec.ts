@@ -160,7 +160,7 @@ test("Day palette covers public pages and admin auth without overflow", async ({
       ).toBeVisible();
       await expect(page.locator("h1:visible")).toHaveCSS(
         "color",
-        "rgb(24, 34, 45)",
+        width <= 768 ? "rgb(31, 41, 51)" : "rgb(24, 34, 45)",
       );
       if (path === "/" && width === 375) {
         const menu = await page
@@ -300,7 +300,10 @@ test("Day controls distinguish raised, pressed, focused and error states", async
   await expect(primary).toHaveCSS("background-color", "rgb(47, 128, 254)");
   await primary.hover();
   await expect(primary).toHaveCSS("background-color", "rgb(31, 111, 229)");
-  await expect(primary).toHaveCSS("scale", "1.025");
+  await expect(primary).toHaveCSS(
+    "transform",
+    "matrix(1.025, 0, 0, 1.01, 0, 0)",
+  );
   await expect(primary.locator(".button-label")).toHaveCSS(
     "color",
     "rgb(255, 255, 255)",

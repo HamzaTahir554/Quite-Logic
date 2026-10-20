@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 import { PageHero } from "@/components/ui/Elements";
 import ContactForm from "@/components/sections/ContactForm";
 import StructuredData from "@/components/seo/StructuredData";
@@ -26,14 +27,14 @@ export default function ContactPage() {
         <a className="contact-option" href="#message-form">
           <span className="overline">01 / Write to us</span>
           <strong>
-            Send us a message <span aria-hidden="true">↘</span>
+            Send us a message <Arrow />
           </strong>
           <span>A few details. A thoughtful response.</span>
         </a>
         <a className="contact-option" href="#book-call">
           <span className="overline">02 / Talk it through</span>
           <strong>
-            Book a call <span aria-hidden="true">↘</span>
+            Book a call <Arrow />
           </strong>
           <span>30 minutes to explore what’s next.</span>
         </a>

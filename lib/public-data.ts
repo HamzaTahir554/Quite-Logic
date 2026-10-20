@@ -87,7 +87,7 @@ export const getHomeProjects = cache(async (): Promise<HomeProject[]> => {
         showOnHome: true,
       })
         .select(
-          "title slug logo category shortDescription description technologies",
+          "title slug logo mediaType category shortDescription description technologies",
         )
         .sort({ order: 1, _id: 1 })
         .limit(3)
@@ -98,6 +98,7 @@ export const getHomeProjects = cache(async (): Promise<HomeProject[]> => {
         title: project.title,
         slug: project.slug,
         logo: project.logo,
+        mediaType: project.mediaType || "logo",
         category: project.category || "",
         description: (project.shortDescription || project.description).slice(
           0,

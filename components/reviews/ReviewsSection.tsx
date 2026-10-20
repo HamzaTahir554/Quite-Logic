@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import FabricButton from "@/components/ui/FabricButton";
 import type { PublicReview } from "@/lib/reviews";
 import Reveal from "@/components/ui/Reveal";
 import ReviewForm from "./ReviewForm";
@@ -55,9 +55,13 @@ export default function ReviewsSection({
               </Heading>
               <p>Experiences shared by the people we build with.</p>
             </div>
-            <Link className="ql-button" href="/reviews#share-review">
-              Share your experience <span aria-hidden="true">↗</span>
-            </Link>
+            <FabricButton
+              variant="secondary"
+              className="ql-button"
+              href="/reviews#share-review"
+            >
+              Share your experience
+            </FabricButton>
           </div>
         </Reveal>
         <div className="reviews-grid" aria-live="polite">
@@ -130,15 +134,24 @@ export default function ReviewsSection({
           )}
         </div>
         {!full && total > 3 && (
-          <Link className="ql-button" href="/reviews">
-            Read all reviews ↗
-          </Link>
+          <FabricButton
+            variant="secondary"
+            className="ql-button"
+            href="/reviews"
+          >
+            Read all reviews
+          </FabricButton>
         )}
         {full && allReviews.length < total && (
           <p>
-            <button className="ql-button" disabled={loading} onClick={loadMore}>
+            <FabricButton
+              variant="secondary"
+              className="ql-button"
+              disabled={loading}
+              onClick={loadMore}
+            >
               {loading ? "Loading…" : "Load more reviews"}
-            </button>
+            </FabricButton>
           </p>
         )}
         {error && <p role="alert">{error}</p>}

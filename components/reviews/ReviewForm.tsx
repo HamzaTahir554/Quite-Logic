@@ -1,4 +1,5 @@
 "use client";
+import FabricButton from "@/components/ui/FabricButton";
 import { useState } from "react";
 export default function ReviewForm() {
   const [busy, setBusy] = useState(false),
@@ -102,9 +103,9 @@ export default function ReviewForm() {
           </label>
         </div>
         {message && <p role={success ? "status" : "alert"}>{message}</p>}
-        <button className="ql-button" disabled={busy}>
+        <FabricButton type="submit" className="ql-button" disabled={busy}>
           {busy ? "Submitting…" : "Submit for approval"}
-        </button>
+        </FabricButton>
       </form>
     </section>
   );

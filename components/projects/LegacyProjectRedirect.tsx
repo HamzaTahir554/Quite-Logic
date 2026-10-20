@@ -1,7 +1,7 @@
 "use client";
+import FabricButton from "@/components/ui/FabricButton";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 export default function LegacyProjectRedirect() {
   const router = useRouter();
   useEffect(() => {
@@ -11,9 +11,9 @@ export default function LegacyProjectRedirect() {
     <section className="section container">
       <h1>Atlas / Cloud</h1>
       <p>This concept has a new home.</p>
-      <Link className="button primary" href="/portfolio/atlas-cloud">
-        Explore Atlas / Cloud ↗
-      </Link>
+      <FabricButton href="/portfolio/atlas-cloud">
+        Explore Atlas / Cloud
+      </FabricButton>
     </section>
   );
 }

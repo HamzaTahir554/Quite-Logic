@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 import { notFound } from "next/navigation";
 import { projects } from "@/data/content";
 import { PageHero, CTA } from "@/components/ui/Elements";
@@ -68,7 +69,9 @@ export default async function ProjectPage({
           parents={[{ name: "Portfolio", path: "/portfolio" }]}
         />
         <nav className="project-breadcrumbs container" aria-label="Breadcrumb">
-          <Link href="/portfolio">← Back to Portfolio</Link>
+          <Link href="/portfolio">
+            Back to Portfolio <Arrow />
+          </Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">{managed.title}</span>
         </nav>
@@ -99,7 +102,7 @@ export default async function ProjectPage({
               </p>
               {managed.projectUrl && (
                 <a className="text-link" href={managed.projectUrl}>
-                  Visit project ↗
+                  Visit project <Arrow />
                 </a>
               )}
             </div>
@@ -125,7 +128,7 @@ export default async function ProjectPage({
           </div>
           <p className="project-return-link">
             <Link className="text-link" href="/portfolio">
-              ← Back to portfolio
+              Back to portfolio <Arrow />
             </Link>
           </p>
         </section>
@@ -149,7 +152,7 @@ export default async function ProjectPage({
       </nav>
       <p className="container project-back-link">
         <Link className="text-link" href="/portfolio">
-          ← Back to Portfolio
+          Back to Portfolio <Arrow />
         </Link>
       </p>
       {p.slug === "atlas-cloud" ? (
@@ -201,7 +204,7 @@ export default async function ProjectPage({
           implementation or measured results.
         </p>
         <Link className="text-link" href="/portfolio">
-          ← Back to all concepts
+          Back to all concepts <Arrow />
         </Link>
       </section>
       <CTA />

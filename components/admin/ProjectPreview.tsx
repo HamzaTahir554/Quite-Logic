@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import { useState } from "react";
 import {
   Dialog,
@@ -139,7 +140,7 @@ export default function ProjectPreview({
               </div>
             )}
             <button className="admin-text-link" onClick={() => setMode("card")}>
-              ← Back to card preview
+              Back to card preview <Arrow />
             </button>
           </div>
         )}

@@ -1,4 +1,5 @@
 "use client";
+import Arrow from "@/components/ui/Arrow";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -117,7 +118,7 @@ export default function PortfolioCard({
           {project.title}
         </span>
         <span className="project-touch-hint">
-          View details <span aria-hidden="true">↗</span>
+          View details <Arrow />
         </span>
       </button>
       <div
@@ -141,11 +142,11 @@ export default function PortfolioCard({
               className="text-link project-preview-link"
               onClick={onOpen}
             >
-              View Project <span aria-hidden="true">↗</span>
+              View Project <Arrow />
             </button>
           ) : (
             <Link href={destination} className="text-link" data-cursor="OPEN">
-              View Project <span aria-hidden="true">↗</span>
+              View Project <Arrow />
             </Link>
           ))}
       </div>

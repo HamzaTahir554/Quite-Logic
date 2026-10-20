@@ -6,18 +6,17 @@ import {
   type ThreeEvent,
 } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type RefObject } from "react";
 import {
   CanvasTexture,
   BoxGeometry,
   EdgesGeometry,
-  Euler,
   Quaternion,
   SRGBColorSpace,
   type Group,
 } from "three";
-import type { MotionValue } from "framer-motion";
-import { faceRotations, serviceFaces } from "@/data/serviceFaces";
+import { serviceFaces } from "@/data/serviceFaces";
+import type { Rotation } from "@/lib/cube-rotation";
 import { useVisualTheme } from "@/theme/VisualThemeProvider";
 import { palettes, type VisualTheme } from "@/theme/tokens";
 
@@ -25,9 +24,9 @@ type Props = {
   active: boolean;
   selected: number;
   onSelect: (index: number) => void;
-  onSettled: () => void;
   onUnavailable: () => void;
-  drag: MotionValue<number>;
+  onReady: () => void;
+  orientation: RefObject<Rotation>;
   dragging: boolean;
   hover: boolean;
 };
@@ -117,7 +116,7 @@ function Face({
     );
     ctx.fillStyle = colors.accent;
     ctx.font = "32px Arial, sans-serif";
-    ctx.fillText("↗", 672, 690);
+    ctx.fillText("→", 672, 690);
     const map = new CanvasTexture(canvas);
     map.colorSpace = SRGBColorSpace;
     map.anisotropy = 2;
@@ -150,21 +149,15 @@ function Face({
 }
 
 function Cube({
-  selected,
   onSelect,
-  onSettled,
-  drag,
+  orientation,
   dragging,
   hover,
   visualTheme,
 }: Props & { visualTheme: VisualTheme }) {
   const turn = useRef<Group>(null);
   const atmosphere = useRef<Group>(null);
-  const delivered = useRef(-1);
-  const orientation = useMemo(
-    () => new Quaternion().setFromEuler(new Euler(...faceRotations[selected])),
-    [selected],
-  );
+  const initial = useRef(new Quaternion().fromArray(orientation.current));
   const scale = useRef(1);
   const edges = useMemo(() => {
     const box = new BoxGeometry(2.406, 2.406, 2.406);
@@ -176,32 +169,23 @@ function Cube({
   useFrame(({ pointer, clock }, delta) => {
     if (!turn.current || !atmosphere.current) return;
     const step = Math.min(delta, 0.05);
-    turn.current.quaternion.slerp(orientation, 1 - Math.exp(-5.8 * step));
+    turn.current.quaternion.fromArray(orientation.current);
     atmosphere.current.rotation.x +=
-      (0.2 - pointer.y * 0.045 - atmosphere.current.rotation.x) *
+      (-pointer.y * 0.012 - atmosphere.current.rotation.x) *
       (1 - Math.exp(-4 * step));
     atmosphere.current.rotation.y +=
-      (-0.43 +
-        pointer.x * 0.065 +
-        drag.get() * 0.42 -
-        atmosphere.current.rotation.y) *
+      (pointer.x * 0.018 - atmosphere.current.rotation.y) *
       (1 - Math.exp(-10 * step));
-    atmosphere.current.position.y = Math.sin(clock.elapsedTime * 0.55) * 0.035;
+    atmosphere.current.position.y = dragging
+      ? 0
+      : Math.sin(clock.elapsedTime * 0.55) * 0.012;
     scale.current +=
       ((hover ? 1.025 : 1) - scale.current) * (1 - Math.exp(-3 * step));
     atmosphere.current.scale.setScalar(scale.current);
-    if (
-      !dragging &&
-      turn.current.quaternion.angleTo(orientation) < 0.015 &&
-      delivered.current !== selected
-    ) {
-      delivered.current = selected;
-      onSettled();
-    }
   });
   return (
     <group ref={atmosphere}>
-      <group ref={turn}>
+      <group ref={turn} quaternion={initial.current}>
         <RoundedBox
           args={[2.4, 2.4, 2.4]}
           radius={0.045}
@@ -236,8 +220,18 @@ function Cube({
   );
 }
 
-function ContextGuard({ onUnavailable }: { onUnavailable: () => void }) {
+function ContextGuard({
+  onUnavailable,
+  onReady,
+}: {
+  onUnavailable: () => void;
+  onReady: () => void;
+}) {
   const gl = useThree((state) => state.gl);
+  const frames = useRef(0);
+  useFrame(() => {
+    if (frames.current < 2 && ++frames.current === 2) onReady();
+  });
   useEffect(() => {
     const canvas = gl.domElement;
     const lost = (event: Event) => {
@@ -260,7 +254,10 @@ export default function ServiceDice(props: Props) {
       gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
     >
       <Cube {...props} visualTheme={theme} />
-      <ContextGuard onUnavailable={props.onUnavailable} />
+      <ContextGuard
+        onUnavailable={props.onUnavailable}
+        onReady={props.onReady}
+      />
     </Canvas>
   );
 }

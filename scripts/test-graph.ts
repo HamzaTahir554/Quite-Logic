@@ -33,7 +33,7 @@ export async function testAdminGraph(
           await page.evaluate(
             () => document.documentElement.scrollWidth <= innerWidth,
           ),
-          "Graph adds no admin overflow",
+          `Graph adds no admin overflow (${route}, ${width}px)`,
         );
         const bounds = await graph.boundingBox();
         check(

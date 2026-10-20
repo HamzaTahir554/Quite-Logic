@@ -96,9 +96,9 @@ test("glass surfaces remain usable across public pages, login and mobile inputs"
         `${route} at ${width}`,
       ).toBe(true);
       if (route !== "/admin/login") {
-        await expect(page.locator(".site-header")).toHaveCSS(
+        await expect(page.locator(".header-surface")).toHaveCSS(
           "backdrop-filter",
-          `blur(${width <= 900 ? 6 : 12}px) saturate(1.2)`,
+          "blur(16px) saturate(1.2)",
         );
       } else {
         await expect(page.locator(".admin-auth-logo")).toBeVisible();

@@ -111,7 +111,7 @@ test("mobile Day has no global gradient, readable copy and aligned controls acro
           await expect(heading.locator("p")).toHaveCSS("font-size", "16px");
           await expect(heading.locator("p")).toHaveCSS(
             "color",
-            "rgb(70, 84, 99)",
+            "rgb(79, 91, 102)",
           );
           await expect(heading.locator(".section-label")).toHaveCSS(
             "opacity",
@@ -119,7 +119,7 @@ test("mobile Day has no global gradient, readable copy and aligned controls acro
           );
           await expect(
             page.locator(".project-copy .overline").first(),
-          ).toHaveCSS("color", "rgb(70, 84, 99)");
+          ).toHaveCSS("color", "rgb(79, 91, 102)");
           await expect(page.locator(".cube-shadow")).toHaveCSS(
             "filter",
             "none",

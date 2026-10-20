@@ -62,6 +62,7 @@ export const projectSchema = z
     // MongoDB supplies creation defaults. Keeping defaults out of this schema
     // prevents PATCH validation from overwriting omitted fields in Zod 4.
     shortDescription: z.string().trim().max(300).optional(),
+    mediaType: z.enum(["logo", "illustration", "screenshot"]).optional(),
     category: z.string().trim().max(100).optional(),
     technologies: z.array(z.string().trim().min(1).max(60)).max(30).optional(),
     projectUrl: z

@@ -1,4 +1,5 @@
 "use client";
+import FabricButton from "@/components/ui/FabricButton";
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { PortfolioProject } from "@/lib/portfolio";
@@ -134,14 +135,15 @@ export default function Portfolio({
       {error && (
         <div className="portfolio-empty" role="alert">
           <p>{error}</p>
-          <button
-            className="button secondary"
+          <FabricButton
+            variant="secondary"
+            className="portfolio-action"
             onClick={() =>
               load(filter, data.projects.length ? data.page + 1 : 1)
             }
           >
             Try again
-          </button>
+          </FabricButton>
         </div>
       )}
       {!loading && !error && data.projects.length === 0 && (
@@ -159,21 +161,26 @@ export default function Portfolio({
                 : "There are no projects in this discipline yet."}
           </p>
           {filter !== "All" && (
-            <button className="button secondary" onClick={() => load("All")}>
-              Explore all projects ↗
-            </button>
+            <FabricButton
+              variant="secondary"
+              className="portfolio-action"
+              onClick={() => load("All")}
+            >
+              Explore all projects
+            </FabricButton>
           )}
         </div>
       )}
       {data.projects.length < data.total && !error && (
         <p className="portfolio-load-more">
-          <button
-            className="button secondary"
+          <FabricButton
+            variant="secondary"
+            className="portfolio-action"
             disabled={loading}
             onClick={() => load(filter, data.page + 1)}
           >
             {loading ? "Loading projects…" : "Load more projects"}
-          </button>
+          </FabricButton>
         </p>
       )}
     </section>

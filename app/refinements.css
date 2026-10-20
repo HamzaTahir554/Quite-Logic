@@ -1,0 +1,250 @@
+/* One arrow geometry and one motion treatment, after all legacy link styles. */
+html body .link-arrow {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  flex: 0 0 auto;
+  vertical-align: middle;
+  translate: 0;
+  rotate: none;
+  transform: translateX(0);
+  filter: none;
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+:where(
+  a:has(> .link-arrow),
+  button:has(> .link-arrow),
+  .contact-option strong,
+  .project-touch-hint
+) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+html body :is(a, button):is(:hover, :focus-visible, :focus-within) .link-arrow {
+  translate: 0;
+  rotate: none;
+  transform: translateX(5px);
+}
+/* All Home records, including future uploads, share the same two-column card. */
+.home-projects .project-card {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 500px;
+}
+.home-projects .project-copy {
+  padding: 40px;
+  min-height: 500px;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(24px, 1fr) auto;
+  align-content: start;
+  align-items: start;
+  gap: 12px;
+}
+.home-projects .project-copy > :is(h3, p, .text-link) {
+  margin: 0;
+}
+.home-projects .project-copy h3 {
+  font-size: 32px;
+  line-height: 1.12;
+}
+.home-projects .project-copy h3 {
+  -webkit-line-clamp: 2;
+}
+.home-projects .project-copy > .overline {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-projects .home-project-visual {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  align-self: stretch;
+  overflow: hidden;
+  background: #303944;
+  border-left: 1px solid var(--line);
+}
+html[data-theme="day"] .home-projects .home-project-visual {
+  background: var(--day-surface-secondary, #e1e6ec);
+}
+.home-projects .project-visual::after {
+  content: "VIEW PROJECT";
+}
+@media (max-width: 900px) {
+  .home-projects .project-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-projects .project-copy {
+    padding: 28px;
+    min-height: 0;
+    grid-template-rows: auto;
+    gap: 20px;
+  }
+  .home-projects .home-project-visual {
+    aspect-ratio: 16 / 10;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+/* Manrope is locally loaded with its full supported 200–800 variable range. */
+@media (max-width: 768px) {
+  :root {
+    --mobile-weight-hero: 750;
+    --mobile-weight-heading: 700;
+    --mobile-weight-title: 650;
+    --mobile-weight-body: 500;
+    --mobile-weight-label: 600;
+    --mobile-weight-button: 650;
+    --mobile-size-body: 16px;
+    --mobile-size-label: 12px;
+  }
+  html body {
+    font-size: var(--mobile-size-body);
+    font-weight: var(--mobile-weight-body);
+    line-height: 1.6;
+  }
+  html body :is(h1, .hero-title-line, .reference-hero h1, .page-hero h1) {
+    font-weight: var(--mobile-weight-hero);
+    line-height: 1.08;
+  }
+  html body :is(h2, .section-heading h2) {
+    font-weight: var(--mobile-weight-heading);
+    line-height: 1.12;
+  }
+  html body :is(h3, .managed-project-title, .home-projects .project-copy h3) {
+    font-weight: var(--mobile-weight-title);
+    line-height: 1.15;
+  }
+  html body .home-projects .project-copy h3 {
+    font-size: 28px;
+  }
+  html
+    body
+    :is(
+      p,
+      blockquote,
+      .muted,
+      .small,
+      .project-copy p,
+      .section-heading > p,
+      .page-hero p,
+      .hero-description,
+      .explorer-selection p,
+      .service-editorial-copy p,
+      .managed-project-description p,
+      .admin-record p,
+      .admin-panel p,
+      .MuiTypography-body1,
+      .MuiTypography-body2
+    ) {
+    font-size: var(--mobile-size-body);
+    font-weight: var(--mobile-weight-body);
+    line-height: 1.6;
+    color: var(--text-secondary);
+    opacity: 1;
+  }
+  html body :is(.nav-link, .mobile-nav a, .admin-nav a) {
+    font-weight: 600;
+  }
+  html
+    body
+    :is(
+      .button,
+      .button.magnetic > .button-label,
+      .text-link,
+      .admin-button,
+      .MuiButton-root,
+      .portfolio-filters button,
+      .signature-explorer .service-selector button
+    ) {
+    font-size: 15px;
+    font-weight: var(--mobile-weight-button);
+  }
+  /* The compact header meeting button keeps its existing dimensions. */
+  html body .site-header .nav-project > .button-label {
+    font-size: 11px;
+  }
+  html
+    body
+    :is(
+      .overline,
+      .eyebrow,
+      .section-label,
+      .project-category,
+      .project-concept-label,
+      .project-featured-label,
+      .portfolio-count,
+      .admin-eyebrow,
+      .admin-badge,
+      .signature-explorer .explorer-hint,
+      .signature-explorer .explorer-information > .overline,
+      .footer-bottom
+    ) {
+    font-size: var(--mobile-size-label);
+    font-weight: var(--mobile-weight-label);
+    opacity: 1;
+  }
+  html body :is(input, textarea, select, .MuiInputBase-root) {
+    font-size: 16px;
+    font-weight: var(--mobile-weight-body);
+  }
+  html body :is(label, .MuiInputLabel-root) {
+    font-weight: var(--mobile-weight-label);
+  }
+  html body .chips .MuiChip-root {
+    font-size: 12px;
+    font-weight: 550;
+  }
+  html body .hero-disciplines {
+    font-size: 12px;
+    font-weight: 600;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  html body .hero-scroll {
+    font-size: 12px;
+    font-weight: 600;
+  }
+  html body .footer-top a:not(.brand) {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  html body .footer-top h3 {
+    font-size: 12px;
+    font-weight: 600;
+  }
+  html[data-theme="night"] {
+    --muted: #d1d6dd;
+    --text-secondary: #d1d6dd;
+  }
+  :root[data-theme="day"] {
+    --day-text-primary: #1f2933;
+    --day-text-secondary: #4f5b66;
+  }
+  /* Scale-model face labels are part of the illustration, not body copy. */
+  html body .cube-face p {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+  html body .cube-face-kicker {
+    font-size: 6px;
+    font-weight: 600;
+  }
+  html body .signature-explorer .explorer-label {
+    font-size: 10px;
+    font-weight: 600;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body .link-arrow,
+  html
+    body
+    :is(a, button):is(:hover, :focus-visible, :focus-within)
+    .link-arrow {
+    transform: none;
+    translate: 0;
+    transition: none;
+  }
+}

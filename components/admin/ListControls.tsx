@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 export function ListControls({
   search,
   setSearch,
@@ -90,7 +91,7 @@ export function Pagination({
           disabled={loading || page === 1}
           onClick={() => setPage(page - 1)}
         >
-          ← Previous
+          Previous <Arrow />
         </button>
         <span className="small">
           Page {page} of {Math.max(1, Math.ceil(total / 12))}
@@ -100,7 +101,7 @@ export function Pagination({
           disabled={loading || page * 12 >= total}
           onClick={() => setPage(page + 1)}
         >
-          Next →
+          Next <Arrow />
         </button>
       </div>
     </nav>

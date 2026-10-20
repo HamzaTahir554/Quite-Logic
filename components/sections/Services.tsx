@@ -1,3 +1,4 @@
+import Arrow from "@/components/ui/Arrow";
 import Link from "next/link";
 import { SectionHeading } from "@/components/ui/Elements";
 import ServiceExplorer from "./ServiceExplorer";
@@ -18,7 +19,7 @@ export default function Services() {
           Carefully considered. From interface to infrastructure.
         </span>
         <Link className="text-link" href="/services">
-          View All Services <span>↗</span>
+          View All Services <Arrow />
         </Link>
       </div>
     </section>
