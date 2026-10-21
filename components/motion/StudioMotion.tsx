@@ -47,7 +47,15 @@ function NavigationTransition() {
       const link = (event.target as Element).closest<HTMLAnchorElement>(
         "a[href]",
       );
-      if (!link || link.target || link.hasAttribute("download")) return;
+      // Header links navigate immediately through Next Link. Keep the existing
+      // curtain for other page links without involving the water surface.
+      if (
+        !link ||
+        link.target ||
+        link.hasAttribute("download") ||
+        link.hasAttribute("data-header-navigation")
+      )
+        return;
       const url = new URL(link.href, window.location.href);
       if (url.origin !== location.origin || url.pathname === location.pathname)
         return;

@@ -58,7 +58,7 @@ html[data-theme] .public-site .site-header {
   height: var(--public-header-height);
   border-radius: inherit;
   border: 1px solid #ffffff1a;
-  background: rgba(48, 57, 68, 0.78);
+  background: rgba(48, 57, 68, 0.72);
   box-shadow:
     inset 0 1px 0 #ffffff12,
     0 10px 28px #15213130;
@@ -80,6 +80,7 @@ html[data-theme="day"] .header-surface {
 }
 .header-bar {
   position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -88,6 +89,158 @@ html[data-theme="day"] .header-surface {
   pointer-events: none;
   transform: translateY(0);
   transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Only the decorative shell floats. Its inner surface still owns the existing
+   compact scale; the stable controls never inherit the water transforms. */
+.header-float {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--public-header-height);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  animation: header-water-float 6.8s ease-in-out infinite;
+}
+.header-float .header-surface {
+  overflow: hidden;
+  isolation: isolate;
+}
+.header-water-wave,
+.header-water-reflection {
+  position: absolute;
+  pointer-events: none;
+}
+.header-water-wave {
+  width: 140%;
+  height: 160%;
+  left: -20%;
+  top: -28%;
+  fill: rgba(89, 101, 114, 0.2);
+  opacity: 0.8;
+}
+.header-water-wave--wide {
+  animation: header-water-wide 12s ease-in-out infinite;
+}
+.header-water-wave--near {
+  left: -8%;
+  top: -16%;
+  fill: rgba(47, 128, 254, 0.06);
+  animation: header-water-near 8.6s ease-in-out infinite;
+  animation-delay: -3s;
+}
+.header-water-edge {
+  fill: none;
+  stroke: rgba(240, 241, 248, 0.1);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+.header-water-reflection {
+  inset: -50% auto -50% 16%;
+  width: 44%;
+  background: linear-gradient(
+    115deg,
+    transparent 15%,
+    #f0f1f80a 50%,
+    transparent 85%
+  );
+  animation: header-water-reflection 15s ease-in-out infinite;
+  animation-delay: -5s;
+}
+html[data-theme="day"] .header-water-wave--wide {
+  fill: rgba(255, 255, 255, 0.28);
+}
+html[data-theme="day"] .header-water-wave--near {
+  fill: rgba(47, 128, 254, 0.035);
+}
+html[data-theme="day"] .header-water-edge {
+  stroke: rgba(255, 255, 255, 0.45);
+}
+html[data-theme="day"] .header-water-reflection {
+  background: linear-gradient(
+    115deg,
+    transparent 15%,
+    #ffffff35 50%,
+    transparent 85%
+  );
+}
+.site-header[data-menu-open="true"] .header-float {
+  animation-play-state: paused;
+}
+@keyframes header-water-float {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+@keyframes header-water-wide {
+  0%,
+  100% {
+    transform: translate(-2%, -2px) scaleX(1);
+  }
+  50% {
+    transform: translate(3%, 4px) scaleX(1.025);
+  }
+}
+@keyframes header-water-near {
+  0%,
+  100% {
+    transform: translate(2%, 3px);
+  }
+  50% {
+    transform: translate(-3%, -3px);
+  }
+}
+@keyframes header-water-reflection {
+  0%,
+  100% {
+    transform: translateX(-10%) rotate(-4deg);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateX(30%) rotate(2deg);
+    opacity: 0.9;
+  }
+}
+/* Visibility is already tracked by StudioMotion; no additional idle JS loop. */
+html[data-motion-paused="true"]
+  :is(.header-float, .header-water-wave, .header-water-reflection) {
+  animation-play-state: paused;
+}
+@media (max-width: 850px) {
+  .header-float {
+    animation-name: header-water-float-mobile;
+    animation-duration: 8s;
+  }
+  .header-water-reflection {
+    display: none;
+  }
+  .header-water-wave--wide {
+    animation-duration: 14s;
+  }
+  .header-water-wave--near {
+    animation-duration: 10s;
+  }
+}
+@keyframes header-water-float-mobile {
+  0%,
+  100% {
+    transform: translateY(-1px);
+  }
+  50% {
+    transform: translateY(1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header-float,
+  .header-water-wave,
+  .header-water-reflection {
+    animation: none;
+    transition: none;
+  }
 }
 .header-bar > :is(a, nav, button, .header-booking) {
   pointer-events: auto;

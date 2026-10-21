@@ -1,6 +1,6 @@
 {
-  "samples": 23,
+  "samples": 28,
   "frameBudget": "balanced",
-  "meanDrawMs": 0.23043478247912033,
-  "p95DrawMs": 0.5
+  "meanDrawMs": 0.22500000149011612,
+  "p95DrawMs": 0.6000000089406967
 }

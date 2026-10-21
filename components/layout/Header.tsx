@@ -11,12 +11,13 @@ import BrandName from "@/components/ui/BrandName";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
+import WaterSurface from "./header/WaterSurface";
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const header = useRef<HTMLElement>(null);
-  const { compact, down } = useHeaderScroll(header, open);
   const reduced = useMotionPreference();
+  const { compact, down } = useHeaderScroll(header, open);
   useEffect(() => {
     const desktop = matchMedia("(min-width: 981px)");
     const closeOnDesktop = () => {
@@ -31,7 +32,8 @@ export default function Header() {
         pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
       return (
         <Link
-          onClick={() => setOpen(false)}
+          data-header-navigation
+          onNavigate={() => setOpen(false)}
           aria-current={active ? "page" : undefined}
           className="nav-link"
           href={href}
@@ -45,9 +47,7 @@ export default function Header() {
                 mobile ? "mobile-active-navigation" : "active-navigation"
               }
               transition={
-                reduced
-                  ? { duration: 0 }
-                  : { type: "spring", stiffness: 430, damping: 36 }
+                reduced ? { duration: 0 } : { duration: 0.24, ease: "easeOut" }
               }
             />
           )}
@@ -63,9 +63,14 @@ export default function Header() {
       data-scrolling-down={down && !open}
       data-menu-open={open}
     >
-      <span className="header-surface" aria-hidden="true" />
+      <WaterSurface />
       <div className="header-bar">
-        <Link className="brand" href="/" aria-label="Quite Logic home">
+        <Link
+          className="brand"
+          href="/"
+          aria-label="Quite Logic home"
+          data-header-navigation
+        >
           <Image src="/logo/icon.png" alt="" width={42} height={42} priority />
           <BrandName />
         </Link>

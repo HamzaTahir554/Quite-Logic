@@ -98,6 +98,8 @@ See [booking experience](qa/BOOKING-REPORT.md) for the official Calendly embed, 
 
 The shared floating header, compact scrolling behavior and attached mobile menu are documented in [the header report](qa/FLOATING-HEADER-REPORT.md).
 
+Its autonomous water surface and immediate navigation are documented in [the liquid header report](qa/HEADER-WATER-REPORT.md).
+
 Home image alignment, the Admin image-presentation choice and shared Fabric CTA interactions are documented in [the media and button report](qa/MEDIA-FABRIC-REPORT.md).
 
 ```sh
