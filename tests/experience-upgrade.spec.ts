@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import sharp from "sharp";
 import { chooseTheme } from "./fixtures/theme";
-test("one compact theme popover works with keyboard, dismissal and persistent preference at desktop and phone sizes", async ({
+test("one-click theme switching works with keyboard and persistent preference at desktop and phone sizes", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -9,33 +9,36 @@ test("one compact theme popover works with keyboard, dismissal and persistent pr
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/contact");
-    const trigger = page.getByRole("button", { name: /Display settings/ });
+    await chooseTheme(page, "night");
+    const trigger = page.getByRole("button", {
+      name: /Switch to (Day|Night) mode/,
+    });
     await expect(trigger).toHaveCount(1);
     const box = (await trigger.boundingBox())!;
     expect(box.width).toBeLessThanOrEqual(48);
     expect(box.x + box.width).toBeLessThanOrEqual(width);
+    await trigger.click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
+    await expect(trigger).toHaveAccessibleName("Switch to Night mode");
+    await expect(page.getByRole("menu")).toHaveCount(0);
+    await expect(trigger).not.toHaveAttribute("aria-haspopup");
+    await trigger.click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "night");
+    await expect(trigger).toHaveAccessibleName("Switch to Day mode");
     await trigger.focus();
     await page.keyboard.press("Enter");
-    const menu = page.getByRole("menu", { name: "Display mode" });
-    await expect(menu).toBeVisible();
-    const bounds = (await menu.boundingBox())!;
-    expect(bounds.x).toBeGreaterThanOrEqual(0);
-    expect(bounds.y + bounds.height).toBeLessThanOrEqual(844);
-    await page.keyboard.press("Escape");
-    await expect(menu).toHaveCount(0);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
     await expect(trigger).toBeFocused();
-    await trigger.click();
-    await expect(menu).toBeVisible();
-    await page.mouse.click(2, 2);
-    await expect(menu).toHaveCount(0);
-    await chooseTheme(page, "day");
     await page.reload();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
-    await chooseTheme(page, "night");
+    await trigger.focus();
+    await page.keyboard.press("Space");
     await expect(page.locator("html")).toHaveAttribute("data-theme", "night");
+    await expect(page.getByRole("menu")).toHaveCount(0);
   }
   expect(errors).toEqual([]);
 });
+
 test("cube controls remain within their wrapper with tap targets and no hint overlap at every requested mobile width", async ({
   page,
 }) => {

@@ -1,8 +1,5 @@
 "use client";
-import { useState } from "react";
-import { Menu, MenuItem } from "@mui/material";
 import { useVisualTheme } from "@/theme/VisualThemeProvider";
-import { useMotionPreference } from "@/hooks/useMotionPreference";
 function ThemeIcon({ day }: { day: boolean }) {
   return (
     <svg
@@ -27,62 +24,19 @@ function ThemeIcon({ day }: { day: boolean }) {
 }
 export default function ThemeToggle() {
   const { theme, setTheme } = useVisualTheme();
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const reduced = useMotionPreference();
   return (
-    <>
-      <button
-        className="theme-popover-button"
-        type="button"
-        aria-label={`Display settings: ${theme === "day" ? "Day" : "Night"} mode`}
-        aria-haspopup="menu"
-        aria-controls={anchor ? "display-settings-menu" : undefined}
-        aria-expanded={Boolean(anchor)}
-        onClick={(event) => setAnchor(event.currentTarget)}
-      >
-        <span className="theme-current-day" aria-hidden="true">
-          <ThemeIcon day />
-        </span>
-        <span className="theme-current-night" aria-hidden="true">
-          <ThemeIcon day={false} />
-        </span>
-      </button>
-      <Menu
-        id="display-settings-menu"
-        anchorEl={anchor}
-        open={Boolean(anchor)}
-        onClose={() => setAnchor(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        marginThreshold={12}
-        transitionDuration={reduced ? 0 : 180}
-        slotProps={{
-          paper: { className: "theme-popover" },
-          list: { "aria-label": "Display mode" },
-        }}
-      >
-        {(["day", "night"] as const).map((value) => (
-          <MenuItem
-            key={value}
-            role="menuitemradio"
-            aria-checked={theme === value}
-            selected={theme === value}
-            onClick={() => {
-              setTheme(value);
-              setAnchor(null);
-            }}
-          >
-            <ThemeIcon day={value === "day"} />
-            <span>
-              {value === "day" ? "Day" : "Night"}
-              <small>
-                {value === "day" ? "Claymorphism" : "Glassmorphism"}
-              </small>
-            </span>
-            {theme === value && <span aria-hidden="true">✓</span>}
-          </MenuItem>
-        ))}
-      </Menu>
-    </>
+    <button
+      className="theme-toggle-button"
+      type="button"
+      aria-label={`Switch to ${theme === "day" ? "Night" : "Day"} mode`}
+      onClick={() => setTheme(theme === "day" ? "night" : "day")}
+    >
+      <span className="theme-current-day" aria-hidden="true">
+        <ThemeIcon day />
+      </span>
+      <span className="theme-current-night" aria-hidden="true">
+        <ThemeIcon day={false} />
+      </span>
+    </button>
   );
 }

@@ -28,6 +28,10 @@ function mailTransport() {
   return transport;
 }
 
+export async function verifyEmailConnection() {
+  await mailTransport().verify();
+}
+
 export async function sendContactInquiry(input: ContactInput) {
   const recipient = process.env.CONTACT_TO?.trim() || contactEmail;
   if (!z.email().safeParse(recipient).success)

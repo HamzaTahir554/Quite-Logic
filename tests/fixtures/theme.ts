@@ -1,10 +1,8 @@
 import { expect, type Page } from "@playwright/test";
 export async function chooseTheme(page: Page, theme: "day" | "night") {
-  await page.getByRole("button", { name: /Display settings/ }).click();
-  await page
-    .getByRole("menuitemradio", {
-      name: theme === "day" ? /Day Claymorphism/ : /Night Glassmorphism/,
-    })
-    .click();
+  if ((await page.locator("html").getAttribute("data-theme")) !== theme)
+    await page
+      .getByRole("button", { name: /Switch to (Day|Night) mode/ })
+      .click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
 }

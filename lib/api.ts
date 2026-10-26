@@ -8,6 +8,7 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public code?: string,
   ) {
     super(message);
   }
@@ -27,7 +28,10 @@ export function endpoint(handler: (request: Request) => Promise<Response>) {
       return await handler(request);
     } catch (error) {
       if (error instanceof ApiError)
-        return json({ error: error.message }, error.status);
+        return json(
+          { error: error.message, ...(error.code ? { code: error.code } : {}) },
+          error.status,
+        );
       if (error instanceof ZodError)
         return json(
           {

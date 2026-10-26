@@ -1,5 +1,5 @@
 /* One persistent theme control, shared by public pages and Admin. */
-.theme-popover-button {
+.theme-toggle-button {
   position: fixed;
   right: max(18px, env(safe-area-inset-right));
   bottom: calc(22px + env(safe-area-inset-bottom));
@@ -15,37 +15,11 @@
   box-shadow: 0 6px 22px #15213130;
   cursor: pointer;
 }
-html[data-theme="day"] .theme-popover-button {
+html[data-theme="day"] .theme-toggle-button {
   background: var(--day-surface);
   box-shadow: var(--day-shadow-control);
 }
-html[data-theme] .theme-popover.MuiPaper-root {
-  min-width: 204px;
-  border-radius: 18px;
-  background: var(--surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  box-shadow: 0 10px 30px #15213130;
-}
-html[data-theme="day"] .theme-popover.MuiPaper-root {
-  background: var(--day-surface);
-  box-shadow: var(--day-shadow-control);
-}
-.theme-popover .MuiMenuItem-root {
-  gap: 12px;
-  min-height: 62px;
-  padding: 10px 14px;
-}
-.theme-popover small {
-  display: block;
-  color: var(--text-secondary);
-  font-size: 11px;
-  margin-top: 3px;
-}
-.theme-popover .Mui-selected {
-  color: var(--blue);
-}
-.theme-popover-button:focus-visible {
+.theme-toggle-button:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 4px;
 }

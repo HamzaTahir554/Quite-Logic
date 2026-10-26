@@ -56,13 +56,14 @@ test("toggle preserves form values, graph identity, navigation and refresh prefe
   await page
     .locator(".graph-background canvas")
     .evaluate((node) => node.setAttribute("data-test-identity", "original"));
-  const toggle = page.getByRole("button", { name: /Display settings/ });
+  const toggle = page.getByRole("button", {
+    name: /Switch to (Day|Night) mode/,
+  });
   await toggle.focus();
   await page.keyboard.press("Enter");
-  await page.getByRole("menuitemradio", { name: /Day Claymorphism/ }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
   await expect(
-    page.getByRole("button", { name: /Display settings/ }),
+    page.getByRole("button", { name: /Switch to (Day|Night) mode/ }),
   ).toBeFocused();
   await expect(page.getByRole("textbox", { name: "Your name" })).toHaveValue(
     "Theme Test Client",
@@ -160,7 +161,7 @@ test("Day palette covers public pages and admin auth without overflow", async ({
       // Async server sections can temporarily exist inside hidden streaming containers.
       await expect(page.locator("h1:visible")).toHaveCount(1);
       await expect(
-        page.getByRole("button", { name: /Display settings/ }),
+        page.getByRole("button", { name: /Switch to (Day|Night) mode/ }),
       ).toBeVisible();
       await expect(page.locator("h1:visible")).toHaveCSS(
         "color",
