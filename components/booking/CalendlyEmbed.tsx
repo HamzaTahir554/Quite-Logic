@@ -1,26 +1,22 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import {
-  bookingStepFromMessage,
-  calendlyScriptUrl,
-  type BookingStep,
-} from "@/lib/calendly";
+import { calendlyOrigin, calendlyScriptUrl } from "@/lib/calendly";
 
 type CalendlyAPI = {
-  initInlineWidget: (options: {
+  initInlineWidget(options: {
     url: string;
     parentElement: HTMLElement;
     resize: boolean;
-  }) => void;
+  }): void;
 };
 const calendlyWindow = () => window as Window & { Calendly?: CalendlyAPI };
 let scriptPromise: Promise<CalendlyAPI> | null = null;
 
-// Load once on demand. Failed loads can be retried using the same official URL.
+/** Official widget script, shared across opens and loaded only on demand. */
 function loadCalendly() {
   const existing = calendlyWindow().Calendly;
   if (existing?.initInlineWidget) return Promise.resolve(existing);
-  if (!scriptPromise) {
+  if (!scriptPromise)
     scriptPromise = new Promise<CalendlyAPI>((resolve, reject) => {
       const script = document.createElement("script");
       const fail = () => {
@@ -41,31 +37,20 @@ function loadCalendly() {
       script.onerror = fail;
       document.head.appendChild(script);
     });
-  }
   return scriptPromise;
 }
 
-export default function CalendlyEmbed({
-  url,
-  onStep,
-}: {
-  url: string;
-  onStep: (step: BookingStep) => void;
-}) {
+export default function CalendlyEmbed({ url }: { url: string }) {
   const container = useRef<HTMLDivElement>(null);
   const [revision, setRevision] = useState(0);
   const [status, setStatus] = useState<"loading" | "ready" | "slow" | "error">(
     "loading",
   );
-  const callback = useRef(onStep);
-  useEffect(() => {
-    callback.current = onStep;
-  }, [onStep]);
   useEffect(() => {
     const element = container.current!;
-    let disposed = false;
+    let disposed = false,
+      ready = false;
     let frame: HTMLIFrameElement | null = null;
-    let ready = false;
     const loaded = () => {
       ready = true;
       if (!disposed) setStatus("ready");
@@ -80,15 +65,16 @@ export default function CalendlyEmbed({
     };
     const observer = new MutationObserver(labelFrame);
     observer.observe(element, { childList: true, subtree: true });
-    function receive(message: MessageEvent) {
-      const step = bookingStepFromMessage(
-        message,
-        frame?.contentWindow || null,
-      );
-      if (!step || disposed) return;
-      loaded();
-      callback.current(step);
-    }
+    const receive = (message: MessageEvent) => {
+      if (
+        message.origin === calendlyOrigin &&
+        frame?.contentWindow &&
+        message.source === frame.contentWindow &&
+        typeof message.data?.event === "string" &&
+        message.data.event.startsWith("calendly.")
+      )
+        loaded();
+    };
     window.addEventListener("message", receive);
     const timer = setTimeout(() => {
       if (!ready && !disposed)
@@ -112,11 +98,6 @@ export default function CalendlyEmbed({
       element.replaceChildren();
     };
   }, [url, revision]);
-  function retry() {
-    setStatus("loading");
-    callback.current("time");
-    setRevision((value) => value + 1);
-  }
   return (
     <div className="booking-calendar" data-calendar-state={status}>
       {status !== "ready" && (
@@ -127,19 +108,22 @@ export default function CalendlyEmbed({
           {status === "loading" ? (
             <>
               <span className="booking-loading-mark" aria-hidden="true" />
-              <span>Loading available times…</span>
+              <span>Loading Calendly…</span>
             </>
           ) : (
             <>
               <span>
                 {status === "slow"
                   ? "The calendar is taking a little longer to load."
-                  : "We couldn’t load the calendar. Please try again or use the link below."}
+                  : "We couldn’t load Calendly. Try again or use the link below."}
               </span>
               <button
                 type="button"
                 className="booking-text-button"
-                onClick={retry}
+                onClick={() => {
+                  setStatus("loading");
+                  setRevision((value) => value + 1);
+                }}
               >
                 Try again
               </button>

@@ -98,6 +98,7 @@ export const reviewSchema = z
     rating: z.number().int().min(1).max(5),
     review: z.string().trim().min(20).max(5000),
     website: z.string().max(0).optional(),
+    useGravatar: z.boolean().optional(),
   })
   .strict();
 export const newPasswordSchema = z

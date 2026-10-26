@@ -6,5 +6,9 @@ export default async function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const admin = await requireAdminPage();
-  return <AdminNav email={admin.email}>{children}</AdminNav>;
+  return (
+    <AdminNav email={admin.email} avatarUrl={admin.avatarUrl}>
+      {children}
+    </AdminNav>
+  );
 }

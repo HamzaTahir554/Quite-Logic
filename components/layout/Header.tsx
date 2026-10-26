@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import { navigation } from "@/data/content";
 import { BookingButton } from "@/components/booking/BookingProvider";
 import BrandName from "@/components/ui/BrandName";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useHeaderScroll } from "@/hooks/useHeaderScroll";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
 import WaterSurface from "./header/WaterSurface";
@@ -77,7 +76,6 @@ export default function Header() {
         <nav className="desktop-nav" aria-label="Main navigation">
           {links()}
         </nav>
-        <ThemeToggle />
         <span className="header-booking">
           <BookingButton className="nav-project" />
         </span>

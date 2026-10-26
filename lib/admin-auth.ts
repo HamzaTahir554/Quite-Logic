@@ -21,7 +21,7 @@ export const currentAdmin = cache(async () => {
     _id: session.adminId,
     sessionVersion: session.version,
   })
-    .select("email sessionVersion")
+    .select("email sessionVersion avatarUrl")
     .lean();
 });
 export async function requireAdmin(request?: Request) {

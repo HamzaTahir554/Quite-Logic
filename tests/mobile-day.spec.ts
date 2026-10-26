@@ -1,3 +1,4 @@
+import { chooseTheme } from "./fixtures/theme";
 import { test, expect } from "@playwright/test";
 import sharp from "sharp";
 import { mkdir } from "node:fs/promises";
@@ -84,7 +85,6 @@ test("mobile Day has no global gradient, readable copy and aligned controls acro
           const header = await page.locator(".site-header").boundingBox();
           const controls = [
             page.locator(".site-header .brand"),
-            page.locator(".site-header .theme-toggle"),
             page.getByRole("button", { name: "Open navigation" }),
           ];
           for (const control of controls) {
@@ -186,7 +186,7 @@ test("mobile Day backdrop stays light at its center and through Day/Night toggle
       // Inspect the painted backdrop itself, independently of text or cards.
       const probe = await page.addStyleTag({
         content:
-          "main, header, footer, .scroll-progress, .studio-cursor, .route-curtain { visibility: hidden !important; }",
+          "main, header, footer, .studio-cursor, .route-curtain { visibility: hidden !important; }",
       });
       const screenshot = await page.screenshot();
       const { data, info } = await sharp(screenshot)
@@ -207,7 +207,7 @@ test("mobile Day backdrop stays light at its center and through Day/Night toggle
         }
       }
       await probe.evaluate((node) => node.parentNode?.removeChild(node));
-      await page.getByRole("button", { name: "Switch to night mode" }).click();
+      await chooseTheme(page, "night");
       await expect(graph).toHaveAttribute("data-theme", "night");
       await expect(graph).toHaveAttribute("data-nodes", "22");
       expect(
@@ -215,7 +215,7 @@ test("mobile Day backdrop stays light at its center and through Day/Night toggle
           (node) => getComputedStyle(node, "::after").backgroundImage,
         ),
       ).not.toBe("none");
-      await page.getByRole("button", { name: "Switch to day mode" }).click();
+      await chooseTheme(page, "day");
       await expect(graph).toHaveAttribute("data-theme", "day");
       await expect(graph).toHaveAttribute("data-nodes", "20");
       expect(

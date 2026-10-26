@@ -11,6 +11,7 @@ const adminSchema = new Schema(
       trim: true,
     },
     passwordHash: { type: String, required: true, select: false },
+    avatarUrl: { type: String, default: "" },
     sessionVersion: { type: Number, default: 0, required: true },
     resetTokenHash: { type: String, select: false },
     resetExpires: { type: Date, select: false },
@@ -31,6 +32,9 @@ const reviewSchema = new Schema(
     company: { type: String, default: "", maxlength: 150 },
     role: { type: String, default: "", maxlength: 100 },
     email: { type: String, required: true, select: false },
+    avatarUrl: { type: String, default: "" },
+    avatarHash: { type: String, default: "", select: false },
+    useGravatar: { type: Boolean, default: false },
     service: { type: String, default: "", maxlength: 100 },
     rating: { type: Number, required: true, min: 1, max: 5 },
     review: { type: String, required: true, maxlength: 5000 },
@@ -120,3 +124,11 @@ export const Project = model("Project", projectSchema);
 export const ProjectImage = model("ProjectImage", imageSchema);
 export const RateLimit = model("RateLimit", rateSchema);
 export const SocialLink = model("SocialLink", socialLinkSchema);
+const avatarSchema = new Schema(
+  {
+    data: { type: Buffer, required: true, select: false },
+    createdBy: { type: Schema.Types.ObjectId, required: true },
+  },
+  { timestamps: true },
+);
+export const AvatarImage = model("AvatarImage", avatarSchema);

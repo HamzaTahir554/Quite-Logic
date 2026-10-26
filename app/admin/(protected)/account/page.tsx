@@ -1,5 +1,6 @@
 import { requireAdminPage } from "@/lib/admin-auth";
 import AuthForm from "@/components/admin/AuthForm";
+import AvatarEditor from "@/components/ui/AvatarEditor";
 export default async function AccountPage() {
   const admin = await requireAdminPage();
   return (
@@ -17,9 +18,11 @@ export default async function AccountPage() {
         <div className="admin-panel">
           <span className="admin-eyebrow">PROFILE</span>
           <div className="admin-account-profile">
-            <span className="admin-account-avatar" aria-hidden="true">
-              {admin.email.slice(0, 1).toUpperCase()}
-            </span>
+            <AvatarEditor
+              name={admin.email}
+              initialUrl={admin.avatarUrl}
+              endpoint="/api/admin/profile"
+            />
             <div>
               <h2>Administrator</h2>
               <p>{admin.email}</p>

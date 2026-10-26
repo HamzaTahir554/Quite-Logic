@@ -1,3 +1,4 @@
+import { chooseTheme } from "./fixtures/theme";
 import { test, expect, type Locator, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 
@@ -93,7 +94,7 @@ test("floating header reserves page space and aligns its controls across both th
           expect(breadcrumb.y - rect.y - rect.height).toBeLessThanOrEqual(64);
         }
         const controls = header.locator(
-          ".brand, .theme-toggle, .mobile-toggle:visible, .nav-project:visible",
+          ".brand, .mobile-toggle:visible, .nav-project:visible",
         );
         for (const control of await controls.all()) {
           const bounds = (await control.boundingBox())!;
@@ -202,7 +203,7 @@ test("one active indicator follows nested routes and theme switching preserves h
   );
   await expect(header.locator(".desktop-nav .nav-active")).toHaveCount(1);
   const before = await header.boundingBox();
-  await header.locator(".theme-toggle").click();
+  await chooseTheme(page, "day");
   expect(await header.boundingBox()).toEqual(before);
   await header.getByRole("link", { name: "Services", exact: true }).click();
   await expect(page).toHaveURL(/\/services$/);
@@ -308,7 +309,7 @@ test("a short touch viewport keeps the menu scrollable and all controls reachabl
     await ready(page);
     const header = page.locator(".site-header");
     const before = await header.boundingBox();
-    await header.locator(".theme-toggle").tap();
+    await chooseTheme(page, "day");
     expect(await header.boundingBox()).toEqual(before);
     await page.getByRole("button", { name: "Open navigation" }).tap();
     const panel = page.getByRole("dialog", { name: "Site navigation" });

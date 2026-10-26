@@ -92,9 +92,11 @@ This application now requires a **Node.js server**. Static `out/` deployment can
 
 See [implementation report](qa/MONGODB-ADMIN-REPORT.md) for files, routes and validation results.
 See [portfolio and Social Links update](qa/SOCIALS-PORTFOLIO-REPORT.md) for the latest layout, compact header CTA and reduced-motion-aware admin animation changes.
-See [booking experience](qa/BOOKING-REPORT.md) for the official Calendly embed, progress events, motion, validation and account-side branding setup. The booking shell keeps the existing meeting URL and loads Calendly only when opened. Branding removal is controlled by the Calendly account; internal Calendly dates, times and fields retain their vendor behavior.
+See [simple Calendly integration](qa/CALENDLY-RESET-REPORT.md) for the official on-demand embed. Calendly handles date/time selection and booking inside the existing branded modal. No API token, custom scheduler or local booking database is required; Calendly branding remains visible.
 
 ## Validation
+
+Theme popovers, responsive cube controls and profile images are documented in [the experience upgrade report](qa/EXPERIENCE-UPGRADE-REPORT.md). `npm run test:avatars` verifies durable avatar storage and validation independently of booking.
 
 The shared floating header, compact scrolling behavior and attached mobile menu are documented in [the header report](qa/FLOATING-HEADER-REPORT.md).
 

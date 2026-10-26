@@ -9,6 +9,7 @@ import VisualThemeProvider, {
 import BookingProvider from "@/components/booking/BookingProvider";
 import GlassLighting from "@/components/motion/GlassLighting";
 import GraphBackground from "@/components/background/GraphBackground";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AppRouterCacheProvider>
@@ -26,6 +27,7 @@ function ThemedApplication({ children }: { children: React.ReactNode }) {
         <GraphBackground />
         <GlassLighting />
         <BookingProvider>{children}</BookingProvider>
+        <ThemeToggle />
       </MotionConfig>
     </ThemeProvider>
   );

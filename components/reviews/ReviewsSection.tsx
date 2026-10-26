@@ -4,7 +4,7 @@ import type { PublicReview } from "@/lib/reviews";
 import Reveal from "@/components/ui/Reveal";
 import ReviewForm from "./ReviewForm";
 import { useState } from "react";
-import Image from "next/image";
+import Avatar from "@/components/ui/Avatar";
 import GlassReflection from "@/components/ui/GlassReflection";
 
 export default function ReviewsSection({
@@ -86,20 +86,7 @@ export default function ReviewsSection({
                 </div>
                 <blockquote>{review.body}</blockquote>
                 <div className="review-person">
-                  {review.image_url ? (
-                    <Image
-                      unoptimized
-                      src={review.image_url!}
-                      alt=""
-                      width={48}
-                      height={48}
-                      loading="lazy"
-                    />
-                  ) : (
-                    <span className="review-initial" aria-hidden="true">
-                      {review.name.slice(0, 1)}
-                    </span>
-                  )}
+                  <Avatar name={review.name} src={review.image_url} />
                   <div>
                     <h3>{review.name}</h3>
                     <p>

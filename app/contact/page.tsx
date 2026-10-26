@@ -34,7 +34,7 @@ export default function ContactPage() {
         <a className="contact-option" href="#book-call">
           <span className="overline">02 / Talk it through</span>
           <strong>
-            Book a call <Arrow />
+            Book a Meeting <Arrow />
           </strong>
           <span>30 minutes to explore what’s next.</span>
         </a>
@@ -58,7 +58,7 @@ export default function ContactPage() {
             <CrystalReflection />
             <Reveal className="booking-invitation">
               <span className="overline">Prefer a conversation?</span>
-              <h2 id="book-call-title">Book a call</h2>
+              <h2 id="book-call-title">Book a Meeting</h2>
               <p>
                 A focused, 30-minute meeting to talk through your goals and a
                 useful next step.

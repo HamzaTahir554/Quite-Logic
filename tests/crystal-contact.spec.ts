@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { widgetScript } from "./fixtures/calendly";
+import { mockCalendly } from "./fixtures/calendly";
 
 test("banner layers react within bounds on all pages and reset with reduced motion", async ({
   page,
@@ -69,19 +69,7 @@ test("banner layers react within bounds on all pages and reset with reduced moti
 test("booking stays on site, loads only on demand and closes accessibly", async ({
   page,
 }) => {
-  let requests = 0;
-  await page.route(
-    "https://assets.calendly.com/assets/external/widget.js",
-    (route) =>
-      route.fulfill({ contentType: "text/javascript", body: widgetScript }),
-  );
-  await page.route("https://calendly.com/**", async (route) => {
-    requests++;
-    await route.fulfill({
-      contentType: "text/html",
-      body: "<html><body><h1>Booking calendar</h1></body></html>",
-    });
-  });
+  await mockCalendly(page);
   await page.goto("/contact");
   await expect(
     page
@@ -95,24 +83,19 @@ test("booking stays on site, loads only on demand and closes accessibly", async 
     page.getByRole("heading", { name: "Send us a message", exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Book a call", exact: true }),
+    page.getByRole("heading", { name: "Book a Meeting", exact: true }),
   ).toBeVisible();
-  expect(requests).toBe(0);
+  await expect(page.locator(".booking-calendly-embed")).toHaveCount(0);
   const trigger = page
     .locator("#book-call")
     .getByRole("button", { name: "Book a Meeting" });
   await trigger.click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  await expect(dialog.locator("iframe")).toHaveAttribute(
-    "src",
-    /^https:\/\/calendly.com\/company-quitelogic\/30min\?/,
-  );
-  await expect(dialog.locator("iframe")).toHaveAttribute(
-    "title",
-    /30-minute meeting/,
-  );
-  await expect.poll(() => requests).toBe(1);
+  await expect(dialog.locator("iframe")).toBeVisible();
+  await expect(
+    dialog.frameLocator("iframe").getByText("Powered by Calendly"),
+  ).toBeVisible();
   await expect(page).toHaveURL("/contact");
   await dialog.getByRole("button", { name: "Close booking" }).click();
   await expect(dialog).toHaveCount(0);

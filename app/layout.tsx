@@ -21,6 +21,7 @@ import "./themes.css";
 import "./refinements.css";
 import "./fabric.css";
 import "./header.css";
+import "./experience.css";
 const manrope = localFont({
   src: "../public/fonts/manrope-latin.woff2",
   weight: "200 800",

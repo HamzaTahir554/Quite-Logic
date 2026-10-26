@@ -18,8 +18,11 @@ import {
 import { useAdminAction, useAdminFeedback } from "./AdminFeedback";
 import { adminDate } from "./project-types";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
+import Avatar from "@/components/ui/Avatar";
+import AvatarEditor from "@/components/ui/AvatarEditor";
 type Review = {
   _id: string;
+  avatarUrl?: string;
   clientName: string;
   company: string;
   role: string;
@@ -154,9 +157,7 @@ export default function ReviewManager() {
               >
                 <div className="admin-record-heading">
                   <div className="admin-review-identity">
-                    <span className="admin-client-avatar" aria-hidden="true">
-                      {review.clientName.slice(0, 1).toUpperCase()}
-                    </span>
+                    <Avatar name={review.clientName} src={review.avatarUrl} />
                     <div>
                       <h2>{review.clientName}</h2>
                       <p>{review.company || "Independent client"}</p>
@@ -242,6 +243,12 @@ export default function ReviewManager() {
             <>
               <div className="admin-record-heading">
                 <h2>{selected.clientName}</h2>
+                <AvatarEditor
+                  key={selected._id}
+                  name={selected.clientName}
+                  initialUrl={selected.avatarUrl}
+                  endpoint={`/api/admin/reviews/${selected._id}/avatar`}
+                />
                 <StatusBadge status={selected.status} />
               </div>
               <dl className="admin-detail-list">

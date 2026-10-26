@@ -10,7 +10,7 @@ import { useAdminAction, useAdminFeedback } from "./AdminFeedback";
 import { apiCall } from "./useAdminList";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
 import { motion } from "framer-motion";
-import ThemeToggle from "@/components/ui/ThemeToggle";
+import Avatar from "@/components/ui/Avatar";
 
 const sections = [
   ["Dashboard", "/admin"],
@@ -21,9 +21,11 @@ const sections = [
 ];
 export default function AdminNav({
   email,
+  avatarUrl,
   children,
 }: {
   email: string;
+  avatarUrl?: string;
   children: React.ReactNode;
 }) {
   const path = usePathname(),
@@ -154,10 +156,7 @@ export default function AdminNav({
             </span>
           </div>
           <div className="admin-topbar-account">
-            <ThemeToggle />
-            <span className="admin-account-avatar" aria-hidden="true">
-              {email.slice(0, 1).toUpperCase()}
-            </span>
+            <Avatar name={email} src={avatarUrl} />
             <span>
               {email}
               <small>Administrator</small>

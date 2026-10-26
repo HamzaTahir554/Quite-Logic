@@ -36,7 +36,11 @@ export function publicReview(r: ReviewRecord & { _id: unknown }): PublicReview {
     rating: r.rating,
     body: r.review,
     created_at: r.createdAt.toISOString(),
-    image_url: null,
+    image_url:
+      r.avatarUrl ||
+      (r.useGravatar && r.avatarHash
+        ? `https://www.gravatar.com/avatar/${r.avatarHash}?d=404&s=96`
+        : null),
   };
 }
 export const getPublishedProjects = cache(async () => {
@@ -120,6 +124,7 @@ export const getApprovedReviews = cache(async (full: boolean) => {
       const filter = { status: "approved" };
       const [records, total] = await Promise.all([
         Review.find(filter)
+          .select("+avatarHash")
           .sort({ createdAt: -1, _id: -1 })
           .limit(full ? 24 : 4)
           .maxTimeMS(4000)

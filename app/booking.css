@@ -1,4 +1,34 @@
 /* Styles belong to Quite Logic's shell, never the contents of Calendly's frame. */
+.simple-booking-dialog.booking-dialog.MuiPaper-root {
+  width: min(960px, calc(100% - 32px));
+  max-width: 960px;
+  margin: 16px;
+  max-height: calc(100dvh - 32px);
+  border-radius: 24px;
+}
+.simple-booking-dialog.booking-dialog .booking-content.MuiDialogContent-root {
+  padding: 16px;
+}
+@media (max-width: 600px) {
+  .simple-booking-dialog.booking-dialog.MuiPaper-root {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100dvh;
+    margin: 0;
+    border-inline: 0;
+    border-radius: 0;
+  }
+  .simple-booking-dialog.booking-dialog .booking-content.MuiDialogContent-root {
+    padding: 0;
+  }
+  .simple-booking-dialog .booking-embed-panel {
+    border: 0;
+    border-radius: 0;
+  }
+  .simple-booking-dialog .booking-frame {
+    min-width: 320px;
+  }
+}
 .booking-dialog.MuiPaper-root {
   width: min(1120px, calc(100% - 48px));
   max-height: calc(100dvh - 48px);

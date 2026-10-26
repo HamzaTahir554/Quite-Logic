@@ -1,3 +1,4 @@
+import { chooseTheme } from "./fixtures/theme";
 import { test, expect, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import { projectNarrative } from "../components/projects/ProjectNarrative";
@@ -247,11 +248,7 @@ test("featured work uses the existing flag and public cards show concise metadat
     await expect(page.locator("main")).not.toContainText("published project");
     const before = await featured.boundingBox();
     const mode = await page.locator("html").getAttribute("data-theme");
-    await page
-      .getByRole("button", {
-        name: `Switch to ${mode === "day" ? "night" : "day"} mode`,
-      })
-      .click();
+    await chooseTheme(page, mode === "day" ? "night" : "day");
     const after = await featured.boundingBox();
     expect(after!.width).toBeCloseTo(before!.width, 0);
     expect(after!.height).toBe(before!.height);

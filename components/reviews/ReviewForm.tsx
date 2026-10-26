@@ -1,7 +1,11 @@
 "use client";
+import { useImagePreview } from "@/hooks/useImagePreview";
 import FabricButton from "@/components/ui/FabricButton";
 import { useState } from "react";
+import Avatar from "@/components/ui/Avatar";
 export default function ReviewForm() {
+  const { file, preview, setFile, ready } = useImagePreview();
+
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
     [success, setSuccess] = useState(false);
@@ -12,17 +16,18 @@ export default function ReviewForm() {
     setMessage("");
     setSuccess(false);
     try {
-      const data = Object.fromEntries(new FormData(form));
+      const data = new FormData(form);
+      if (file) data.set("profileImage", file);
       const response = await fetch("/api/reviews", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, rating: Number(data.rating) }),
+        body: data,
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Please try again.");
       setMessage(result.message);
       setSuccess(true);
       form.reset();
+      setFile(null);
     } catch (error) {
       setMessage(
         error instanceof Error
@@ -38,6 +43,41 @@ export default function ReviewForm() {
       <h2>Share your experience.</h2>
       <p>Your email stays private. Reviews appear after approval.</p>
       <form className="review-form" onSubmit={submit}>
+        <div className="avatar-editor">
+          <Avatar name="Your profile" src={preview} />
+          <label>
+            Profile image (optional)
+            <input
+              type="file"
+              disabled={!ready || busy}
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => {
+                const candidate = event.target.files?.[0];
+                if (
+                  candidate &&
+                  (!["image/jpeg", "image/png", "image/webp"].includes(
+                    candidate.type,
+                  ) ||
+                    candidate.size > 2 * 1024 * 1024)
+                ) {
+                  setMessage("Choose JPEG, PNG or WebP up to 2 MB.");
+                  return;
+                }
+                setFile(candidate || null);
+              }}
+            />
+          </label>
+          {file && (
+            <button type="button" onClick={() => setFile(null)}>
+              Remove Image
+            </button>
+          )}
+        </div>
+        <label>
+          <input type="checkbox" name="useGravatar" /> Use my public Gravatar
+          photo if available. This shares an email hash with Gravatar; your
+          email stays private.
+        </label>
         <div className="review-form-grid">
           <label>
             Your name

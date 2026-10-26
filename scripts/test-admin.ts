@@ -1182,6 +1182,10 @@ try {
   console.log(
     `Passed ${assertions} integration assertions. Running browser regression suite…`,
   );
+  await Admin.create({
+    email: "profile-admin@example.test",
+    passwordHash: await hashPassword("LocalProfile1!Password"),
+  });
   const runner = spawn(
     process.execPath,
     [
@@ -1193,7 +1197,11 @@ try {
     {
       stdio: "inherit",
       windowsHide: true,
-      env: { ...process.env, E2E_BASE_URL: origin },
+      env: {
+        ...process.env,
+        E2E_BASE_URL: origin,
+        E2E_PROFILE_FIXTURE: "true",
+      },
     },
   );
   const [code] = await once(runner, "exit");

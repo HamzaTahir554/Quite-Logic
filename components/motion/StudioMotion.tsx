@@ -4,12 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import StudioCursor from "./StudioCursor";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
 import BrandName from "@/components/ui/BrandName";
-import {
-  motion,
-  useAnimationControls,
-  useScroll,
-  useSpring,
-} from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 
 function NavigationTransition() {
   const pathname = usePathname();
@@ -92,7 +87,6 @@ function NavigationTransition() {
       initial={{ scaleY: 0 }}
       animate={controls}
     >
-      <span className="route-blue-line" />
       <BrandName />
     </motion.div>
   );
@@ -112,16 +106,8 @@ export default function StudioMotion() {
       document.removeEventListener("visibilitychange", visibility);
     };
   }, []);
-  const { scrollYProgress } = useScroll();
-  const reduced = useMotionPreference();
-  const progress = useSpring(scrollYProgress, { stiffness: 150, damping: 30 });
   return (
     <>
-      <motion.div
-        aria-hidden="true"
-        className="scroll-progress"
-        style={{ scaleX: reduced ? scrollYProgress : progress }}
-      />
       <StudioCursor />
       <NavigationTransition />
     </>

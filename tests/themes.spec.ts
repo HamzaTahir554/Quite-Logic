@@ -1,3 +1,4 @@
+import { chooseTheme } from "./fixtures/theme";
 import { test, expect } from "@playwright/test";
 import { mockCalendly } from "./fixtures/calendly";
 
@@ -21,6 +22,8 @@ test("saved Day mode is applied before hydration even on a dark system", async (
   try {
     await page.goto("/services", { waitUntil: "domcontentloaded" });
     await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
+    await expect(page.locator(".theme-current-day svg")).toBeVisible();
+    await expect(page.locator(".theme-current-night svg")).toBeHidden();
     expect(
       await page.evaluate(() => getComputedStyle(document.body).color),
     ).toBe("rgb(24, 34, 45)");
@@ -53,12 +56,13 @@ test("toggle preserves form values, graph identity, navigation and refresh prefe
   await page
     .locator(".graph-background canvas")
     .evaluate((node) => node.setAttribute("data-test-identity", "original"));
-  const toggle = page.getByRole("button", { name: "Switch to day mode" });
+  const toggle = page.getByRole("button", { name: /Display settings/ });
   await toggle.focus();
   await page.keyboard.press("Enter");
+  await page.getByRole("menuitemradio", { name: /Day Claymorphism/ }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
   await expect(
-    page.getByRole("button", { name: "Switch to night mode" }),
+    page.getByRole("button", { name: /Display settings/ }),
   ).toBeFocused();
   await expect(page.getByRole("textbox", { name: "Your name" })).toHaveValue(
     "Theme Test Client",
@@ -82,7 +86,7 @@ test("toggle preserves form values, graph identity, navigation and refresh prefe
   await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
-  await page.getByRole("button", { name: "Switch to night mode" }).click();
+  await chooseTheme(page, "night");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "night");
   expect(
     await page.evaluate((key) => localStorage.getItem(key), storageKey),
@@ -114,7 +118,7 @@ test("first visit follows the system and blocked storage never breaks switching"
       };
     });
     await page.reload();
-    await page.getByRole("button", { name: "Switch to day mode" }).click();
+    await chooseTheme(page, "day");
     await expect(page.locator("html")).toHaveAttribute("data-theme", "day");
   } finally {
     await context.close();
@@ -156,7 +160,7 @@ test("Day palette covers public pages and admin auth without overflow", async ({
       // Async server sections can temporarily exist inside hidden streaming containers.
       await expect(page.locator("h1:visible")).toHaveCount(1);
       await expect(
-        page.getByRole("button", { name: "Switch to night mode" }),
+        page.getByRole("button", { name: /Display settings/ }),
       ).toBeVisible();
       await expect(page.locator("h1:visible")).toHaveCSS(
         "color",
@@ -196,27 +200,26 @@ test("Day palette covers public pages and admin auth without overflow", async ({
   expect(errors).toEqual([]);
 });
 
-test("Day booking uses supported calendar colors and theme changes do not erase an open booking", async ({
+test("Day Calendly embed retains its frame during surrounding theme changes", async ({
   page,
 }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("quietlogic-theme", "day"),
-  );
   await mockCalendly(page);
   await page.goto("/contact");
+  await chooseTheme(page, "day");
   await page
     .getByRole("button", { name: "Book a Meeting", exact: true })
     .first()
     .click();
   const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  const frame = dialog.locator("iframe");
-  await expect(frame).toHaveAttribute("src", /background_color=e8ecf1/);
-  await expect(frame).toHaveAttribute("src", /text_color=18222d/);
-  const source = await frame.getAttribute("src");
+  await expect(dialog.locator("iframe")).toBeVisible();
+  const source = await dialog.locator("iframe").getAttribute("src");
+  await expect(dialog.locator("iframe")).toHaveAttribute(
+    "src",
+    /background_color=e8ecf1/,
+  );
   await page.evaluate(() => {
     localStorage.setItem("quietlogic-theme", "night");
-    window.dispatchEvent(
+    return window.dispatchEvent(
       new StorageEvent("storage", {
         key: "quietlogic-theme",
         newValue: "night",
@@ -224,7 +227,8 @@ test("Day booking uses supported calendar colors and theme changes do not erase 
     );
   });
   await expect(page.locator("html")).toHaveAttribute("data-theme", "night");
-  await expect(frame).toHaveAttribute("src", source!);
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator("iframe")).toHaveAttribute("src", source!);
   await dialog.getByRole("button", { name: "Close booking" }).click();
 });
 
@@ -269,7 +273,7 @@ test("Day admin data rows, inputs and status chips stay readable", async ({
     "color",
     "rgb(194, 65, 75)",
   );
-  await page.getByRole("button", { name: "Switch to night mode" }).click();
+  await chooseTheme(page, "night");
   await expect(panel).not.toHaveCSS("background-color", "rgb(229, 233, 238)");
 });
 

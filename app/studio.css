@@ -12,15 +12,6 @@ main,
   position: relative;
   z-index: 1;
 }
-.scroll-progress {
-  position: fixed;
-  inset: 0 0 auto;
-  height: 2px;
-  background: var(--blue);
-  transform-origin: left;
-  z-index: 500;
-  pointer-events: none;
-}
 .studio-cursor {
   position: fixed;
   left: 0;
@@ -80,15 +71,6 @@ main,
 }
 .route-curtain > span:last-child > span {
   color: var(--blue);
-}
-.route-blue-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--blue);
-  box-shadow: 0 0 15px #2f80fe44;
 }
 .site-header {
   background: rgba(35, 42, 51, 0.75);

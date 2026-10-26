@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { endpoint, json, objectId, body, ApiError } from "@/lib/api";
 import { requireAdmin } from "@/lib/admin-auth";
-import { Review } from "@/lib/models";
+import { Review, AvatarImage } from "@/lib/models";
 
 type Context = { params: Promise<{ id: string }> };
 export async function PATCH(request: Request, context: Context) {
@@ -28,8 +28,12 @@ export async function PATCH(request: Request, context: Context) {
 export async function DELETE(request: Request, context: Context) {
   return endpoint(async (req) => {
     await requireAdmin(req);
-    if (!(await Review.findByIdAndDelete(objectId((await context.params).id))))
-      throw new ApiError(404, "Review not found.");
+    const review = await Review.findByIdAndDelete(
+      objectId((await context.params).id),
+    );
+    if (!review) throw new ApiError(404, "Review not found.");
+    if (review.avatarUrl)
+      await AvatarImage.deleteOne({ _id: review.avatarUrl.split("/").pop() });
     return json({ message: "Review deleted." });
   })(request);
 }
