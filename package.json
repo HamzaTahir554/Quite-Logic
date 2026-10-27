@@ -8,6 +8,7 @@
     "start": "next start",
     "dev": "next dev",
     "build": "next build",
+    "build:hostinger": "next build --webpack",
     "lint": "eslint .",
     "admin:create": "tsx scripts/setup-admin.ts",
     "db:check": "tsx scripts/check-db.ts",

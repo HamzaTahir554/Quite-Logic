@@ -80,6 +80,8 @@ Server checks protect every admin page and API. Passwords use salted scrypt; opa
 
 ## Production
 
+For Hostinger Node.js Web Apps, select **Node.js 24.x**, use install command `npm ci --include=optional`, build command `npm run build:hostinger`, and start command `npm start`. The project requires Node `>=24 <25`; changing this setting requires a fresh dependency installation on Hostinger. Do not upload Windows `node_modules` or `.next` artifacts. Keep `package-lock.json` committed so the host installs its own Linux native dependencies, including Sharp. The build limits page-data workers to two to avoid excessive parallel processes on shared hosting. The Hostinger command uses Webpack because [Hostinger currently requires it for Next.js 16.3.3 and newer](https://www.hostinger.com/support/how-to-fix-next-js-16-turbopack-build-errors-on-hostinger/); the ordinary local `build` command still uses the Next.js default. A successful local build does not verify the hosting server's memory, glibc or native-module compatibility; check the new Hostinger build log if it still aborts.
+
 This application now requires a **Node.js server**. Static `out/` deployment cannot run its admin panel or APIs. The old static preview/finalization scripts and Apache `.htaccess` are legacy artifacts and are not used by `build` or `start`.
 
 1. Create a MongoDB Atlas database/user with access limited to this application database. Allow the application host's network address. A replica set is required for transactional reordering; Atlas provides one.
