@@ -11,11 +11,13 @@ import { apiCall } from "./useAdminList";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
 import { motion } from "framer-motion";
 import Avatar from "@/components/ui/Avatar";
+import { GmailUnreadBadge } from "./gmail/GmailStatus";
 
 const sections = [
   ["Dashboard", "/admin"],
   ["Reviews", "/admin/reviews"],
   ["Portfolio", "/admin/portfolio"],
+  ["Inbox", "/admin/inbox"],
   ["Social Links", "/admin/settings"],
   ["Account", "/admin/account"],
 ];
@@ -100,6 +102,7 @@ export default function AdminNav({
               )}
               <AdminIcon name={label} />
               <span>{label}</span>
+              {label === "Inbox" && <GmailUnreadBadge />}
               {current === label && (
                 <span className="admin-active-dot" aria-hidden="true" />
               )}

@@ -96,6 +96,8 @@ See [simple Calendly integration](qa/CALENDLY-RESET-REPORT.md) for the official 
 
 ## Validation
 
+The Admin Gmail Inbox uses Google OAuth with encrypted offline credentials, independently of transactional SMTP. Follow [Google Cloud setup and environment instructions](docs/GMAIL-SETUP.md), then connect the official mailbox from Admin → Inbox. [The integration report](qa/GMAIL-INTEGRATION-REPORT.md) lists files, features, limits and verification still required. After a production build, `npm run test:gmail` runs isolated Gmail API and browser checks without sending real email.
+
 Theme popovers, responsive cube controls and profile images are documented in [the experience upgrade report](qa/EXPERIENCE-UPGRADE-REPORT.md). `npm run test:avatars` verifies durable avatar storage and validation independently of booking.
 
 The shared floating header, compact scrolling behavior and attached mobile menu are documented in [the header report](qa/FLOATING-HEADER-REPORT.md).

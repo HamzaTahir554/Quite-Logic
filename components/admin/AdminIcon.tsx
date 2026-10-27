@@ -16,6 +16,12 @@ export default function AdminIcon({ name }: { name: string }) {
     Portfolio: (
       <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
     ),
+    Inbox: (
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m3 6 9 7 9-7" />
+      </>
+    ),
     Account: (
       <>
         <circle cx="12" cy="8" r="4" />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./admin.css";
+import "./gmail.css";
 import AdminFeedbackProvider from "@/components/admin/AdminFeedback";
 export const metadata: Metadata = {
   title: "Admin",
