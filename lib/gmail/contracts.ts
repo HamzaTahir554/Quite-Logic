@@ -3,6 +3,7 @@ export type GmailStatus = {
   configured: boolean;
   connected: boolean;
   reconnect: boolean;
+  configurationError?: string;
   accountEmail?: string;
   unreadCount: number;
 };

@@ -5,7 +5,7 @@ import { ApiError } from "../api";
 import { connectDB } from "../mongodb";
 import { GmailIntegration } from "./models";
 import { decryptToken } from "./crypto";
-import { configured, oauthClient } from "./config";
+import { gmailConfigurationError, oauthClient } from "./config";
 import type { GmailStatus } from "./contracts";
 let cached: { ciphertext: string; client: OAuth2Client } | undefined;
 export async function mailboxClient() {
@@ -99,12 +99,14 @@ export async function googleCall<T>(
 }
 export const googleOptions = { timeout: 12000, retry: false };
 export async function gmailStatus(): Promise<GmailStatus> {
-  if (!configured())
+  const configurationError = gmailConfigurationError();
+  if (configurationError)
     return {
       configured: false,
       connected: false,
       reconnect: false,
       unreadCount: 0,
+      configurationError,
     };
   await connectDB();
   const integration = await GmailIntegration.findOne({

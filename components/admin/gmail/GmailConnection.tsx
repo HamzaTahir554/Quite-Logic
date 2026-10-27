@@ -81,9 +81,9 @@ export default function GmailConnection({
       )}
       {!status && !error && <p role="status">Checking connection...</p>}
       {status && !status.configured && (
-        <p className="muted">
-          Google OAuth setup is required. Configure the server using the Gmail
-          setup guide, then refresh this page.
+        <p role="alert" className="admin-error">
+          {status.configurationError ||
+            "The running server could not validate Gmail configuration. Apply the saved environment variables and restart the application."}
         </p>
       )}
       {status?.connected ? (
@@ -101,9 +101,9 @@ export default function GmailConnection({
               : "Connect Gmail"}
         </FabricButton>
       )}
-      {error && (
+      {(error || (status && !status.configured)) && (
         <button className="admin-button" onClick={() => void refresh()}>
-          Retry connection check
+          Check configuration again
         </button>
       )}
     </section>

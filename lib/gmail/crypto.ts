@@ -2,7 +2,7 @@ import "server-only";
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import { ApiError } from "../api";
 function key() {
-  const value = process.env.GMAIL_TOKEN_ENCRYPTION_KEY || "";
+  const value = process.env.GMAIL_TOKEN_ENCRYPTION_KEY?.trim() || "";
   const bytes = Buffer.from(value, "base64");
   if (!/^[A-Za-z0-9+/]{43}=$/.test(value) || bytes.length !== 32)
     throw new ApiError(503, "Gmail token encryption is not configured.");

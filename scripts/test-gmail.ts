@@ -21,7 +21,8 @@ import {
 } from "../lib/gmail/models";
 import { sanitizeEmailHtml, normalizeMessage } from "../lib/gmail/mime";
 import { validateAttachment } from "../lib/gmail/send";
-import { gmailScopes } from "../lib/gmail/config";
+import { gmailScopes, gmailConfigurationError } from "../lib/gmail/config";
+import { gmailStatus } from "../lib/gmail/client";
 import { message } from "./fixtures/gmail-google.mjs";
 const origin = "http://localhost:3261",
   directory = resolve("node_modules/.cache/gmail-test");
@@ -88,6 +89,57 @@ try {
   await mkdir(directory, { recursive: true });
   await mode("normal");
   process.env.GMAIL_TOKEN_ENCRYPTION_KEY = randomBytes(32).toString("base64");
+  Object.assign(process.env, {
+    APP_URL: origin,
+    GOOGLE_CLIENT_ID: "fixture-client",
+    GOOGLE_CLIENT_SECRET: "fixture-secret",
+    GOOGLE_REDIRECT_URI: origin + "/api/admin/gmail/callback",
+  });
+  check(
+    !gmailConfigurationError(),
+    "Valid server Gmail configuration accepted",
+  );
+  delete process.env.GOOGLE_CLIENT_SECRET;
+  const missingConfiguration = await gmailStatus();
+  check(
+    !missingConfiguration.configured &&
+      missingConfiguration.configurationError?.includes("GOOGLE_CLIENT_SECRET"),
+    "Missing configuration names the specific server variable",
+  );
+  process.env.GOOGLE_CLIENT_SECRET = "fixture-secret";
+  const properKey = process.env.GMAIL_TOKEN_ENCRYPTION_KEY;
+  process.env.GMAIL_TOKEN_ENCRYPTION_KEY = "invalid-private-key-value";
+  const invalidKey = gmailConfigurationError();
+  check(
+    invalidKey?.includes("base64-encoded 32-byte") &&
+      !invalidKey.includes("invalid-private-key-value"),
+    "Invalid key diagnostics explain the format without exposing its value",
+  );
+  process.env.GMAIL_TOKEN_ENCRYPTION_KEY = "  " + properKey + "  ";
+  check(
+    !gmailConfigurationError(),
+    "Whitespace around valid server credentials does not disable Gmail",
+  );
+  process.env.GMAIL_TOKEN_ENCRYPTION_KEY = properKey;
+  process.env.GOOGLE_REDIRECT_URI =
+    "GOOGLE_REDIRECT_URI=" + origin + "/api/admin/gmail/callback";
+  check(
+    gmailConfigurationError()?.includes("repeats its variable name"),
+    "Pasted KEY=value callback explains the duplicated prefix",
+  );
+  process.env.GOOGLE_REDIRECT_URI =
+    "https://different.example.test/api/admin/gmail/callback";
+  check(
+    gmailConfigurationError()?.includes("same origin as APP_URL"),
+    "Callback origin mismatch has an actionable diagnostic",
+  );
+  process.env.GOOGLE_REDIRECT_URI = origin + "/api/admin/gmail/callback";
+  process.env.GOOGLE_CLIENT_SECRET = '"fixture-secret"';
+  check(
+    gmailConfigurationError()?.includes("surrounding quotes"),
+    "Quoted Hostinger values have an actionable diagnostic",
+  );
+  process.env.GOOGLE_CLIENT_SECRET = "fixture-secret";
   const encrypted = encryptToken("fixture-refresh-only");
   check(
     !encrypted.includes("fixture-refresh-only") &&
@@ -332,6 +384,8 @@ try {
     ).status === 403,
     "OAuth state cannot be replayed",
   );
+  // The callback browser loads Inbox, which can prime the SDK access-token cache.
+  await mode("shortExpiry");
   const browserConnect = await api("connect", "POST");
   const browserState = new URL(
     (await browserConnect.json()).url,
@@ -708,6 +762,36 @@ try {
     page.getByRole("button", { name: "Reconnect Gmail", exact: true }),
   ).toBeVisible();
   check(true, "Expired Gmail authorization shows a reconnect action");
+  const diagnostic =
+    "GOOGLE_REDIRECT_URI must use the same origin as APP_URL and the exact path /api/admin/gmail/callback.";
+  await page.route("**/api/admin/gmail/status", (route) =>
+    route.fulfill({
+      json: {
+        configured: false,
+        connected: false,
+        reconnect: false,
+        unreadCount: 0,
+        configurationError: diagnostic,
+      },
+    }),
+  );
+  await page.reload();
+  await expect(
+    page.getByRole("alert").filter({ hasText: diagnostic }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Connect Gmail", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole("button", {
+      name: "Check configuration again",
+      exact: true,
+    }),
+  ).toBeVisible();
+  check(
+    true,
+    "Admin sees the specific configuration error with a retry action, without bypassing validation",
+  );
   check(
     !logs.includes("fixture-access-only") &&
       !logs.includes("fixture-refresh-only") &&
